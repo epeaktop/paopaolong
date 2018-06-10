@@ -335,7 +335,7 @@ void BubbleLayer::correctReadyPosition()
     {
         for (int j = offY; j < MAX_COLS && j < offY + 4; j++)
         {
-            if (board[i][j] == nullptr)
+            if (board[i][j] == nullptr&&board[i+1][j]==nullptr)
             {
                 if (j == MAX_COLS - 1 && !flag)
                 {
