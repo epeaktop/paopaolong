@@ -1,11 +1,11 @@
-﻿//
+//
 //  ObserverPattern.h
 //
 //  Created by Ruoqian, Chen on 2013/06/18
 //
 #ifndef __OBSERVER_PATTERN_H__
 #define __OBSERVER_PATTERN_H__
-
+#include "cocos2d.h"
 class Observer
 {
 public:

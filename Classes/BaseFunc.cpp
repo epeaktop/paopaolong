@@ -8,8 +8,8 @@
 #include "StringMgr.h"
 #include "BaseFunc.h"
 #include "BaseDef.h"
-
-
+#include <iostream>
+#include <map>
 const char *DOC_EXT = ".data";
 
 

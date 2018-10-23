@@ -40,34 +40,34 @@ bool Cover::init()
     
     showSoundButton();
     
-    auto more = MenuItemImage::create("green_btn.png", "green_btn.png",CC_CALLBACK_1(Cover::newCallback,this));
-    more->setTag(MORE_BTN_TAG);
-    more->setPosition(size.width/2, 360);
-    auto more_label = Label::createWithSystemFont("more", "Arial", 36);
-    more->addChild(more_label);
-    more_label->setPosition(more->getContentSize().width/2,more->getContentSize().height/2 + 10);
+//    auto more = MenuItemImage::create("green_btn.png", "green_btn.png",CC_CALLBACK_1(Cover::newCallback,this));
+//    more->setTag(MORE_BTN_TAG);
+//    more->setPosition(size.width/2, 360);
+//    auto more_label = Label::createWithSystemFont("more", "Arial", 36);
+//    more->addChild(more_label);
+//    more_label->setPosition(more->getContentSize().width/2,more->getContentSize().height/2 + 10);
     
     
-    auto facebook = MenuItemImage::create("facebook_login.png","facebook_login.png",CC_CALLBACK_1(Cover::newCallback, this));
-    facebook->setPosition(size.width/2, 240);
-    facebook->setTag(FACEBOOK_TAG);
+//    auto facebook = MenuItemImage::create("facebook_login.png","facebook_login.png",CC_CALLBACK_1(Cover::newCallback, this));
+//    facebook->setPosition(size.width/2, 240);
+//    facebook->setTag(FACEBOOK_TAG);
     
     
-    TI()->repeatShakeNode(more);
+//    TI()->repeatShakeNode(more);
     TI()->repeatShakeNode(new_button);
-    TI()->repeatShakeNode(facebook);
+//    TI()->repeatShakeNode(facebook);
     
     auto rateBtn = addRateButton();
-    Menu *pMenu = Menu::create(new_button,sound_, sound2_, more, rateBtn, facebook, NULL);
+    Menu *pMenu = Menu::create(new_button,sound_, sound2_, rateBtn  , NULL);
     
     pMenu->setPosition(Vec2::ZERO);
     
     
     addChild(pMenu, 100);
 
-	moreGameLayer_ = MoreGameLayer::create();
-    addChild(moreGameLayer_, 1000);
-    moreGameLayer_->setVisible(false);
+//    moreGameLayer_ = MoreGameLayer::create();
+//    addChild(moreGameLayer_, 1000);
+//    moreGameLayer_->setVisible(false);
     
     regTouch();
     
@@ -98,25 +98,25 @@ void Cover::onEnter()
 
 void Cover::showMoreGame()
 {
-    moreGameLayerShow = true;
-    moreGameLayer_->setVisible(moreGameLayerShow);
+//    moreGameLayerShow = true;
+//    moreGameLayer_->setVisible(moreGameLayerShow);
 }
 
 
 void Cover::newCallback(Ref *pSender)
 {
     Node *obj = (Node*) pSender;
-    if(moreGameLayer_->isVisible())
-    {
-    	return;
-    }
+//    if(moreGameLayer_->isVisible())
+//    {
+//        return;
+//    }
     
-    if(obj->getTag() == MORE_BTN_TAG)
-    {
-    	showMoreGame();
-    	return;
-    }
-    
+//    if(obj->getTag() == MORE_BTN_TAG)
+//    {
+//        showMoreGame();
+//        return;
+//    }
+//
     if(obj->getTag() == RATE_BTN)
     {
     	callJava("download", "com.mmj.paopaolong");
@@ -206,52 +206,52 @@ bool Cover::onTouchBegan(Touch *touch, Event *unused_event)
     Vec2 location = touch->getLocationInView();
      location = Director::getInstance()->convertToGL(location);
     
-	if(TI()->isInScope(location,Vec2(490,910),Vec2(540,960)))
-    {
-        moreGameLayer_->setVisible(false);
-    	return true;
-    }
+//    if(TI()->isInScope(location,Vec2(490,910),Vec2(540,960)))
+//    {
+//        moreGameLayer_->setVisible(false);
+//        return true;
+//    }
     
-    if(!moreGameLayer_->isVisible())
-    	return true;
-    
-    if(TI()->isInScope(location,Vec2(62,960-330),Vec2(190,960-190)))
-    {
-        callJava("download", "com.mmj.jewelsline2");
-    	return true;
-    }
-    
-    if(TI()->isInScope(location,Vec2(219,960-330),Vec2(348,960-190)))
-    {
-        callJava("download", "com.mmj.majiang");
-    	return true;
-    }
-    
-    if(TI()->isInScope(location,Vec2(384,960-330),Vec2(960,960-190)))
-    {
-        callJava("download", "com.mmj.cake");
-    	return true;
-    }
-    
-    
-    if(TI()->isInScope(location,Vec2(62,960-526),Vec2(190,960-390)))
-    {
-        callJava("download", "com.mmj.diamond");
-    	return true;
-    }
-    
-    if(TI()->isInScope(location,Vec2(219,960-526),Vec2(348,960-390)))
-    {
-        callJava("download", "org.mmj.sudoku");
-    	return true;
-    }
-    
-    if(TI()->isInScope(location,Vec2(384,960-526),Vec2(960,960-390)))
-    {
-        callJava("download", "com.mmj.bird");
-    	return true;
-    }
-    
+//    if(!moreGameLayer_->isVisible())
+//        return true;
+//    
+//    if(TI()->isInScope(location,Vec2(62,960-330),Vec2(190,960-190)))
+//    {
+//        callJava("download", "com.mmj.jewelsline2");
+//        return true;
+//    }
+//    
+//    if(TI()->isInScope(location,Vec2(219,960-330),Vec2(348,960-190)))
+//    {
+//        callJava("download", "com.mmj.majiang");
+//        return true;
+//    }
+//    
+//    if(TI()->isInScope(location,Vec2(384,960-330),Vec2(960,960-190)))
+//    {
+//        callJava("download", "com.mmj.cake");
+//        return true;
+//    }
+//    
+//    
+//    if(TI()->isInScope(location,Vec2(62,960-526),Vec2(190,960-390)))
+//    {
+//        callJava("download", "com.mmj.diamond");
+//        return true;
+//    }
+//    
+//    if(TI()->isInScope(location,Vec2(219,960-526),Vec2(348,960-390)))
+//    {
+//        callJava("download", "org.mmj.sudoku");
+//        return true;
+//    }
+//    
+//    if(TI()->isInScope(location,Vec2(384,960-526),Vec2(960,960-390)))
+//    {
+//        callJava("download", "com.mmj.bird");
+//        return true;
+//    }
+//    
     
     
     

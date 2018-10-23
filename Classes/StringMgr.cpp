@@ -1,4 +1,4 @@
-﻿//
+//
 //  StringMgr.cpp
 //
 //  Created by Ruoqian, Chen on 2013/08/28
@@ -9,12 +9,12 @@
 namespace
 {
 static CStringMgr *s_pStringMgr = NULL;
-const char *STR_RES = "ini/strRes.ini";
+
 }
 
 CStringMgr::CStringMgr(void)
 {
-	this->Reload();
+	//this->Reload();
 }
 
 CStringMgr::~CStringMgr(void)

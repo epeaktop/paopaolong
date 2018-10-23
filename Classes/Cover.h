@@ -52,7 +52,7 @@ public:
     int someNumber;
     CREATE_FUNC(Cover);
     
-	MoreGameLayer *moreGameLayer_ = nullptr;
+//    MoreGameLayer *moreGameLayer_ = nullptr;
     bool moreGameLayerShow = false;
     EventListenerTouchOneByOne* _listener;
     

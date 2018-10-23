@@ -79,6 +79,8 @@ public:
     void calcRetainMap();
     void showWinAnim(Vec2& pos);
     void starCallback(Ref* obj);
+    void showHitNumsAnim();
+    void showHits(int num);
 public:
 
 	Vector<Sprite*> _auxiliary;
@@ -91,6 +93,16 @@ public:
     
     std::map<int, int> retainMap_;    // 用来计算还剩下那些颜色的泡泡
     std::vector<int>   retainVec_;    // 将计算结果转换成数组
+    /**
+     * 连击数
+     */
+    unsigned int hitNums_ = 0;
+    /**
+     * 上次发射泡泡是否击中泡泡
+     */
+    bool lastHited_ = false;
+   
+    Label *hitedNumLabel_ = nullptr;
     
 };
 

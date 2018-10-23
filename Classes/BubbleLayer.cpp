@@ -14,12 +14,14 @@ using namespace CocosDenshion;
 using namespace cocostudio::timeline;
 using namespace std;
 /*
-  TODO:
-    1. 每个关卡开始先弹出一个界面，这个界面显示一个礼包，点击礼包显示广告
-      1.1 找到关卡开始的代码在什么地方 done
-      1.2
-    2. 每个关卡结束时弹出一个界面，显示广告（前6关不显示该广告）。
-*/
+ * 加入连击的感念
+ * 让泡泡可以超过一个屏幕
+ * facebook用户相关
+ * ** 积分排行榜
+ * ** 可以看到好友的进度、不登录 facebook 的用户可以看到一个模拟的用户列表；让用户感觉是在
+ * ** 联机和别人对战
+ * 可以看到商品在出售，实时就可以看到。
+ */
 static float waitTime = 0.1f;
 static int sameSum = 0;
 
@@ -65,6 +67,17 @@ void BubbleLayer::calcRetainMap()
 }
 
 
+void BubbleLayer::showHits(int num)
+{
+    auto m = MoveTo::create(1, Vec2(600, 300));
+    auto m2 = MoveTo::create(1,Vec2(1380,300));
+    auto d = DelayTime::create(0.7);
+    auto seq = Sequence::create(m,d,m2, NULL);
+    stringstream s("");
+    s << num << " hits";
+    hitedNumLabel_->setString(s.str().c_str());
+    hitedNumLabel_->runAction(seq);
+}
 
 bool BubbleLayer::init()
 {
@@ -87,7 +100,9 @@ bool BubbleLayer::init()
     calcRetainMap();
     initWaitPaoPao();
     initReadyPaoPao();
-
+    hitedNumLabel_ = Label::createWithSystemFont("0 hits", "Arial", 30);
+    addChild(hitedNumLabel_, 1000);
+    hitedNumLabel_->setPosition(1380, 300);
     return true;
 }
 
@@ -263,6 +278,8 @@ bool BubbleLayer::isCollideBorder()
     return bRet;
 }
 
+// 检查是否碰撞到附近的球，在update中如果碰不到附近的球，球就一直运动
+// 碰到附近的球了就停止运动
 bool BubbleLayer::checkCollideBorder()
 {
     bool bRet = false;
@@ -687,9 +704,12 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
         }
 
         setEnable();
+        lastHited_ = false;
+        hitNums_ = 0;
     }
     else
     {
+        
         for (int i = 0; i < MAX_ROWS; ++i)
         {
             for (int j = 0; j < MAX_COLS; ++j)
@@ -714,8 +734,24 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
                 }
             }
         }
-
+        if(lastHited_)
+        {
+            hitNums_++;  
+        }
+        lastHited_ = true;
+        if( hitNums_ > 1)
+        {
+            showHitNumsAnim();
+        }
     }
+}
+
+/**
+ * 显示连击动画
+ */
+void BubbleLayer::showHitNumsAnim()
+{
+    
 }
 
 void BubbleLayer::bubbleAction(Bubble *obj)
@@ -825,10 +861,10 @@ void BubbleLayer::checkDownBubble()
 
     for (int i = 0; i < MAX_ROWS; ++i)
     {
-        /*
-        当第一次的时候横着只关心右边，第二次的时候横着只关心左边
-        剩下关心与自己相关的下面两个
-        */
+       /*
+         * 当第一次的时候横着只关心右边，第二次的时候横着只关心左边
+         * 剩下关心与自己相关的下面两个
+         */
         for (int j = 0; j < MAX_COLS; ++j)
         {
             if (board[i][j] && board[i][j]->getIsPass())

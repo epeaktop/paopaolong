@@ -16,7 +16,8 @@
 #include "BaseDef.h"
 
 #include <cocos2d.h>
-
+#include <vector>
+#include <map>
 using namespace std;
 
 USING_NS_CC;

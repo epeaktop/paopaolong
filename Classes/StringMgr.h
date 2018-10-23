@@ -1,11 +1,13 @@
-﻿//
+//
 //  StringMgr.h
 //
 //  Created by Ruoqian, Chen on 2013/08/28
 //
 #ifndef __STRING_MGR_H__
 #define __STRING_MGR_H__
-
+#include "cocos2d.h"
+#include <map>
+#include <vector>
 class CStringMgr
 {
 private:
