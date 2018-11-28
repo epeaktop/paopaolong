@@ -167,7 +167,7 @@ void StartLayer::update(float delta)
 {
 	auto ball = (Sprite*)_startNode->getChildByTag(43);
 	ball->setPosition(ball->getPosition().x + getReal().x * 20, ball->getPosition().y + getReal().y * 20);
-	if (ball->getPosition().x <= BUBBLE_RADIUS)
+	if (ball->getPosition().x <= R)
 	{
 		setReal((_disPoint - ball->getPosition()).getNormalized());
 	}

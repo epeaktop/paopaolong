@@ -28,11 +28,8 @@ static int sameSum = 0;
 Scene *BubbleLayer::scene()
 {
     Scene *scene = Scene::create();
-
     BubbleLayer *layer = BubbleLayer::create();
-
     scene->addChild(layer);
-
     return scene;
 }
 
@@ -66,10 +63,10 @@ void BubbleLayer::calcRetainMap()
     
 }
 
-
+// 显示连击
 void BubbleLayer::showHits(int num)
 {
-    auto m = MoveTo::create(1, Vec2(600, 300));
+    auto m = MoveTo::create(1, Vec2(500, 300));
     auto m2 = MoveTo::create(1,Vec2(1380,300));
     auto d = DelayTime::create(0.7);
     auto seq = Sequence::create(m,d,m2, NULL);
@@ -175,19 +172,22 @@ Bubble *BubbleLayer::randomPaoPao(int flag)
     return pRet;
 }
 
+// 根据行、列确定球的位置
 Point BubbleLayer::getPointByRowAndCol(int row, int col)
 {
     bool flag = row % 2 == 0 ? true : false;
     Size winSize = Director::getInstance()->getWinSize();
-    Point pos = Point((col * 2 + 1) * (BUBBLE_RADIUS + 1) + (flag ? 0 : BUBBLE_RADIUS), TOUCH_TOP * winSize.height - row * (BUBBLE_RADIUS * 2 - 5) - BUBBLE_RADIUS);
+    auto x = (col * 2 + 1) * (R + 1) + (flag ? 0 : R);
+    auto y = TOUCH_TOP * winSize.height - row * (R * 2 - 5) - R;
 
-    return pos;
+    return Point(x,y);
 }
+
 Vec2 BubbleLayer::getRowAndColByPoint(Point target)
 {
     Size winSize = Director::getInstance()->getWinSize();
-    int x = (TOUCH_TOP * winSize.height - target.y) / (BUBBLE_RADIUS * 2 - 5);
-    int y = ((target.x - (x % 2) * BUBBLE_RADIUS) / ((BUBBLE_RADIUS + 1) * 2));
+    int x = (TOUCH_TOP * winSize.height - target.y) / (R * 2 - 5);
+    int y = ((target.x - (x % 2) * R) / ((R + 1) * 2));
     return Vec2(x, y);
 }
 void BubbleLayer::initWaitPaoPao()
@@ -263,14 +263,14 @@ void BubbleLayer::update(float fDelta)
         return;
     }
 }
-
+// 是否碰撞了边界
 bool BubbleLayer::isCollideBorder()
 {
     bool bRet = false;
     Size size = Director::getInstance()->getWinSize();
     Point pos = ready->getPosition();
 
-    if (pos.x + BUBBLE_RADIUS > size.width || pos.x - BUBBLE_RADIUS / 2 < 0)
+    if (pos.x + R > size.width || pos.x - R / 2 < 0)
     {
         bRet = true;
     }
@@ -283,17 +283,17 @@ bool BubbleLayer::isCollideBorder()
 bool BubbleLayer::checkCollideBorder()
 {
     bool bRet = false;
-    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto winSize = Director::getInstance()->getVisibleSize();
     auto point = ready->getPosition();
 
 
-    if (point.y < TOUCH_DOWN * visibleSize.height)
+    if (point.y < TOUCH_DOWN * winSize.height)
     {
         return false;
     }
 
 
-    if (ready->getPosition().y > TOUCH_TOP * visibleSize.height - BUBBLE_RADIUS)
+    if (ready->getPosition().y > TOUCH_TOP * winSize.height - R)
     {
         if (ready->getType() == BUBBLE_TYPE_COLOR)
         {
@@ -306,9 +306,9 @@ bool BubbleLayer::checkCollideBorder()
     }
 
     std::vector<Vec2> rowCol;
-    rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y + BUBBLE_RADIUS)));
-    rowCol.push_back(getRowAndColByPoint(Point(point.x - BUBBLE_RADIUS, point.y)));
-    rowCol.push_back(getRowAndColByPoint(Point(point.x + BUBBLE_RADIUS, point.y)));
+    rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y + R)));
+    rowCol.push_back(getRowAndColByPoint(Point(point.x - R, point.y)));
+    rowCol.push_back(getRowAndColByPoint(Point(point.x + R, point.y)));
 
     for (auto & ti : rowCol)
     {
@@ -334,14 +334,17 @@ void BubbleLayer::changeWaitToReady()
 
 }
 
+// 正在运动球停止了，摆正这个球的位置
 void BubbleLayer::correctReadyPosition()
 {
     int offX = 0, offY = 0;
     int row = 0, col = 0;
+    // 注意，这个ready的表诉并不清楚；应该是正在运动的球的位置
     Point pos = ready->getPosition();
     Vec2 rowCol = getRowAndColByPoint(pos);
     offX = rowCol.x == 0 ? 0 : rowCol.x - 1;
     offY = rowCol.y == 0 ? 0 : rowCol.y - 1;
+    
     float length = FLT_MAX;
     bool flag = (int)(rowCol.x + 1) % 2 == 0 ? true : false;
 
@@ -389,7 +392,7 @@ void BubbleLayer::correctReadyPosition()
     ready->runAction(Sequence::create(MoveTo::create(0.2f, getPointByRowAndCol(row, col)), CallFunc::create(CC_CALLBACK_0(BubbleLayer::readyAction, this)), nullptr));
 
 }
-
+// 摆正位置后，才会真正消除掉球
 void BubbleLayer::readyAction()
 {
     setDisable();
@@ -427,7 +430,7 @@ void BubbleLayer::readyAction()
     resetAllPass();
     checkDownBubble();
     downBubble();
-    throwBallAction();
+//    throwBallAction();
     changeWaitToReady();
 }
 
@@ -539,7 +542,7 @@ void BubbleLayer::findTheSameBubble(int i, int j, bool flag, BubbleType type)
         ArmatureDataManager::getInstance()->addArmatureFileInfo("BubbleSpecial/baozha.ExportJson");
         Armature *armature = Armature::create("baozha");
         obj->addChild(armature);
-        armature->setPosition(BUBBLE_RADIUS, BUBBLE_RADIUS);
+        armature->setPosition(R, R);
         armature->getAnimation()->play("daojubaozha");
         obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
         {
@@ -723,7 +726,7 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
                     ArmatureDataManager::getInstance()->addArmatureFileInfo("BubbleSpecial/baozha.ExportJson");
                     Armature *armature = Armature::create("baozha");
                     obj->addChild(armature);
-                    armature->setPosition(BUBBLE_RADIUS, BUBBLE_RADIUS);
+                    armature->setPosition(R, R);
                     armature->getAnimation()->play("daojubaozha");
                     obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
                     {
@@ -736,7 +739,8 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
         }
         if(lastHited_)
         {
-            hitNums_++;  
+            hitNums_++;
+            showHits(hitNums_);
         }
         lastHited_ = true;
         if( hitNums_ > 1)
@@ -1019,7 +1023,7 @@ void BubbleLayer::initBubbleAction(Bubble *obj, int i, int j)
 {
     setDisable();
     auto point = getPointByRowAndCol(i, j);
-    auto start = Point(point.x, 300.0f - i * BUBBLE_RADIUS * 2);
+    auto start = Point(point.x, 300.0f - i * R * 2);
     obj->setPosition(start);
     auto moveTo = MoveTo::create(0.4f + j * 0.1f, point);
     obj->runAction(Sequence::create(moveTo, CallFunc::create([ = ]()
@@ -1069,7 +1073,7 @@ void BubbleLayer::auxiliaryLine(Point tagrat)
     auto position = Point(READY_PAOPAO_POS.x + real.x * speed, READY_PAOPAO_POS.y + real.y * speed);
     CCLOG("%f,%f", real.x, real.y);
 
-    while (position.y < TOUCH_TOP * Director::getInstance()->getVisibleSize().height - BUBBLE_RADIUS)
+    while (position.y < TOUCH_TOP * Director::getInstance()->getVisibleSize().height - R)
     {
         for (int i = MAX_ROWS - 1; i >= 0; i--)
         {
@@ -1077,7 +1081,7 @@ void BubbleLayer::auxiliaryLine(Point tagrat)
             {
                 if (board[i][j] != nullptr)
                 {
-                    if ((board[i][j]->getPosition()).getDistance(position) <= BUBBLE_RADIUS * 1.5)
+                    if ((board[i][j]->getPosition()).getDistance(position) <= R * 1.5)
                     {
                         return;
                     }
@@ -1085,7 +1089,7 @@ void BubbleLayer::auxiliaryLine(Point tagrat)
             }
         }
 
-        if (position.x <= BUBBLE_RADIUS || position.x >= Director::getInstance()->getVisibleSize().width - BUBBLE_RADIUS)
+        if (position.x <= R || position.x >= Director::getInstance()->getVisibleSize().width - R)
         {
             real.x = -real.x;
         }
