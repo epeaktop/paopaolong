@@ -171,7 +171,7 @@ Bubble *BubbleLayer::randomPaoPao(int flag)
     pRet = Bubble::initWithType(type);
     return pRet;
 }
-
+const float offset_y = 600;
 // 根据行、列确定球的位置
 Point BubbleLayer::getPointByRowAndCol(int row, int col)
 {
@@ -179,7 +179,7 @@ Point BubbleLayer::getPointByRowAndCol(int row, int col)
     Size winSize = Director::getInstance()->getWinSize();
     auto x = (col * 2 + 1) * (R + 1) + (flag ? 0 : R);
     auto y = TOUCH_TOP * winSize.height - row * (R * 2 - 5) - R;
-
+    y = R*(2*row +1) + offset_y;
     return Point(x,y);
 }
 
@@ -188,6 +188,7 @@ Vec2 BubbleLayer::getRowAndColByPoint(Point target)
     Size winSize = Director::getInstance()->getWinSize();
     int x = (TOUCH_TOP * winSize.height - target.y) / (R * 2 - 5);
     int y = ((target.x - (x % 2) * R) / ((R + 1) * 2));
+    x = ((target.y - offset_y)/R - 1)/2;
     return Vec2(x, y);
 }
 void BubbleLayer::initWaitPaoPao()
