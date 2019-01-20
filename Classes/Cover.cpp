@@ -11,6 +11,7 @@
 const int MORE_BTN_TAG = 1000;
 const int RATE_BTN = 10011;
 const int FACEBOOK_TAG = 10012;
+const int CLASSICS_TAG = 10013;
 
 using  namespace std;
 bool Cover::init()
@@ -21,63 +22,54 @@ bool Cover::init()
     }
 
     Size size = Director::getInstance()->getWinSize();
-
-
     auto *game_bg = Sprite::create("cover-bg.png");
     game_bg->setPosition(Vec2(size.width / 2, size.height / 2));
     addChild(game_bg, -1);
 
-    log("Cover::init");
     auto *new_button = MenuItemImage::create("yellow_btn.png", "yellow_btn.png", CC_CALLBACK_1(Cover::newCallback,this));
-	auto new_label = Label::createWithSystemFont("play", "Arial", 36);
+    auto new_label = Label::createWithSystemFont("venture", "Arial", 36);
     new_button->addChild(new_label);
+    /* 经典模式按钮 */
+    auto classics = MenuItemImage::create("yellow_btn.png", "yellow_btn.png", CC_CALLBACK_1(Cover::newCallback,this));
+    auto classicsLabel = Label::createWithSystemFont("classics", "Arial", 36);
+    classics->addChild(classicsLabel);
     new_label->setPosition(new_button->getContentSize().width/2,new_button->getContentSize().height/2+ 10);
     new_button->setPosition(Vec2(size.width / 2 , size.height / 2));
     sound_ = MenuItemImage::create("sound.png", "sound.png", CC_CALLBACK_1(Cover::soundCallBack,this));
     sound2_ = MenuItemImage::create("no-sound.png", "no-sound.png", CC_CALLBACK_1(Cover::soundCallBack,this));
     sound_->setPosition(Vec2(74,960-49));
     sound2_->setPosition(Vec2(74,960-49));
-    
     showSoundButton();
-    
+/*
 //    auto more = MenuItemImage::create("green_btn.png", "green_btn.png",CC_CALLBACK_1(Cover::newCallback,this));
 //    more->setTag(MORE_BTN_TAG);
 //    more->setPosition(size.width/2, 360);
 //    auto more_label = Label::createWithSystemFont("more", "Arial", 36);
 //    more->addChild(more_label);
 //    more_label->setPosition(more->getContentSize().width/2,more->getContentSize().height/2 + 10);
-    
-    
 //    auto facebook = MenuItemImage::create("facebook_login.png","facebook_login.png",CC_CALLBACK_1(Cover::newCallback, this));
 //    facebook->setPosition(size.width/2, 240);
 //    facebook->setTag(FACEBOOK_TAG);
-    
-    
 //    TI()->repeatShakeNode(more);
-    TI()->repeatShakeNode(new_button);
 //    TI()->repeatShakeNode(facebook);
+*/
+    TI()->repeatShakeNode(new_button);
     
     auto rateBtn = addRateButton();
     Menu *pMenu = Menu::create(new_button,sound_, sound2_, rateBtn  , NULL);
-    
     pMenu->setPosition(Vec2::ZERO);
-    
-    
     addChild(pMenu, 100);
 
 //    moreGameLayer_ = MoreGameLayer::create();
 //    addChild(moreGameLayer_, 1000);
 //    moreGameLayer_->setVisible(false);
-    
     regTouch();
-    
     return true;
-
 }
 
 MenuItemImage* Cover::addRateButton()
 {
-	auto ret = MenuItemImage::create("rate.png", "rate.png", CC_CALLBACK_1(Cover::newCallback, this));
+    auto ret = MenuItemImage::create("rate.png", "rate.png", CC_CALLBACK_1(Cover::newCallback, this));
     ret->setTag(RATE_BTN);
     ret->setPosition(170,960-49);
     return ret;
@@ -87,7 +79,6 @@ void Cover::onExit()
 {
     Layer::onExit();
     log("Cover::onExit");
-
 }
 
 void Cover::onEnter()

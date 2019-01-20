@@ -5,7 +5,6 @@
 #include "SimpleAudioEngine.h"
 #include "MoreGame.h"
 
-
 USING_NS_CC;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
@@ -13,18 +12,9 @@ using namespace CocosDenshion;
 
 class Cover : public Layer
 {
-
 public:
-    Cover(): isSoundOn_(true),
-        sound_(NULL),
-        sound2_(NULL),
-        someNumber(0)
-    {
-//
-    }
+    Cover(): isSoundOn_(true),sound_(NULL),sound2_(NULL),someNumber(0){}
     virtual ~Cover() {}
-
-
     static Scene *scene();
     virtual bool init();
     virtual void onExit();
@@ -55,9 +45,6 @@ public:
 //    MoreGameLayer *moreGameLayer_ = nullptr;
     bool moreGameLayerShow = false;
     EventListenerTouchOneByOne* _listener;
-    
 };
-
-
 
 #endif /* defined(__popstart__Cover__) */
