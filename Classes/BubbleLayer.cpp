@@ -232,6 +232,8 @@ void BubbleLayer::onTouch(Point target)
         break;
     }
     this->addMoveNumber(1);
+    maxLevel = getMaxMoveNumbers(USER()->getSelLevel());
+    TI()->showNumber(maxLevel - this->getMoveNumber());
     this->scheduleUpdate();
 }
 
@@ -1267,11 +1269,6 @@ int BubbleLayer::getMaxMoveNumbers(int level)
     return a[level];
 }
 
-void BubbleLayer::showMoveNumbers(int num)
-{
-    stringstream s("");
-    s << num;
-    hitedNumLabel_->setString(s.str().c_str());
-}
+
 
 

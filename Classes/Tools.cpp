@@ -198,6 +198,7 @@ void Tools::addLabel(cocos2d::Node *obj, std::string name, float x, float y, int
 }
 
 
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 void Tools::toast(string str)
 {
@@ -205,3 +206,9 @@ void Tools::toast(string str)
 }
 #endif
 
+void Tools::showNumber(cocos2d::Label* label, int num, const char* name)
+{
+    std::stringstream s("");
+    s << num << name;
+    label->setString(s.str().c_str());
+}

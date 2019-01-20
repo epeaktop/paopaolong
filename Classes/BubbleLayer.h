@@ -170,7 +170,7 @@ public:
     int getMaxMoveNumbers(int level);
     /* 获取当前移动的步数 */
     CC_SYNTHESIZE_ADD(int, _moveNumbers, MoveNumber);
-    void showMoveNumbers(int n);
+
 public:
 	Vector<Sprite*> _auxiliary;
 	void colorBubble();
