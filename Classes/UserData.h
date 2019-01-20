@@ -20,9 +20,12 @@ public:
 	void reset();
 	void saveData();
 	void addScore(int var);
-    
+
+
 	CC_SYNTHESIZE(int, _score, Score);
 	CC_SYNTHESIZE(bool, _isBeginner, IsBeginner);
+	CC_SYNTHESIZE(bool, _isClassics, IsClassics);
+
 	CC_SYNTHESIZE_ADD(int, _bomb, Bomb); //炸弹
 	CC_SYNTHESIZE_ADD(int, _colorBubble, ColorBubble); //可变泡泡
 	CC_SYNTHESIZE_ADD(int, _hourglass, Hourglass); //沙漏
@@ -61,17 +64,14 @@ private:
     }
     
 public:
-    
     void setScore(int level, int score)
     {
         UserDefault::getInstance()->setIntegerForKey(getKeyByLevel(level).c_str(), score);
     }
-    
     int getScore(int level)
     {
         return UserDefault::getInstance()->getIntegerForKey(getKeyByLevel(level).c_str(), 0);
     }
-    
 };
 
 #define USER UserData::getInstance

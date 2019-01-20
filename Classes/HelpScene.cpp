@@ -194,8 +194,6 @@ void HelpScene::onExit()
     Layer::onExit();
 }
 
-
-
 void HelpScene::menuBackCallback(Ref *pSender)
 {
     auto obj = (MenuItemImage*)pSender;
@@ -223,10 +221,9 @@ void HelpScene::buttonCallback(Node *pNode)
     if (BT_OK == pNode->getTag())
     {
         auto s = GameScene::create();
-        
         s->_bubbleLayer->setLevel(UserData::getInstance()->getSelLevel());
+        USER()->setIsClassics(isClassicsMode());
         auto transition = TransitionTurnOffTiles::create(0.5, s);
-        
         Director::getInstance()->replaceScene(transition);
     }
 }

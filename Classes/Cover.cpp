@@ -86,7 +86,6 @@ void Cover::showMoreGame()
 //    moreGameLayer_->setVisible(moreGameLayerShow);
 }
 
-
 void Cover::newCallback(Ref *pSender)
 {
     Node *obj = (Node*) pSender;
@@ -105,7 +104,17 @@ void Cover::newCallback(Ref *pSender)
     SimpleAudioEngine::getInstance()->playEffect("Music/Click.mp3");
     SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
     /* 选择关卡的界面 */
-    Director::getInstance()->pushScene(HelpScene::scene());
+    auto scene = HelpScene::scene();
+    if (obj->getTag() == CLASSICS_TAG)
+    {
+        scene->setClassicsMode(true);
+    }
+    else
+    {
+        scene->setClassicsMode(false);
+    }
+
+    Director::getInstance()->pushScene();
 }
 void Cover::exitCallback(Ref *pSender)
 {
