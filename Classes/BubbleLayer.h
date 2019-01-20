@@ -17,11 +17,8 @@ class BubbleLayer : public Layer
 {
 public:
     virtual bool init();
-
     static cocos2d::Scene* scene();
-
 	void onTouch(Point target);
-
 	CREATE_FUNC(BubbleLayer);
 	virtual void update(float delta);
 private:
@@ -30,7 +27,6 @@ private:
 	Bubble *wait[MAX_WAIT_PAOPAO]; 	    // 等待的泡泡
 public:
 	Bubble *ready;  // 将会发射的泡泡
-
 public:
 	
 	CC_SYNTHESIZE(Vec2, real, Real);
@@ -81,9 +77,8 @@ public:
     void starCallback(Ref* obj);
     void showHitNumsAnim();
     void showHits(int num);
-    
+
     const int const_line = 8;
-    
     /* 目前泡泡的高度 */
     int getHowmanyLines()
     {
@@ -105,8 +100,6 @@ public:
         }
         return n;
     }
-    
-    
     float getStart()
     {
         const float oldY = 100;
@@ -122,7 +115,6 @@ public:
         }
         return oldY + n*2*R;
     }
-    
     //
     void moveBoard(int n)
     {
@@ -168,22 +160,23 @@ public:
     {// getHowmanyLines
         return startLines_ - endLines_;
     }
-    
+
     void  moveObj(Sprite* obj, Vec2 targetPos)
     {
         auto moveto = MoveTo::create(0.1f, targetPos);
         obj->runAction(moveto);
     }
+    // 获取这一关卡最多可以移动多少步
+    int getMaxMoveNumbers(int level);
+    /* 获取当前移动的步数 */
+    CC_SYNTHESIZE_ADD(int, _moveNumbers, MoveNumber);
 public:
-
 	Vector<Sprite*> _auxiliary;
-
 	void colorBubble();
 	void swapBubble();
 	void bombBubble();
 	void auxiliaryLine(Point tagrat);
     void buttonCallback(Node* obj);
-    
     std::map<int, int> retainMap_;    // 用来计算还剩下那些颜色的泡泡
     std::vector<int>   retainVec_;    // 将计算结果转换成数组
     /**
@@ -194,7 +187,6 @@ public:
      * 上次发射泡泡是否击中泡泡
      */
     bool lastHited_ = false;
-   
     Label *hitedNumLabel_ = nullptr;
     
 };
