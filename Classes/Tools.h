@@ -133,6 +133,8 @@ public:
     	_ss << s;
     	return _ss.str();
 	}
+
+    void addLabel(cocos2d::Node *obj, std::string name, float x, float y, int order=1000);
 private:
     static Tools* instance_;
         

@@ -34,16 +34,12 @@ bool GameScene::init()
         SimpleAudioEngine::getInstance()->pauseAllEffects();
         SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
     }
-	
 
-
-
-	_bubbleLayer = BubbleLayer::create();
+    _bubbleLayer = BubbleLayer::create();
 	addChild(_bubbleLayer);
 
 	_propLayer = PropLayer::create();
 	addChild(_propLayer);
-
 
     auto bgArmature = (Armature *)_bg->getChildByTag(63);
     bgArmature->setVisible(false);
@@ -85,9 +81,7 @@ void GameScene::mPause()
 
 void GameScene::mResume()
 {
-
 	operateAllSchedulerAndActions(this, k_Operate_Resume);
-
 }
 
 void GameScene::onTouch(Point target)
@@ -140,5 +134,4 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 		return;
 	}
 	operateAllSchedulerAndActions(this, k_Operate_Pause);
-
 }

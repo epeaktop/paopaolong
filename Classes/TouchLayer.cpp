@@ -19,23 +19,12 @@ bool TouchLayer::init()
 	listener->onTouchEnded = CC_CALLBACK_2(TouchLayer::onTouchEnded, this);
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-
-	
-
-	
-
 	return true;
 }
 
 bool TouchLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
-	/*
-	auto gameScene = (GameScene*)this->getParent();
-	BubbleLayer* bubbleLayer = gameScene->_bubbleLayer;
-	auto real = (touch->getLocation() - bubbleLayer->ready->getPosition()).getNormalized();
-	bubbleLayer->setReal(real);*/
 	return getTouchEnable();
-	
 }
 
 void TouchLayer::onTouchMoved(Touch *touch, Event *unused_event)

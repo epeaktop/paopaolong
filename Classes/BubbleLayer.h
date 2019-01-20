@@ -170,6 +170,7 @@ public:
     int getMaxMoveNumbers(int level);
     /* 获取当前移动的步数 */
     CC_SYNTHESIZE_ADD(int, _moveNumbers, MoveNumber);
+    void showMoveNumbers(int n);
 public:
 	Vector<Sprite*> _auxiliary;
 	void colorBubble();
@@ -188,7 +189,8 @@ public:
      */
     bool lastHited_ = false;
     Label *hitedNumLabel_ = nullptr;
-    
+    Label *moveNumberLabel_ = nullptr;
+    Label *moveLabel_ = nullptr;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */

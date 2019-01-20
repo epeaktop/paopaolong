@@ -100,8 +100,12 @@ bool BubbleLayer::init()
     hitedNumLabel_ = Label::createWithSystemFont("0 hits", "Arial", 30);
     addChild(hitedNumLabel_, 1000);
     hitedNumLabel_->setPosition(1380, 300);
+    this->setMoveNumber(0);
+    moveLabel_ = TI()->addLabel(this, 'Moves:', 1000, 50);
+    moveNumberLabel_ = TI()->addLabel(this, '0', 1100, 50);
     return true;
 }
+
 
 bool BubbleLayer::initTheBoard(int level)
 {
@@ -113,7 +117,6 @@ bool BubbleLayer::initTheBoard(int level)
         {
             board[i][j] = NULL;
         }
-
         bRet = true;
     }
 
@@ -228,7 +231,7 @@ void BubbleLayer::onTouch(Point target)
     default:
         break;
     }
-
+    this->addMoveNumber(1);
     this->scheduleUpdate();
 }
 
@@ -383,10 +386,17 @@ void BubbleLayer::correctReadyPosition()
 
     if (getPointByRowAndCol(row, col).y <= TOUCH_DOWN * (Director::getInstance()->getVisibleSize().height))
     {
-        gameOver(true);
-        return;
+        return gameOver(true);
     }
 
+    if (USER()->getIsClassics())
+    {
+        // todo : 忽略掉时间的计算
+        if (getMoveNumber() < getMaxMoveNumbers(USER()->getSelLevel()))
+        {
+            return gameOver(true);
+        }
+    }
     std::thread moveBubble(&BubbleLayer::moveTheBubble, this, row, col, tempFlag, MOVE_DISTANCE);
     moveBubble.join();
 
@@ -1256,3 +1266,12 @@ int BubbleLayer::getMaxMoveNumbers(int level)
     };
     return a[level];
 }
+
+void BubbleLayer::showMoveNumbers(int num)
+{
+    stringstream s("");
+    s << num;
+    hitedNumLabel_->setString(s.str().c_str());
+}
+
+

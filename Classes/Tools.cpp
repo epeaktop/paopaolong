@@ -188,6 +188,16 @@ void Tools::repeatShakeNode(cocos2d::Node *obj)
     obj->runAction(repeat);
     
 }
+
+void Tools::addLabel(cocos2d::Node *obj, std::string name, float x, float y, int order=1000)
+{
+    auto label = Label::createWithSystemFont(name.c_str(), "Arial", 30);
+    obj->addChild(label, order);
+    setPos(label, x, y);
+    return label;
+}
+
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 void Tools::toast(string str)
 {
