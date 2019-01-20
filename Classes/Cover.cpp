@@ -14,6 +14,20 @@ const int FACEBOOK_TAG = 10012;
 const int CLASSICS_TAG = 10013;
 
 using  namespace std;
+
+MenuItemImage *Cover::classicsButton()
+{
+    Size size = Director::getInstance()->getWinSize();
+    /* 经典模式按钮 */
+    auto classics = MenuItemImage::create("yellow_btn.png", "yellow_btn.png", CC_CALLBACK_1(Cover::newCallback,this));
+    auto classicsLabel = Label::createWithSystemFont("classics", "Arial", 36);
+    classics->addChild(classicsLabel);
+    classicsLabel->setPosition(classics->getContentSize().width/2, classics->getContentSize().height/2+ 10);
+    classics->setPosition(Vec2(size.width / 2 , 360));
+    classics->setTag(CLASSICS_TAG);
+    return classics;
+}
+
 bool Cover::init()
 {
     if (!Layer::init())
@@ -29,10 +43,6 @@ bool Cover::init()
     auto *new_button = MenuItemImage::create("yellow_btn.png", "yellow_btn.png", CC_CALLBACK_1(Cover::newCallback,this));
     auto new_label = Label::createWithSystemFont("venture", "Arial", 36);
     new_button->addChild(new_label);
-    /* 经典模式按钮 */
-    auto classics = MenuItemImage::create("yellow_btn.png", "yellow_btn.png", CC_CALLBACK_1(Cover::newCallback,this));
-    auto classicsLabel = Label::createWithSystemFont("classics", "Arial", 36);
-    classics->addChild(classicsLabel);
     new_label->setPosition(new_button->getContentSize().width/2,new_button->getContentSize().height/2+ 10);
     new_button->setPosition(Vec2(size.width / 2 , size.height / 2));
     sound_ = MenuItemImage::create("sound.png", "sound.png", CC_CALLBACK_1(Cover::soundCallBack,this));
@@ -40,29 +50,12 @@ bool Cover::init()
     sound_->setPosition(Vec2(74,960-49));
     sound2_->setPosition(Vec2(74,960-49));
     showSoundButton();
-/*
-//    auto more = MenuItemImage::create("green_btn.png", "green_btn.png",CC_CALLBACK_1(Cover::newCallback,this));
-//    more->setTag(MORE_BTN_TAG);
-//    more->setPosition(size.width/2, 360);
-//    auto more_label = Label::createWithSystemFont("more", "Arial", 36);
-//    more->addChild(more_label);
-//    more_label->setPosition(more->getContentSize().width/2,more->getContentSize().height/2 + 10);
-//    auto facebook = MenuItemImage::create("facebook_login.png","facebook_login.png",CC_CALLBACK_1(Cover::newCallback, this));
-//    facebook->setPosition(size.width/2, 240);
-//    facebook->setTag(FACEBOOK_TAG);
-//    TI()->repeatShakeNode(more);
-//    TI()->repeatShakeNode(facebook);
-*/
     TI()->repeatShakeNode(new_button);
-    
     auto rateBtn = addRateButton();
-    Menu *pMenu = Menu::create(new_button,sound_, sound2_, rateBtn  , NULL);
+    auto classics = classicsButton();
+    Menu *pMenu = Menu::create(new_button,classics,sound_, sound2_, rateBtn , NULL);
     pMenu->setPosition(Vec2::ZERO);
     addChild(pMenu, 100);
-
-//    moreGameLayer_ = MoreGameLayer::create();
-//    addChild(moreGameLayer_, 1000);
-//    moreGameLayer_->setVisible(false);
     regTouch();
     return true;
 }
@@ -97,17 +90,6 @@ void Cover::showMoreGame()
 void Cover::newCallback(Ref *pSender)
 {
     Node *obj = (Node*) pSender;
-//    if(moreGameLayer_->isVisible())
-//    {
-//        return;
-//    }
-    
-//    if(obj->getTag() == MORE_BTN_TAG)
-//    {
-//        showMoreGame();
-//        return;
-//    }
-//
     if(obj->getTag() == RATE_BTN)
     {
     	callJava("download", "com.mmj.paopaolong");
@@ -122,8 +104,8 @@ void Cover::newCallback(Ref *pSender)
     
     SimpleAudioEngine::getInstance()->playEffect("Music/Click.mp3");
     SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+    /* 选择关卡的界面 */
     Director::getInstance()->pushScene(HelpScene::scene());
-    
 }
 void Cover::exitCallback(Ref *pSender)
 {

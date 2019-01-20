@@ -31,9 +31,9 @@ public:
     bool onTouchBegan(Touch *touch, Event *unused_event);
 	void onTouchMoved(Touch *touch, Event *unused_event);
 	void onTouchEnded(Touch *touch, Event *unused_event);
-
     void regTouch();
-    MenuItemImage* addRateButton();
+    MenuItemImage *addRateButton();
+    MenuItemImage *classicsButton();
 public:
     bool isSoundOn_;
     MenuItemImage *sound_;
