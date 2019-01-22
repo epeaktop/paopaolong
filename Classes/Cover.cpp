@@ -107,14 +107,14 @@ void Cover::newCallback(Ref *pSender)
     auto scene = HelpScene::scene();
     if (obj->getTag() == CLASSICS_TAG)
     {
-        scene->setClassicsMode(true);
+        USER()->setIsClassics(true);
     }
     else
     {
-        scene->setClassicsMode(false);
+        USER()->setIsClassics(false);
     }
 
-    Director::getInstance()->pushScene();
+    Director::getInstance()->pushScene(scene);
 }
 void Cover::exitCallback(Ref *pSender)
 {
@@ -186,58 +186,7 @@ void Cover::update(float dt)
 bool Cover::onTouchBegan(Touch *touch, Event *unused_event)
 {
     Vec2 location = touch->getLocationInView();
-     location = Director::getInstance()->convertToGL(location);
-    
-//    if(TI()->isInScope(location,Vec2(490,910),Vec2(540,960)))
-//    {
-//        moreGameLayer_->setVisible(false);
-//        return true;
-//    }
-    
-//    if(!moreGameLayer_->isVisible())
-//        return true;
-//    
-//    if(TI()->isInScope(location,Vec2(62,960-330),Vec2(190,960-190)))
-//    {
-//        callJava("download", "com.mmj.jewelsline2");
-//        return true;
-//    }
-//    
-//    if(TI()->isInScope(location,Vec2(219,960-330),Vec2(348,960-190)))
-//    {
-//        callJava("download", "com.mmj.majiang");
-//        return true;
-//    }
-//    
-//    if(TI()->isInScope(location,Vec2(384,960-330),Vec2(960,960-190)))
-//    {
-//        callJava("download", "com.mmj.cake");
-//        return true;
-//    }
-//    
-//    
-//    if(TI()->isInScope(location,Vec2(62,960-526),Vec2(190,960-390)))
-//    {
-//        callJava("download", "com.mmj.diamond");
-//        return true;
-//    }
-//    
-//    if(TI()->isInScope(location,Vec2(219,960-526),Vec2(348,960-390)))
-//    {
-//        callJava("download", "org.mmj.sudoku");
-//        return true;
-//    }
-//    
-//    if(TI()->isInScope(location,Vec2(384,960-526),Vec2(960,960-390)))
-//    {
-//        callJava("download", "com.mmj.bird");
-//        return true;
-//    }
-//    
-    
-    
-    
-    
+    location = Director::getInstance()->convertToGL(location);
 	return true;
 }
 

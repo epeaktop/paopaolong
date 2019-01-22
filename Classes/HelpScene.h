@@ -27,18 +27,7 @@ private:
     Label* hpNumber_ = nullptr;
     Label* starNumber_ = nullptr;
     int starNum_ = 0;
-    /* 模式：0代表冒险模式;1 代表经典模式 */
-    int mode_ = 0;
 public:
-    void setClassicsMode(bool mode)
-    {
-        if(mode)
-            mode_ = 1;
-        else
-            mode_ = 0;
-    }
-    bool isClassicsMode() const { return mode_ == 1; }
-    bool isAdventureMode() const { return mode_ == 0; }
 	virtual bool init();
     virtual void onExit();
 	static Scene* scene();

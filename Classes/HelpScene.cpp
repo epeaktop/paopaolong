@@ -304,8 +304,6 @@ void HelpScene::showSliver()
     int i = UserData::getInstance()->getSliver();
     sliverNumber_->setString(TI()->_itos(i));
     sliverNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
-
-    //TI()->shakeNode(sliverNumber_);
 }
 
 void HelpScene::showHp()
@@ -356,9 +354,7 @@ void HelpScene::onTouchEnded(CCTouch *touch, CCEvent *event)
     CCPoint touchPoint = touch->getLocationInView();
     touchPoint = Director::sharedDirector()->convertToGL(touchPoint);
     y_end = touchPoint.y;
-
     CCSize winSize = Director::sharedDirector()->getWinSize();
-
     ActionInterval  *actionTo;
 
     if (y_batch_location_begin + y_end - y_begin < y_min) //拉到最上面了
