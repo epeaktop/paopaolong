@@ -7,6 +7,8 @@
 #include "GameEnum.h"
 #include "ui/CocosGUI.h"
 #include "editor-support/cocostudio/CocoStudio.h"
+#include "Tools.h"
+
 #include <map>
 
 

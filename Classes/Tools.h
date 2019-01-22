@@ -142,5 +142,10 @@ private:
 };
 
 #define TI Tools::getInstance
-	
+#define CC_SYNTHESIZE_ADD(varType, varName, funName)\
+protected: varType varName; \
+public: virtual varType get##funName(void) const { return varName; }\
+public: virtual void set##funName(varType var){ varName = var; }\
+public: virtual void add##funName(varType var){ varType temp = varName; varName = var + temp; saveData(); }\
+
 #endif  // __HELLOWORLD_SCENE_H__

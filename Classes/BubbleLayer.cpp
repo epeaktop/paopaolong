@@ -138,7 +138,12 @@ bool BubbleLayer::initTheBoard(int level)
                 board[i][j] = Bubble::initWithType((BubbleType)customs[level][i][j]);
             }
 
-            bool flag = (i % 2) == 0 ? true : false;
+            bool flag;
+            if ((i % 2) == 0) {
+                flag = true;
+            } else {
+                flag = false;
+            }
             board[i][j]->setFlag(flag);
             addChild(board[i][j]);
             initBubbleAction(board[i][j], i, j);
@@ -178,7 +183,12 @@ const float offset_y = 600;
 // 根据行、列确定球的位置
 Point BubbleLayer::getPointByRowAndCol(int row, int col)
 {
-    bool flag = row % 2 == 0 ? true : false;
+    bool flag;
+    if (row % 2 == 0) {
+        flag = true;
+    } else {
+        flag = false;
+    }
     Size winSize = Director::getInstance()->getWinSize();
     auto x = (col * 2 + 1) * (R + 1) + (flag ? 0 : R);
     auto y = TOUCH_TOP * winSize.height - row * (R * 2 - 5) - R;
@@ -292,12 +302,11 @@ bool BubbleLayer::checkCollideBorder()
     auto winSize = Director::getInstance()->getVisibleSize();
     auto point = ready->getPosition();
 
-
+    /* 底部的边界 */
     if (point.y < TOUCH_DOWN * winSize.height)
     {
         return false;
     }
-
 
     if (ready->getPosition().y > TOUCH_TOP * winSize.height - R)
     {
@@ -307,7 +316,6 @@ bool BubbleLayer::checkCollideBorder()
             ready->setType(type);
             ready->initWithSpriteFrameName(StringUtils::format(BUBBLE_NAME.c_str(), type));
         }
-
         bRet = true;
     }
 
@@ -323,7 +331,6 @@ bool BubbleLayer::checkCollideBorder()
             return true;
         }
     }
-
     return bRet;
 }
 
@@ -352,7 +359,12 @@ void BubbleLayer::correctReadyPosition()
     offY = rowCol.y == 0 ? 0 : rowCol.y - 1;
     
     float length = FLT_MAX;
-    bool flag = (int)(rowCol.x + 1) % 2 == 0 ? true : false;
+    bool flag;
+    if ((int) (rowCol.x + 1) % 2 == 0) {
+        flag = true;
+    } else {
+        flag = false;
+    }
 
     bool tempFlag = flag;
 
@@ -412,7 +424,12 @@ void BubbleLayer::readyAction()
     Vec2 RowAndCol = getRowAndColByPoint(ready->getPosition());
     int row = RowAndCol.x;
     int col = RowAndCol.y;
-    bool tempFlag = row % 2 == 0 ? true : false;
+    bool tempFlag;
+    if (row % 2 == 0) {
+        tempFlag = true;
+    } else {
+        tempFlag = false;
+    }
 
     if (row < 0)
     {
@@ -966,41 +983,40 @@ void BubbleLayer::downBubble()
     }
 	
     // 游戏开始的地方
-    if (isPass() && _havePass == false)
+    if (!isPass() || _havePass)
+        return;
+    if(UserData::getInstance()->getLevel() > 4)
     {
-        if(UserData::getInstance()->getLevel() > 4)
-        {
-            callJava("showAds","");
-        }
-        _havePass = true;
-        setDisable();
-        auto gameScene = (GameScene *)this->getParent();
-        gameScene->_propLayer->setVisible(false);
-       
-        auto cur_level = UserData::getInstance()->getSelLevel();
-        auto score = UserData::getInstance()->getScore();
-        int last_time = gameScene->_propLayer->getTime();
-        
-        score += last_time * 100;
-        
-        UserData::getInstance()->setScore(score);
-        
-        UserData::getInstance()->setScore(cur_level,score);
-        
-        GameResult *pl = GameResult::create("game_start.png");
-        pl->setContentSize(Size(540, 960));
-        pl->setTitle("", 30);
-        pl->setContentText("", 33, 80, 150);
-        pl->setCallbackFunc(this, callfuncN_selector(BubbleLayer::buttonCallback));
-        
-        pl->addButton("start_bt.png", "start_bt.png", Vec2(540/2, 300), BT_OK);
-        
-        this->addChild(pl, 2000);
-  
-        if(UserData::getInstance()->getLevel() <= UserData::getInstance()->getSelLevel())
-        {
-        	UserData::getInstance()->addLevel(1);
-        }
+        callJava("showAds","");
+    }
+    _havePass = true;
+    setDisable();
+    auto gameScene = (GameScene *)this->getParent();
+    gameScene->_propLayer->setVisible(false);
+
+    auto cur_level = UserData::getInstance()->getSelLevel();
+    auto score = UserData::getInstance()->getScore();
+    int last_time = gameScene->_propLayer->getTime();
+
+    score += last_time * 100;
+
+    UserData::getInstance()->setScore(score);
+
+    UserData::getInstance()->setScore(cur_level,score);
+
+    GameResult *pl = GameResult::create("game_start.png");
+    pl->setContentSize(Size(540, 960));
+    pl->setTitle("", 30);
+    pl->setContentText("", 33, 80, 150);
+    pl->setCallbackFunc(this, callfuncN_selector(BubbleLayer::buttonCallback));
+
+    pl->addButton("start_bt.png", "start_bt.png", Vec2(540/2, 300), BT_OK);
+
+    this->addChild(pl, 2000);
+
+    if(UserData::getInstance()->getLevel() <= UserData::getInstance()->getSelLevel())
+    {
+        UserData::getInstance()->addLevel(1);
     }
 }
 

@@ -2,16 +2,9 @@
 #define  USER_DATA_H_
 
 #include "cocos2d.h"
+#include "Tools.h"
 
 USING_NS_CC;
-
-#define CC_SYNTHESIZE_ADD(varType, varName, funName)\
-protected: varType varName; \
-public: virtual varType get##funName(void) const { return varName; }\
-public: virtual void set##funName(varType var){ varName = var; }\
-public: virtual void add##funName(varType var){ varType temp = varName; varName = var + temp; saveData(); }\
-
-
 class UserData
 {
 public:
