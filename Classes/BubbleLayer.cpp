@@ -243,7 +243,7 @@ void BubbleLayer::onTouch(Point target)
     }
     this->addMoveNumber(1);
     auto maxLevel = getMaxMoveNumbers(USER()->getSelLevel());
-    TI()->showNumber(maxLevel - this->getMoveNumber());
+    TI()->showNumber(this->moveNumberLabel_,maxLevel - this->getMoveNumber(), "");
     this->scheduleUpdate();
 }
 

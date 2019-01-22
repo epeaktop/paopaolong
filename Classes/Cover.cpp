@@ -1,5 +1,7 @@
 
 #include "Cover.h"
+#include "UserData.h"
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
 #include "SpriteFrameAnimation.h"

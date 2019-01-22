@@ -78,7 +78,6 @@ int Tools::string2number(string str)
     {
         return stoi(str);
     }
-    return 0;
 }
 
 float Tools::getHeigh()
@@ -189,7 +188,7 @@ void Tools::repeatShakeNode(cocos2d::Node *obj)
     
 }
 
-void Tools::addLabel(cocos2d::Node *obj, std::string name, float x, float y, int order=1000)
+Label* Tools::addLabel(cocos2d::Node *obj, std::string name, float x, float y, int order=1000)
 {
     auto label = Label::createWithSystemFont(name.c_str(), "Arial", 30);
     obj->addChild(label, order);
