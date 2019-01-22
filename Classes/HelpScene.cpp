@@ -222,7 +222,6 @@ void HelpScene::buttonCallback(Node *pNode)
     {
         auto s = GameScene::create();
         s->_bubbleLayer->setLevel(UserData::getInstance()->getSelLevel());
-        USER()->setIsClassics(isClassicsMode());
         auto transition = TransitionTurnOffTiles::create(0.5, s);
         Director::getInstance()->replaceScene(transition);
     }
