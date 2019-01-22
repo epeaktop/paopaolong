@@ -101,8 +101,8 @@ bool BubbleLayer::init()
     addChild(hitedNumLabel_, 1000);
     hitedNumLabel_->setPosition(1380, 300);
     this->setMoveNumber(0);
-    moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f);
-    moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f);
+    moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
+    moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
     return true;
 }
 
