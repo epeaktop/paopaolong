@@ -33,7 +33,7 @@ bool PropLayer::init()
 	{
 		return false;
 	}
-	setTime(60);
+	setTime(MAX_TIME);
 	_propLayer = CSLoader::createNode("PropLayer.csb");
 	auto frameSize = Director::getInstance()->getVisibleSize();
 	_propLayer->setContentSize(frameSize);
@@ -47,28 +47,20 @@ bool PropLayer::init()
     }
 
 	auto bomb =  (ui::ImageView*)_propLayer->getChildByTag(24);
-    //bomb->addClickEventListener(CC_CALLBACK_1(PropLayer::menuBombCallBack, this));
-
     bomb->setVisible(false);
-
 
 	auto hourglass = (ui::ImageView*)_propLayer->getChildByTag(23);
     hourglass->setVisible(false);
 
-
 	auto colorBubble = (ui::ImageView*)_propLayer->getChildByTag(22);
-//    colorBubble->addClickEventListener(CC_CALLBACK_1(PropLayer::menuColorBubbleCallBack, this));
     colorBubble->setVisible(false);
     
-
-
 	auto pauseMenu = (ui::Button*)_propLayer->getChildByTag(36);
 	pauseMenu->addClickEventListener(CC_CALLBACK_1(PropLayer::menuPauseCallBack, this));
 
     auto propArmature = (Armature *)_propLayer->getChildByTag(68);
     propArmature->setVisible(false);
 	scheduleUpdate();
-    
     
     auto b = MenuItemImage::create("box1.png", "box1.png");
     b->setCallback(CC_CALLBACK_1(PropLayer::buttonCallback,this));
@@ -130,7 +122,6 @@ void PropLayer::showOpenBoxAnimi(int flag)
     }
     
     sp->setScale(0.5);
-    
     addChild(sp);
     sp->setPosition(50, 200);
     auto fi = FadeIn::create(0.5);
@@ -164,13 +155,13 @@ void PropLayer::buttonCallback(Ref* obj)
     int a = rand()%2 + 1;
     showOpenBoxAnimi(a);
 }
+
 void PropLayer::setBombNum()
 {
 	auto bomb = (ui::ImageView*)_propLayer->getChildByTag(24);
 	bomb->addClickEventListener(CC_CALLBACK_1(PropLayer::menuBombCallBack, this));
 	auto bombText = (ui::TextBMFont*)bomb->getChildByTag(152);
 	bombText->setString(StringUtils::format("%d", UserData::getInstance()->getBomb()));
-
 }
 
 void PropLayer::setColorBubbleNum()
@@ -190,19 +181,16 @@ void PropLayer::menuBombCallBack(Ref* Psender)
 // 增加时间
 void PropLayer::menuHourglassCallBack(Ref* Psender)
 {
-
 	auto hourglass = (ui::ImageView*)_propLayer->getChildByTag(23);
 	hourglass->addClickEventListener(CC_CALLBACK_1(PropLayer::menuHourglassCallBack, this));
 	auto hourglassText = (ui::TextBMFont*)hourglass->getChildByTag(151);
 	hourglassText->setString(StringUtils::format("%d", UserData::getInstance()->getHourglass()));
 
 	auto time = getTime() + HOURGLASSTIME;
-	
     if (time >= MAX_TIME)
 	{	
 		time = MAX_TIME;
 	}
-    
 	setTime(time);
 }
 
@@ -214,7 +202,6 @@ void PropLayer::menuColorBubbleCallBack(Ref* Psender)
 
 void PropLayer::menuPauseCallBack(Ref* Psender)
 {
-
 	auto gameSceme = (GameScene*)this->getParent();
 	gameSceme->mPause();
 	auto layer = PauseLayer::create();
@@ -227,7 +214,6 @@ void PropLayer::update(float delta)
 
 	auto timeLabel = (ui::TextBMFont*)_propLayer->getChildByTag(131);
  	timeLabel->setString(StringUtils::format("%d", (int)getTime()));
-
 
 	auto loadingBar = (ui::LoadingBar*)_propLayer->getChildByTag(29);
 	loadingBar->setPercent(getTime()/60.0 * 100);
@@ -255,7 +241,6 @@ void PropLayer::update(float delta)
 		auto currentTime = (ui::TextBMFont*)timeSptite->getChildByTag(132);
 		if (currentTime->getString() != StringUtils::format("%d", (int)getTime()))
 		{
-			
 			SimpleAudioEngine::getInstance()->playEffect("Music/Clock.mp3");
 			currentTime->setString(StringUtils::format("%d", (int)getTime()));
 		}
@@ -292,16 +277,17 @@ void PropLayer::setCannonAngle(Point target)
 	auto angle = (target - READY_PAOPAO_POS).getAngle(Vec2(0, 1));
 	cannon->setRotation(CC_RADIANS_TO_DEGREES(angle));
 }
+
 void PropLayer::setCannonAction(Point target)
 {
 	auto cannon = (Sprite*)_propLayer->getChildByTag(38);
-	auto angle = cannon->getRotation();
 
 	auto dir = -10 * (target - READY_PAOPAO_POS).getNormalized();
 	auto moveBy = MoveBy::create(0.1f, dir);
 	auto seq = Sequence::create(moveBy, moveBy->reverse(), nullptr);
 	cannon->runAction(seq);
 }
+
 void PropLayer::timeCallFunc()
 {
 	auto timeSptite = (Sprite*)_propLayer->getChildByTag(46);
