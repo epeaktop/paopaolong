@@ -13,17 +13,25 @@ const int BT_OK = 2401;
 using namespace CocosDenshion;
 using namespace cocostudio::timeline;
 using namespace std;
-/*
- * 加入连击的感念
- * 让泡泡可以超过一个屏幕
- * facebook用户相关
- * ** 积分排行榜
- * ** 可以看到好友的进度、不登录 facebook 的用户可以看到一个模拟的用户列表；让用户感觉是在
- * ** 联机和别人对战
- * 可以看到商品在出售，实时就可以看到。
- */
+
 static float waitTime = 0.1f;
 static int sameSum = 0;
+
+/*
+ google视频广告
+ facebook接入
+ 更多的展示广告
+ 增加些道具
+   *【钢球】按照一条直线碰到全部消失
+   *【炸弹】
+   *【木锤】
+   *【七彩球】
+ 领取每日奖励（Daily Rewards）
+ 花金币就可以增加游戏的时间并且弹出广告
+ 没有金币看奖励广告就可以得到金币
+ Fun and Simple time killer no complicated nonsense… Litterally shoot bubbles! Perfect
+ 画上切换球的图标
+*/
 
 Scene *BubbleLayer::scene()
 {

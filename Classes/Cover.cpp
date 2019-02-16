@@ -43,7 +43,7 @@ bool Cover::init()
     addChild(game_bg, -1);
 
     auto *new_button = MenuItemImage::create("yellow_btn.png", "yellow_btn.png", CC_CALLBACK_1(Cover::newCallback,this));
-    auto new_label = Label::createWithSystemFont("venture", "Arial", 36);
+    auto new_label = Label::createWithSystemFont("play", "Arial", 36);
     new_button->addChild(new_label);
     new_label->setPosition(new_button->getContentSize().width/2,new_button->getContentSize().height/2+ 10);
     new_button->setPosition(Vec2(size.width / 2 , size.height / 2));
@@ -54,8 +54,8 @@ bool Cover::init()
     showSoundButton();
     TI()->repeatShakeNode(new_button);
     auto rateBtn = addRateButton();
-    auto classics = classicsButton();
-    Menu *pMenu = Menu::create(new_button,classics,sound_, sound2_, rateBtn , NULL);
+    //auto classics = classicsButton();
+    Menu *pMenu = Menu::create(new_button,sound_, sound2_, rateBtn , NULL);
     pMenu->setPosition(Vec2::ZERO);
     addChild(pMenu, 100);
     regTouch();

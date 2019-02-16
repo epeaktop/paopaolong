@@ -17,9 +17,9 @@ bool GameScene::init()
 {
 
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("bubbles.plist");
-
-	_bg = CSLoader::createNode("Background.csb");
-	auto frameSize = Director::getInstance()->getVisibleSize();
+    auto frameSize = Director::getInstance()->getVisibleSize();
+	
+    _bg = CSLoader::createNode("Background.csb");
 	_bg->setContentSize(frameSize);
 	ui::Helper::doLayout(_bg);
 	addChild(_bg);
