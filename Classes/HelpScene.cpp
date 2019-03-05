@@ -390,11 +390,9 @@ void HelpScene::undateState(float dt)
     else
     {
         moveSpeed = moveSpeed * 9 / 10;
-
         if (moveSpeed > 2 || moveSpeed < -2)
         {
             helpLayer->setPosition(ccpAdd(helpLayer->getPosition(), ccp(0, moveSpeed)));
-
             if (helpLayer->getPosition().y < y_min)
             {
                 ActionInterval  *actionTo = MoveTo::create(0, CCPointMake(0, y_min));

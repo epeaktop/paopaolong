@@ -23,14 +23,14 @@ static int sameSum = 0;
  更多的展示广告
  增加些道具
    *【钢球】按照一条直线碰到全部消失
-   *【炸弹】
-   *【木锤】
-   *【七彩球】
  领取每日奖励（Daily Rewards）
  花金币就可以增加游戏的时间并且弹出广告
  没有金币看奖励广告就可以得到金币
  Fun and Simple time killer no complicated nonsense… Litterally shoot bubbles! Perfect
  画上切换球的图标
+ 透明泡泡,碰撞后透明泡泡会消失
+ 将三消游戏上传上来
+ 给ads账号充值
 */
 
 Scene *BubbleLayer::scene()
