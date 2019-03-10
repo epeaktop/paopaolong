@@ -31,6 +31,8 @@ static int sameSum = 0;
  透明泡泡,碰撞后透明泡泡会消失
  将三消游戏上传上来
  给ads账号充值
+ 打开游戏出现logo，然后出现进度条
+ 界面切换时候出现新手引导
 */
 
 Scene *BubbleLayer::scene()
