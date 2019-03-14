@@ -265,16 +265,13 @@ void BubbleLayer::setDisable()
 
 void BubbleLayer::update(float fDelta)
 {
-
     if (isCollideBorder())
     {
         real.x = -real.x;
     }
-
     setDisable();
     Point pos = ready->getPosition();
     ready->setPosition(Point(pos.x + real.x * PAOPAO_SPEED, pos.y + real.y * PAOPAO_SPEED));
-
     if (checkCollideBorder())
     {
         SimpleAudioEngine::getInstance()->playEffect("Music/Hit.mp3");
@@ -287,16 +284,9 @@ void BubbleLayer::update(float fDelta)
 // 是否碰撞了边界
 bool BubbleLayer::isCollideBorder()
 {
-    bool bRet = false;
     Size size = Director::getInstance()->getWinSize();
     Point pos = ready->getPosition();
-
-    if (pos.x + R > size.width || pos.x - R / 2 < 0)
-    {
-        bRet = true;
-    }
-
-    return bRet;
+    return (pos.x + R > size.width || pos.x - R / 2 < 0)
 }
 
 // 检查是否碰撞到附近的球，在update中如果碰不到附近的球，球就一直运动
