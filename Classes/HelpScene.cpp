@@ -32,12 +32,8 @@ const float NUMBER_POS_X = 35.0f;
 Scene *HelpScene::scene()
 {
     auto *scene = Scene::create();
-
     HelpScene *layer = HelpScene::create();
-
     scene->addChild(layer);
-
-
     return scene;
 }
 
@@ -52,28 +48,21 @@ bool HelpScene::init()
   	showSliver();
     showHp();
     showQuit();
-    
     this->setKeypadEnabled(true);
 
     Size size = Director::getInstance()->getWinSize();
-    bjSprite =  Sprite::create("map_1.png");
 
+    bjSprite =  Sprite::create("map_1.png");
     bjSprite->setAnchorPoint(Vec2::ZERO);
     this->addChild(bjSprite, 1);
 
     auto charMap = Label::createWithCharMap("scoreNumber.png", 54, 64, '0');
     charMap->setPosition(Point(size.width/2,size.height*0.4));
-  
     this->addChild(charMap,3);
-    
-
-  
     helpLayer = Layer::create();
     helpLayer->setAnchorPoint(Vec2::ZERO);
     helpLayer->setPosition(Vec2::ZERO);
     Vector<MenuItem*> itemArray;
- 	
-
     for (int i = 1; i <= 500; i++)
     {
         MenuItemImage* item = nullptr;
@@ -124,7 +113,6 @@ bool HelpScene::init()
         {
             item = MenuItemImage::create("lock_lv.png", "lock_lv.png");
             item->setCallback(CC_CALLBACK_1(HelpScene::lockBackCallback,this));
-
         }
         
         item->setTag(i);
@@ -135,17 +123,13 @@ bool HelpScene::init()
         ss.str("");
         ss << i;
         charMap->setString(ss.str());
-        
-        
         if(sp!=nullptr)
         {
         	sp->setPosition(60, 120);
         	item->addChild(sp);
         	sp->setScale(0.6, 0.6);
         }
-        
         item->addChild(charMap);
-        
         switch (i % 3)
         {
             case 0:
@@ -160,30 +144,23 @@ bool HelpScene::init()
             default:
                 break;
         }
-        
     }
-    
     auto menu_ = Menu::createWithArray(itemArray);
     menu_->setAnchorPoint(Vec2::ZERO);
     menu_->setPosition(Vec2::ZERO);
     helpLayer->addChild(menu_);
     helpLayer->setContentSize(Size(540,500*120));
     addChild(helpLayer,2);
-    
     y_min = 0;
     y_max = size.height*10;
-
     this->setTouchEnabled(true);
     enableMove = false;
-	
     schedule(schedule_selector(HelpScene::undateState));   //增加定时器调用
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
-
     listener->onTouchBegan = CC_CALLBACK_2(HelpScene::onTouchBegan, this);
     listener->onTouchMoved = CC_CALLBACK_2(HelpScene::onTouchMoved, this);
     listener->onTouchEnded = CC_CALLBACK_2(HelpScene::onTouchEnded, this);
-
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	showStar();
     return true;
@@ -198,7 +175,6 @@ void HelpScene::menuBackCallback(Ref *pSender)
 {
     auto obj = (MenuItemImage*)pSender;
     int level = obj->getTag();
-    log("menuBackCallback: = %d!~~", level);
 
     PopupLayer *pl = PopupLayer::create("game_start.png");
     pl->setContentSize(Size(540, 960));
@@ -212,10 +188,8 @@ void HelpScene::menuBackCallback(Ref *pSender)
     
 }
 
-void HelpScene::lockBackCallback(Ref *pSender)
-{
-    
-}
+void HelpScene::lockBackCallback(Ref *pSender){}
+/* 点击按钮后进入指定关卡 */
 void HelpScene::buttonCallback(Node *pNode)
 {
     if (BT_OK == pNode->getTag())
