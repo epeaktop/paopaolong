@@ -147,14 +147,10 @@ bool BubbleLayer::initTheBoard(int level)
             {
                 board[i][j] = Bubble::initWithType((BubbleType)customs[level][i][j]);
             }
-
-            bool flag;
-            if ((i % 2) == 0) {
-                flag = true;
-            } else {
-                flag = false;
-            }
-            board[i][j]->setFlag(flag);
+            board[i][j]->setFlag((i % 2) == 0);
+          
+            board[i][j]->setString(i,j);
+            
             addChild(board[i][j]);
             initBubbleAction(board[i][j], i, j);
         }
@@ -265,13 +261,19 @@ void BubbleLayer::setDisable()
 
 void BubbleLayer::update(float fDelta)
 {
+
     if (isCollideBorder())
     {
+        log("[撞到边缘]%f", real.x);
         real.x = -real.x;
     }
+
     setDisable();
     Point pos = ready->getPosition();
-    ready->setPosition(Point(pos.x + real.x * PAOPAO_SPEED, pos.y + real.y * PAOPAO_SPEED));
+    auto newPos = Point(pos.x + real.x * PAOPAO_SPEED, pos.y + real.y * PAOPAO_SPEED);
+    ready->setPosition(newPos);
+    Vec2 s = getRowAndColByPoint(newPos);
+    log("<update>(%d,%d)-->(%d,%d):row(%d),col(%d)",int(pos.x),int(pos.y), int(newPos.x),int(newPos.y),int(s.x), int(s.y));
     if (checkCollideBorder())
     {
         SimpleAudioEngine::getInstance()->playEffect("Music/Hit.mp3");
@@ -284,16 +286,22 @@ void BubbleLayer::update(float fDelta)
 // 是否碰撞了边界
 bool BubbleLayer::isCollideBorder()
 {
+    bool bRet = false;
     Size size = Director::getInstance()->getWinSize();
     Point pos = ready->getPosition();
-    return (pos.x + R > size.width || pos.x - R / 2 < 0)
+
+    if (pos.x + R > size.width || pos.x - R / 2 < 0)
+    {
+        bRet = true;
+    }
+
+    return bRet;
 }
 
 // 检查是否碰撞到附近的球，在update中如果碰不到附近的球，球就一直运动
 // 碰到附近的球了就停止运动
 bool BubbleLayer::checkCollideBorder()
 {
-    bool bRet = false;
     auto winSize = Director::getInstance()->getVisibleSize();
     auto point = ready->getPosition();
 
@@ -302,7 +310,7 @@ bool BubbleLayer::checkCollideBorder()
     {
         return false;
     }
-
+    /* 顶部边界 */
     if (ready->getPosition().y > TOUCH_TOP * winSize.height - R)
     {
         if (ready->getType() == BUBBLE_TYPE_COLOR)
@@ -311,24 +319,36 @@ bool BubbleLayer::checkCollideBorder()
             ready->setType(type);
             ready->initWithSpriteFrameName(StringUtils::format(BUBBLE_NAME.c_str(), type));
         }
-        bRet = true;
+        // 确定当前的行，列
+        curFindRow = 0;
+        curFindCol = getRowAndColByPoint(point).y;
+        return true;
     }
-
+    
     std::vector<Vec2> rowCol;
-    rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y + R)));
-    rowCol.push_back(getRowAndColByPoint(Point(point.x - R, point.y)));
-    rowCol.push_back(getRowAndColByPoint(Point(point.x + R, point.y)));
+     rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y)));
+    rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y + R))); // 当前点的上面
+    rowCol.push_back(getRowAndColByPoint(Point(point.x - R, point.y))); // 当前点的左边
+    rowCol.push_back(getRowAndColByPoint(Point(point.x + R, point.y))); // 当前点的右边
 
     for (auto & ti : rowCol)
     {
+        if(int(ti.y) >= MAX_COLS)
+            continue;
+        if(int(ti.x) >= MAX_ROWS)
+            continue;
         if (board[int(ti.x)][int(ti.y)] != nullptr)
         {
+            log("[@@@@]%d,%d", int(ti.x), int(ti.y));
+            curFindRow = int(ti.x);
+            curFindCol = int(ti.y);
+            board[int(ti.x)][int(ti.y)]->setColor(ccRED);
             return true;
         }
     }
-    return bRet;
+    return false;
 }
-
+// 调整后的点和发现有球的点是同一个点
 void BubbleLayer::changeWaitToReady()
 {
     ready = wait[0];
@@ -341,58 +361,103 @@ void BubbleLayer::changeWaitToReady()
     ready->runAction(seq);
 
 }
+struct PosData
+{
+    int x;
+    int y;
+    Vec2 pos;
+};
 
+void debugLog(Bubble* obj, int index, int i ,int j)
+{
+    if (obj)
+        log("item%d not nullpte, %d,%d", index, i, j);
+}
 // 正在运动球停止了，摆正这个球的位置
 void BubbleLayer::correctReadyPosition()
 {
-    int offX = 0, offY = 0;
     int row = 0, col = 0;
     // 注意，这个ready的表诉并不清楚；应该是正在运动的球的位置
     Point pos = ready->getPosition();
     Vec2 rowCol = getRowAndColByPoint(pos);
-    offX = rowCol.x == 0 ? 0 : rowCol.x - 1;
-    offY = rowCol.y == 0 ? 0 : rowCol.y - 1;
     
-    float length = FLT_MAX;
-    bool flag;
-    if ((int) (rowCol.x + 1) % 2 == 0) {
-        flag = true;
-    } else {
-        flag = false;
-    }
-
-    bool tempFlag = flag;
-
-
-    for (int i = offX; i < MAX_ROWS && i < offX + 4; i++)
+    int i = curFindRow;
+    int j = curFindCol;
+    auto item1 = board[i][j-1];
+    auto item2 = board[i][j+1];
+    auto item3 = board[i+1][j-1];
+    auto item4 = board[i+1][j];
+    auto item5 = board[i+1][j+1];
+    
+    vector<PosData> a;
+    debugLog(item1, 1, i, j-1);
+    debugLog(item2, 2,i, j+1);
+    debugLog(item3, 3,i+1,j-1 );
+    debugLog(item4, 4,i+1,j);
+    debugLog(item5, 5,i+1,j+1);
+    
+    if(j > 0 && item1 == nullptr)
     {
-        for (int j = offY; j < MAX_COLS && j < offY + 4; j++)
-        {
-            if (board[i][j] == nullptr&&board[i+1][j]==nullptr)
-            {
-                if (j == MAX_COLS - 1 && !flag)
-                {
-                    continue;
-                }
-
-                Point tPos = getPointByRowAndCol(i, j);
-
-                if (tPos.getDistance(pos) < length)
-                {
-                    row = i;
-                    col = j;
-                    tempFlag = flag;
-                    length = tPos.getDistance(pos);
-                }
-            }
-        }
-
-        flag = !flag;
+        PosData pd1;
+        pd1.x = i;
+        pd1.y = j-1;
+        pd1.pos = getPointByRowAndCol(i,j-1);
+        a.push_back(pd1);
     }
-
+    if(j+1< MAX_COLS&& item2 == nullptr)
+    {
+        PosData pd1;
+        pd1.x = i;
+        pd1.y = j+1;
+        pd1.pos = getPointByRowAndCol(i,j+1);
+        a.push_back(pd1);
+    }
+    if(i+1 <MAX_ROWS&& item4 == nullptr)
+    {
+        PosData pd1;
+        pd1.x = i+1;
+        pd1.y = j;
+        pd1.pos = getPointByRowAndCol(i+1,j);
+        a.push_back(pd1);
+    }
+    
+    if(i+1 <MAX_ROWS && j+ 1 < MAX_COLS && item5 == nullptr)
+    {
+        PosData pd1;
+        pd1.x = i+1;
+        pd1.y = j+1;
+        pd1.pos = getPointByRowAndCol(i+1,j+1);
+        a.push_back(pd1);
+    }
+    
+    if(i+1 <MAX_ROWS && j-1 >= 0 && item3 == nullptr)
+    {
+        PosData pd1;
+        pd1.x = i+1;
+        pd1.y = j-1;
+        pd1.pos = getPointByRowAndCol(i+1,j-1);
+        a.push_back(pd1);
+    }
+    float dis = 100000;
+    for(auto obj : a)
+    {
+        auto dis2 = obj.pos.distance(pos);
+        if(dis2 < dis)
+        {
+            dis = dis2;
+            row = obj.x;
+            col = obj.y;
+        }
+    }
+    // 上边界直接设置
+    if(curFindRow==0 && board[curFindRow][curFindCol]==nullptr)
+    {
+        row = curFindRow;
+        col = curFindCol;
+    }
+    
     board[row][col] = ready;
-    ready->setFlag(tempFlag);
-
+    board[row][col]->setString(row, col);
     if (getPointByRowAndCol(row, col).y <= TOUCH_DOWN * (Director::getInstance()->getVisibleSize().height))
     {
         return gameOver(true);
@@ -406,10 +471,11 @@ void BubbleLayer::correctReadyPosition()
             return gameOver(true);
         }
     }
-    std::thread moveBubble(&BubbleLayer::moveTheBubble, this, row, col, tempFlag, MOVE_DISTANCE);
+    std::thread moveBubble(&BubbleLayer::moveTheBubble, this, row, col, (row % 2==0), MOVE_DISTANCE);
     moveBubble.join();
-
-    ready->runAction(Sequence::create(MoveTo::create(0.2f, getPointByRowAndCol(row, col)), CallFunc::create(CC_CALLBACK_0(BubbleLayer::readyAction, this)), nullptr));
+    auto newPos = getPointByRowAndCol(row, col);
+    log("[调整后的位置]%f,%f,%d,%d",newPos.x,newPos.y,row,col);
+    ready->runAction(Sequence::create(MoveTo::create(0.2f, newPos),CallFunc::create(CC_CALLBACK_0(BubbleLayer::readyAction, this)), nullptr));
 
 }
 // 摆正位置后，才会真正消除掉球
@@ -1203,7 +1269,8 @@ void BubbleLayer::onTouchMoved(Touch *touch, Event *unused_event)
 {
     
     auto gameScene = (GameScene *)this->getParent();
-    this->removeChildByTag(100);
+    if(getChildByTag(100))
+        this->removeChildByTag(100);
 
     if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height || touch->getLocation().y >= TOUCH_TOP * Director::getInstance()->getVisibleSize().height)
     {
@@ -1225,7 +1292,8 @@ void BubbleLayer::onTouchEnded(Touch *touch, Event *unused_event)
 {
 
     auto gameScene = (GameScene *)this->getParent();
-    this->removeChildByTag(100);
+    if(getChildByTag(100))
+        this->removeChildByTag(100);
 
     if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height && touch->getLocation().x <= 200)
     {

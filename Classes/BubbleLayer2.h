@@ -172,9 +172,12 @@ public:
     CC_SYNTHESIZE_ADD(int, _moveNumbers, MoveNumber);
     bool clickSelectButton(Point p)
     {
-        return true;
+        return (p.y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height && p.x <= 200);
     }
-
+    bool clickDesignArea(Point p)
+    {
+        return !clickSelectButton(p);
+    }
 public:
 	Vector<Sprite*> _auxiliary;
 	void colorBubble();
@@ -206,7 +209,7 @@ public:
     /**
      * 当前选择颜色的值
      */
-     int currentColor_ = 0;
+     int currentColor_ = 1;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */

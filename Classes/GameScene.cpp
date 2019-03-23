@@ -34,10 +34,12 @@ bool GameScene::init()
         SimpleAudioEngine::getInstance()->pauseAllEffects();
         SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
     }
-
-    _bubbleLayer = BubbleLayer::create();
-	addChild(_bubbleLayer);
-
+#ifdef DESIGN_MODE
+    _bubbleLayer = BubbleLayer2::create();
+#else
+	_bubbleLayer = BubbleLayer::create();
+#endif
+    addChild(_bubbleLayer);
 	_propLayer = PropLayer::create();
 	addChild(_propLayer);
 

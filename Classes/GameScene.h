@@ -4,8 +4,9 @@
 #include "cocos2d.h"
 #include "TouchLayer.h"
 #include "BubbleLayer.h"
+#include "BubbleLayer2.h"
 #include "PropLayer.h"
-
+#define DESIGN_MODE
 
 USING_NS_CC;
 
@@ -22,7 +23,12 @@ public:
 	virtual bool init();
 
 	TouchLayer* _touchLayer;
-	BubbleLayer* _bubbleLayer;
+#ifdef DESIGN_MODE
+	BubbleLayer2* _bubbleLayer;
+#else
+    BubbleLayer* _bubbleLayer;
+#endif
+    
 	PropLayer* _propLayer;
 	Node* _bg;
 

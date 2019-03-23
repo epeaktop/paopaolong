@@ -3,7 +3,7 @@
  * auth ： jiangxf@2019.3.22
  */
 
-#include "BubbleLayer22.h"
+#include "BubbleLayer2.h"
 #include "GameScene.h"
 #include "UserData.h"
 #include "SimpleAudioEngine.h"
@@ -64,14 +64,6 @@ void BubbleLayer2::calcRetainMap()
 // 显示连击
 void BubbleLayer2::showHits(int num)
 {
-    auto m = MoveTo::create(1, Vec2(500, 300));
-    auto m2 = MoveTo::create(1,Vec2(1380,300));
-    auto d = DelayTime::create(0.7);
-    auto seq = Sequence::create(m,d,m2, NULL);
-    stringstream s("");
-    s << num << " hits";
-    hitedNumLabel_->setString(s.str().c_str());
-    hitedNumLabel_->runAction(seq);
 }
 
 bool BubbleLayer2::init()
@@ -99,8 +91,8 @@ bool BubbleLayer2::init()
     this->setMoveNumber(0);
     moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
     moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
-    selectedBubble_ = TI()->addLabel(this, std::string("选择球的颜色"), 50.0f, 50.0f, 1000);
-    showSelectedBubble_ = TI()->addLabel(this, std::string("0"), 100.0f, 50.0f, 1000);
+    selectedBubble_ = TI()->addLabel(this, std::string("选择球的颜色"), 50.0f, 500.0f, 1000);
+    showSelectedBubble_ = TI()->addLabel(this, std::string("0"), 150.0f, 500.0f, 1000);
     return true;
 }
 
@@ -213,22 +205,19 @@ void BubbleLayer2::initReadyPaoPao()
     ready->setPosition(READY_PAOPAO_POS);
     this->addChild(ready);
 }
+
 void BubbleLayer2::onTouch(Point target)
 {
     if(clickSelectButton(target))
     {
-        if(currentColor_++ > 8)
-        {
-            currentColor_ = 0;
-        }
-        showSelectedBubble_->setString(TI()->itos(currentColor_));
+
     }
     if(clickDesignArea(target))
     {
         auto a = getRowAndColByPoint(target);
         int i = a.x;
         int j = a.y;
-        board[i][j] = Bubble::initWithType(currentColor_);
+        board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);
         board[i][j]->setPosition(getPointByRowAndCol(i,j));
         board[i][j]->setFlag((i % 2) == 0);
         addChild(board[i][j]);
@@ -252,7 +241,7 @@ bool BubbleLayer2::isCollideBorder()
 {
     Size size = Director::getInstance()->getWinSize();
     Point pos = ready->getPosition();
-    return (pos.x + R > size.width || pos.x - R / 2 < 0)
+    return (pos.x + R > size.width || pos.x - R / 2 < 0);
 }
 
 // 检查是否碰撞到附近的球，在update中如果碰不到附近的球，球就一直运动
@@ -1030,17 +1019,11 @@ void BubbleLayer2::gameOver(bool over)
 
 void BubbleLayer2::swapBubble()
 {
-    auto readyPoint = ready->getPosition();
-    auto waitPoint = wait[0]->getPosition();
-
-    ready->runAction(MoveTo::create(0.1f, waitPoint));
-    wait[0]->runAction(MoveTo::create(0.1f, readyPoint));
-
-    auto temp = ready;
-    ready = wait[0];
-    wait[0] = temp;
-
-    throwBallAction();
+    if(currentColor_++ > 6)
+    {
+        currentColor_ = 1;
+    }
+    showSelectedBubble_->setString(TI()->itos(currentColor_));
 }
 void BubbleLayer2::colorBubble()
 {

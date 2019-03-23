@@ -10,7 +10,7 @@ class Bubble : public Sprite
 public:
 	Bubble();
 	~Bubble();
-	static Bubble *initWithType(BubbleType type = BUBBLE_TYPE1);
+	static Bubble *initWithType(BubbleType type = BUBBLE_TYPE1, int flag = 0);
 	CREATE_FUNC(Bubble);
 	CC_SYNTHESIZE(BubbleType, _type, Type);//泡泡的类型
 	CC_SYNTHESIZE(bool, _isSame, IsSame); //判断是否是统一类型的
@@ -18,8 +18,21 @@ public:
 	CC_SYNTHESIZE(bool, _flag, Flag);//是否是左缺的状态
 	CC_SYNTHESIZE(bool, _isMove, IsMove); //是否移动过
 	CC_SYNTHESIZE(bool, _isDie, IsDie);
-private:
+public:
+    Label *label = nullptr;
 	static std::string getStringByType(BubbleType type);
+    void setString(std::string s)
+    {
+        if(!label)
+            return;
+        label->setString(s);
+    }
+    void setString(int i, int j)
+    {
+        std::stringstream s;
+        s <<i<<","<<j;
+        setString(s.str());
+    }
 };
 
 #endif /* defined(__paopaolong__PaoPao__) */

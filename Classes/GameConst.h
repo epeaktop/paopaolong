@@ -3,17 +3,17 @@
 
 using namespace std;
 
-#define MAX_COLS 10
+#define MAX_COLS 12
 #define MAX_ROWS 15
 #define MAX_CUS 41
 
-const float R = 26.0f;  //  泡泡的半径
+const float R = 20.0f;  //  泡泡的半径
 const int HOURGLASSTIME = 30;
 
 const float TOUCH_TOP = 0.90f;
 const float TOUCH_DOWN = 0.33f;
 
-const float MOVE_DISTANCE = 20.0f;
+const float MOVE_DISTANCE = 10.0f;
 
 const int BUBBLE_COUNT = 7;
 

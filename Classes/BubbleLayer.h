@@ -193,6 +193,8 @@ public:
     Label *hitedNumLabel_ = nullptr;
     Label *moveNumberLabel_ = nullptr;
     Label *moveLabel_ = nullptr;
+    int curFindCol = 0;
+    int curFindRow = 0;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */

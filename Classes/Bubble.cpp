@@ -20,12 +20,22 @@ Bubble::~Bubble()
 
 }
 
-Bubble * Bubble::initWithType(BubbleType type) //根据传过来的类型来生成泡泡
+Bubble * Bubble::initWithType(BubbleType type, int flag) //根据传过来的类型来生成泡泡
 {
 	Bubble *pRet = Bubble::create();
 	pRet->setType(type);
 	pRet->initWithSpriteFrameName(getStringByType(type));
-
+    pRet->setScale(0.7);
+    pRet->label = Label::createWithSystemFont("0,0", "Arial", 27);
+    pRet->label->setColor(Color3B::RED);
+    
+    pRet->label->enableOutline(ccc4(0,0,0,128),3);
+    pRet->label->setPosition(25,25);
+    pRet->addChild(pRet->label, 100000);
+    if(flag == 1)
+    {
+        pRet->label->setVisible(false);
+    }
 	return pRet;
 }
 
