@@ -91,82 +91,23 @@ bool BubbleLayer2::init()
     this->setMoveNumber(0);
     moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
     moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
-    selectedBubble_ = TI()->addLabel(this, std::string("选择球的颜色"), 50.0f, 500.0f, 1000);
-    showSelectedBubble_ = TI()->addLabel(this, std::string("0"), 150.0f, 500.0f, 1000);
+    selectedBubble_ = TI()->addLabel(this, std::string("选择球的颜色"), 50.0f, 450.0f, 1000);
+    showSelectedBubble_ = TI()->addLabel(this, std::string("0"), 150.0f, 450.0f, 1000);
     return true;
 }
 
 
 bool BubbleLayer2::initTheBoard(int level)
 {
-    bool bRet = false;
-
-    for (int i = 0; i < MAX_ROWS; ++i)
-    {
-        for (int j = 0; j < MAX_COLS; ++j)
-        {
-            board[i][j] = NULL;
-        }
-        bRet = true;
-    }
-
-    for (int i = 0; i < MAX_ROWS; i++)
-    {
-        for (int j = 0; j < MAX_COLS; ++j)
-        {
-            if ((i % 2 && j == MAX_COLS - 1) || customs[level][i][j] == 0)
-            {
-                continue;
-            }
-
-            if (customs[level][i][j] == -1)
-            {
-                board[i][j] = randomPaoPao(1);
-            }
-            else if (customs[level][i][j] != 0)
-            {
-                board[i][j] = Bubble::initWithType((BubbleType)customs[level][i][j]);
-            }
-
-            bool flag;
-            if ((i % 2) == 0) {
-                flag = true;
-            } else {
-                flag = false;
-            }
-            board[i][j]->setFlag(flag);
-            addChild(board[i][j]);
-            initBubbleAction(board[i][j], i, j);
-        }
-    }
-
-    return bRet;
+    return true;
 }
 
 Bubble *BubbleLayer2::randomPaoPao(int flag)
 {
     Bubble *pRet = NULL;
-    
-    BubbleType type;
-    if (flag != 0 )
-    {
-        type = static_cast<BubbleType>(rand() % BUBBLE_COUNT + 1);
-    }
-   	else
-    {
-        calcRetainMap();
-        if (retainVec_.size() ==0 )
-        {
-            type = BUBBLE_TYPE1;
-        }
-        else
-        {
-            int i = rand() % (retainVec_.size());
-            type = static_cast<BubbleType>(retainVec_[i]);
-        }
-    }
-    
+    BubbleType type = (BubbleType)currentColor_;
     pRet = Bubble::initWithType(type);
+    ready = pRet;
     return pRet;
 }
 
@@ -208,20 +149,25 @@ void BubbleLayer2::initReadyPaoPao()
 
 void BubbleLayer2::onTouch(Point target)
 {
-    if(clickSelectButton(target))
-    {
-
-    }
     if(clickDesignArea(target))
     {
         auto a = getRowAndColByPoint(target);
         int i = a.x;
         int j = a.y;
-        board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);
-        board[i][j]->setPosition(getPointByRowAndCol(i,j));
-        board[i][j]->setFlag((i % 2) == 0);
-        addChild(board[i][j]);
+        if(board[i][j] == nullptr)
+        {
+            board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);
+            board[i][j]->setPosition(getPointByRowAndCol(i,j));
+            board[i][j]->setFlag((i % 2) == 0);
+            addChild(board[i][j]);
+        }
+        else
+        {
+            removeChild(board[i][j]);
+            board[i][j] = nullptr;
+        }
     }
+    
     this->scheduleUpdate();
 }
 void BubbleLayer2::setEnable()
@@ -288,448 +234,43 @@ void BubbleLayer2::changeWaitToReady()
 {
     ready = wait[0];
     auto jumpAction = JumpTo::create(0.1f, READY_PAOPAO_POS, 30.0f, 1);
-
     auto callFunc = CallFunc::create(CC_CALLBACK_0(BubbleLayer2::jumpActionCallBack, this));
-
     auto seq = Sequence::create(jumpAction, callFunc, nullptr);
-
     ready->runAction(seq);
-
 }
 
 // 正在运动球停止了，摆正这个球的位置
 void BubbleLayer2::correctReadyPosition()
 {
-    int offX = 0, offY = 0;
-    int row = 0, col = 0;
-    // 注意，这个ready的表诉并不清楚；应该是正在运动的球的位置
-    Point pos = ready->getPosition();
-    Vec2 rowCol = getRowAndColByPoint(pos);
-    offX = rowCol.x == 0 ? 0 : rowCol.x - 1;
-    offY = rowCol.y == 0 ? 0 : rowCol.y - 1;
-    
-    float length = FLT_MAX;
-    bool flag;
-    if ((int) (rowCol.x + 1) % 2 == 0) {
-        flag = true;
-    } else {
-        flag = false;
-    }
-
-    bool tempFlag = flag;
-
-
-    for (int i = offX; i < MAX_ROWS && i < offX + 4; i++)
-    {
-        for (int j = offY; j < MAX_COLS && j < offY + 4; j++)
-        {
-            if (board[i][j] == nullptr&&board[i+1][j]==nullptr)
-            {
-                if (j == MAX_COLS - 1 && !flag)
-                {
-                    continue;
-                }
-
-                Point tPos = getPointByRowAndCol(i, j);
-
-                if (tPos.getDistance(pos) < length)
-                {
-                    row = i;
-                    col = j;
-                    tempFlag = flag;
-                    length = tPos.getDistance(pos);
-                }
-            }
-        }
-
-        flag = !flag;
-    }
-
-    board[row][col] = ready;
-    ready->setFlag(tempFlag);
-
-    if (getPointByRowAndCol(row, col).y <= TOUCH_DOWN * (Director::getInstance()->getVisibleSize().height))
-    {
-        return gameOver(true);
-    }
-
-    if (USER()->getIsClassics())
-    {
-        // todo : 忽略掉时间的计算
-        if (getMoveNumber() < getMaxMoveNumbers(USER()->getSelLevel()))
-        {
-            return gameOver(true);
-        }
-    }
-    std::thread moveBubble(&BubbleLayer2::moveTheBubble, this, row, col, tempFlag, MOVE_DISTANCE);
-    moveBubble.join();
-
-    ready->runAction(Sequence::create(MoveTo::create(0.2f, getPointByRowAndCol(row, col)), CallFunc::create(CC_CALLBACK_0(BubbleLayer2::readyAction, this)), nullptr));
-
 }
 // 摆正位置后，才会真正消除掉球
 void BubbleLayer2::readyAction()
 {
-    setDisable();
-    Vec2 RowAndCol = getRowAndColByPoint(ready->getPosition());
-    int row = RowAndCol.x;
-    int col = RowAndCol.y;
-    bool tempFlag;
-    if (row % 2 == 0) {
-        tempFlag = true;
-    } else {
-        tempFlag = false;
-    }
-
-    if (row < 0)
-    {
-        row = 0;
-    }
-
-    if (col < 0)
-    {
-        col = 0;
-    }
-
-    if (ready->getType() == BUBBLE_TYPE_BOMB)
-    {
-        bubbleBlast(row, col, tempFlag);
-    }
-    else
-    {
-        sameSum = 0;
-        waitTime = 0.1f;
-
-        if (board[row][col])
-        {
-            findTheSameBubble(row, col, tempFlag, board[row][col]->getType());
-            deleteTheSameBubble(row, col, tempFlag);
-        }
-    }
-
-    resetAllPass();
-    checkDownBubble();
-    downBubble();
-//    throwBallAction();
-    changeWaitToReady();
 }
 
 bool BubbleLayer2::getFirstRowFlag()  //得到第一行是否左缺 不缺为true
 {
-    for (int i = 0; i < MAX_COLS; ++i)
-    {
-        if (board[0][i])
-        {
-            return board[0][i]->getFlag();
-        }
-    }
-
     return true;
 }
 
 bool BubbleLayer2::isCircleCollision(Point pos1, float radius1, Point pos2, float radius2)
 {
-    if (pos1.getDistance(pos2) > (radius1 + radius2 - 10) || pos2.y > pos1.y)
-    {
-        return false;
-    }
-
     return true;
 }
 
 void BubbleLayer2::findTheSameBubble(int i, int j, bool flag, BubbleType type)
 {
-    setDisable();
-
-    if (i < 0 || i >= MAX_ROWS || j < 0 || j >= MAX_COLS)
-    {
-        return;
-    }
-
-    if (board[i][j] == nullptr)
-    {
-        return;
-    }
-
-    if (board[i][j]->getType() != type)
-    {
-        return;
-    }
-
-    if (board[i][j]->getIsSame())
-    {
-        return;
-    }
-
-    /*
-    首先将自己isSame设置为true，并且增加theSame
-    从当前位置左上，右上，左下，右下，左，右六个方向进行寻找
-    */
-    board[i][j]->setIsSame(true);
-    ++sameSum;
-
-    if (flag && j > 0 && i > 0)
-    {
-        findTheSameBubble(i - 1, j - 1, !flag, type);
-    }
-    else if (!flag && i > 0)
-    {
-        findTheSameBubble(i - 1, j, !flag, type);
-    }
-
-    if (flag && i > 0)
-    {
-        findTheSameBubble(i - 1, j, !flag, type);
-    }
-    else if (!flag && i > 0 && j < MAX_COLS - 1)
-    {
-        findTheSameBubble(i - 1, j + 1, !flag, type);
-    }
-
-    if (flag && j > 0 && i < MAX_ROWS)
-    {
-        findTheSameBubble(i + 1, j - 1, !flag, type);
-    }
-    else if (!flag && i < MAX_ROWS)
-    {
-        findTheSameBubble(i + 1, j, !flag, type);
-    }
-
-    if (flag && i < MAX_ROWS)
-    {
-        findTheSameBubble(i + 1, j, !flag, type);
-    }
-    else if (!flag && i < MAX_ROWS && j < MAX_COLS - 1)
-    {
-        findTheSameBubble(i + 1, j + 1, !flag, type);
-    }
-
-    if (j > 0)
-    {
-        findTheSameBubble(i, j - 1, flag, type);
-    }
-
-    if (j < MAX_COLS)
-    {
-        findTheSameBubble(i, j + 1, flag, type);
-    }
-
-    if (sameSum >= 5)
-    {
-        waitTime += 0.05f;
-        Bubble *obj = board[i][j];
-        SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-        ArmatureDataManager::getInstance()->addArmatureFileInfo("BubbleSpecial/baozha.ExportJson");
-        Armature *armature = Armature::create("baozha");
-        obj->addChild(armature);
-        armature->setPosition(R, R);
-        armature->getAnimation()->play("daojubaozha");
-        obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
-        {
-            obj->removeFromParent();
-        }), nullptr));
-    }
 }
 void BubbleLayer2::bubbleBlast(int i, int j, bool flag)
 {
-    bubbleAction(board[i][j]);
-    board[i][j] = nullptr;
-    ready = nullptr;
-
-    if (flag && j > 0 && i > 0 && board[i - 1][j - 1])
-    {
-        bubbleAction(board[i - 1][j - 1]);
-        board[i - 1][j - 1] = nullptr;
-    }
-    else if (!flag && i > 0 && board[i - 1][j])
-    {
-        bubbleAction(board[i - 1][j]);
-        board[i - 1][j] = nullptr;
-    }
-
-    if (flag && i > 0 && board[i - 1][j])
-    {
-        bubbleAction(board[i - 1][j]);
-        board[i - 1][j] = nullptr;
-    }
-    else if (!flag && i > 0 && j < MAX_COLS - 1 && board[i - 1][j + 1])
-    {
-        bubbleAction(board[i - 1][j + 1]);
-        board[i - 1][j + 1] = nullptr;
-    }
-
-    if (flag && j > 0 && i < MAX_ROWS && board[i + 1][j - 1])
-    {
-        bubbleAction(board[i + 1][j - 1]);
-        board[i + 1][j - 1] = nullptr;
-    }
-    else if (!flag && i < MAX_ROWS && board[i + 1][j])
-    {
-        bubbleAction(board[i + 1][j]);
-        board[i + 1][j] = nullptr;
-    }
-
-    if (flag && i < MAX_ROWS && board[i + 1][j])
-    {
-        bubbleAction(board[i + 1][j]);
-        board[i + 1][j] = nullptr;
-    }
-    else if (!flag && i < MAX_ROWS && j < MAX_COLS - 1 && board[i + 1][j + 1])
-    {
-        bubbleAction(board[i + 1][j + 1]);
-        board[i + 1][j + 1] = nullptr;
-    }
-
-    if (j > 0 && board[i][j - 1])
-    {
-        bubbleAction(board[i][j - 1]);
-        board[i][j - 1] = nullptr;
-    }
-
-    if (j < MAX_COLS && board[i][j + 1])
-    {
-        bubbleAction(board[i][j + 1]);
-        board[i][j + 1] = nullptr;
-    }
 }
-
 void BubbleLayer2::moveTheBubble(int i, int j, bool flag, float distance)
 {
-
-    if (distance <= 1.0f)
-    {
-        return;
-    }
-
-    if (i < 0 || i >= MAX_ROWS || j < 0 || j >= MAX_COLS)
-    {
-        return;
-    }
-
-    if (board[i][j] == nullptr)
-    {
-        return;
-    }
-
-    if (board[i][j]->getIsMove())
-    {
-        return;
-    }
-
-    board[i][j]->setIsMove(true);
-
-    auto dir = (((Vec2)getPointByRowAndCol(i, j) - ready->getPosition()).getNormalized()) * distance;
-    auto moveBy = MoveBy::create(0.1f, dir);
-    auto seq = Sequence::create(moveBy, moveBy->reverse(), nullptr);
-    board[i][j]->runAction(seq);
-
-    if (flag && j > 0 && i > 0)
-    {
-        moveTheBubble(i - 1, j - 1, !flag, distance - 5);
-    }
-    else if (!flag && i > 0)
-    {
-        moveTheBubble(i - 1, j, !flag, distance - 5);
-    }
-
-    if (flag && i > 0)
-    {
-        moveTheBubble(i - 1, j, !flag, distance - 5);
-    }
-    else if (!flag && i > 0 && j < MAX_COLS - 1)
-    {
-        moveTheBubble(i - 1, j + 1, !flag, distance - 5);
-    }
-
-    if (flag && j > 0 && i < MAX_ROWS)
-    {
-        moveTheBubble(i + 1, j - 1, !flag, distance - 5);
-    }
-    else if (!flag && i < MAX_ROWS)
-    {
-        moveTheBubble(i + 1, j, !flag, distance - 5);
-    }
-
-    if (flag && i < MAX_ROWS)
-    {
-        moveTheBubble(i + 1, j, !flag, distance - 5);
-    }
-    else if (!flag && i < MAX_ROWS && j < MAX_COLS - 1)
-    {
-        moveTheBubble(i + 1, j + 1, !flag, distance - 5);
-    }
-
-    if (j > 0)
-    {
-        moveTheBubble(i, j - 1, flag, distance - 5);
-    }
-
-    if (j < MAX_COLS)
-    {
-        moveTheBubble(i, j + 1, flag, distance - 5);
-    }
 }
 
 void BubbleLayer2::deleteTheSameBubble(int i, int j, bool flag)
 {
-    if (sameSum < 3)
-    {
-        for (int i = 0; i < MAX_ROWS; ++i)
-        {
-            for (int j = 0; j < MAX_COLS; ++j)
-            {
-                if (board[i][j] != nullptr && board[i][j]->getIsSame())
-                {
-                    board[i][j]->setIsSame(false);
-                    sameSum--;
-                }
-            }
-        }
-
-        setEnable();
-        lastHited_ = false;
-        hitNums_ = 0;
-    }
-    else
-    {
-        
-        for (int i = 0; i < MAX_ROWS; ++i)
-        {
-            for (int j = 0; j < MAX_COLS; ++j)
-            {
-                if (board[i][j] != nullptr && board[i][j]->getIsSame())
-                {
-                    Bubble *obj = board[i][j];
-                    waitTime += 0.05f;
-                    SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-
-                    ArmatureDataManager::getInstance()->addArmatureFileInfo("BubbleSpecial/baozha.ExportJson");
-                    Armature *armature = Armature::create("baozha");
-                    obj->addChild(armature);
-                    armature->setPosition(R, R);
-                    armature->getAnimation()->play("daojubaozha");
-                    obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
-                    {
-                        obj->removeFromParent();
-                        setEnable();
-                    }), nullptr));
-                    board[i][j] = NULL;
-                }
-            }
-        }
-        if(lastHited_)
-        {
-            hitNums_++;
-            showHits(hitNums_);
-        }
-        lastHited_ = true;
-        if( hitNums_ > 1)
-        {
-            showHitNumsAnim();
-        }
-    }
 }
-
 /**
  * 显示连击动画
  */
@@ -754,7 +295,6 @@ void BubbleLayer2::bubbleAction(Bubble *obj)
 void BubbleLayer2::callbackRemoveBubble(cocos2d::Node *obj)
 {
     auto bubble = dynamic_cast<Bubble *>(obj);
-
     if (bubble != nullptr)
     {
         Armature *armature = Armature::create("paopaolong");
@@ -767,24 +307,6 @@ void BubbleLayer2::callbackRemoveBubble(cocos2d::Node *obj)
 }
 void BubbleLayer2::movementPassCallBack(Armature *armature, MovementEventType type, const std::string &name)
 {
-    if (type == COMPLETE)
-    {
-        if (name == "gongxiguoguan")
-        {
-            this->removeChild(armature);
-            _level++;
-
-            if (_level >= MAX_CUS)
-            {
-                return;
-            }
-
-            this->initTheBoard(_level);
-            UserData::getInstance()->addLevel(1);
-            _havePass = false;
-        }
-
-    }
 }
 
 void BubbleLayer2::moveParantCallBack(Armature *armature, MovementEventType type, const std::string &name)
@@ -835,84 +357,6 @@ void BubbleLayer2::resetAllPass()
 
 void BubbleLayer2::checkDownBubble()
 {
-    for (int i = 0; i < MAX_COLS; ++i)
-    {
-        if (board[0][i])
-        {
-            board[0][i]->setIsPass(true);
-        }
-    }
-
-    for (int i = 0; i < MAX_ROWS; ++i)
-    {
-       /*
-         * 当第一次的时候横着只关心右边，第二次的时候横着只关心左边
-         * 剩下关心与自己相关的下面两个
-         */
-        for (int j = 0; j < MAX_COLS; ++j)
-        {
-            if (board[i][j] && board[i][j]->getIsPass())
-            {
-                if (j < MAX_COLS - 1 && board[i][j + 1])
-                {
-                    board[i][j + 1]->setIsPass(true);
-                }
-
-                if (i < MAX_ROWS - 1)
-                {
-                    if (board[i][j]->getFlag() && j > 0 && board[i + 1][j - 1])
-                    {
-                        board[i + 1][j - 1]->setIsPass(true);
-                    }
-                    else if (!(board[i][j]->getFlag()) && board[i + 1][j])
-                    {
-                        board[i + 1][j]->setIsPass(true);
-                    }
-
-                    if (board[i][j]->getFlag() && board[i + 1][j])
-                    {
-                        board[i + 1][j]->setIsPass(true);
-                    }
-                    else if (!(board[i][j]->getFlag()) && j < MAX_COLS - 1 && board[i + 1][j + 1])
-                    {
-                        board[i + 1][j + 1]->setIsPass(true);
-                    }
-                }
-            }
-        }
-
-        for (int j = MAX_COLS - 1; j >= 0; --j)
-        {
-            if (board[i][j] && board[i][j]->getIsPass())
-            {
-                if (j > 0 && board[i][j - 1])
-                {
-                    board[i][j - 1]->setIsPass(true);
-                }
-
-                if (i < MAX_ROWS - 1)
-                {
-                    if (board[i][j]->getFlag() && j > 0 && board[i + 1][j - 1])
-                    {
-                        board[i + 1][j - 1]->setIsPass(true);
-                    }
-                    else if (!(board[i][j]->getFlag()) && board[i + 1][j])
-                    {
-                        board[i + 1][j]->setIsPass(true);
-                    }
-
-                    if (board[i][j]->getFlag() && board[i + 1][j])
-                    {
-                        board[i + 1][j]->setIsPass(true);
-                    }
-                    else if (!(board[i][j]->getFlag()) && j < MAX_COLS - 1 && board[i + 1][j + 1])
-                    {
-                        board[i + 1][j + 1]->setIsPass(true);
-                    }
-                }
-            }
-        }
-    }
 }
 
 void BubbleLayer2::downBubble()
@@ -1024,6 +468,8 @@ void BubbleLayer2::swapBubble()
         currentColor_ = 1;
     }
     showSelectedBubble_->setString(TI()->itos(currentColor_));
+    randomPaoPao();
+    changeWaitToReady();
 }
 void BubbleLayer2::colorBubble()
 {
@@ -1124,23 +570,6 @@ bool BubbleLayer2::onTouchBegan(Touch *touch, Event *unused_event)
 
 void BubbleLayer2::showWinAnim(Vec2& pos)
 {
-    auto size = Director::getInstance()->getWinSize();
-    
-    ActionInterval* move = MoveTo::create(1.f, pos);
-    ActionInterval* scale = ScaleTo::create(1.0f, 0.9f);
-    ActionInterval* sineIn = EaseBackIn::create(move);
-    
-    FiniteTimeAction * spawn = Spawn::create(sineIn, scale, NULL);
-    
-    auto a = Sprite::create("star.png");
-    a->setPosition(size.width*2, size.height/2);
-    a->setScale(6, 6);
-    addChild(a, 10);
-    
-    CallFuncN* callback = CallFuncN::create(CC_CALLBACK_1(BubbleLayer2::starCallback, this));
-    a->runAction(Sequence::create(spawn, callback, NULL));
-
-
 }
 
 void BubbleLayer2::starCallback(Ref* obj)
@@ -1151,31 +580,11 @@ void BubbleLayer2::starCallback(Ref* obj)
 void BubbleLayer2::onTouchMoved(Touch *touch, Event *unused_event)
 {
     
-    auto gameScene = (GameScene *)this->getParent();
-    this->removeChildByTag(100);
-
-    if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height || touch->getLocation().y >= TOUCH_TOP * Director::getInstance()->getVisibleSize().height)
-    {
-        return;
-    }
-
-    real = (touch->getLocation() - READY_PAOPAO_POS).getNormalized();
-
-    if (real.x <= 0.9 && real.x >= -0.9 && real != Vec2::ZERO && real.y > 0)
-    {
-        this->auxiliaryLine(touch->getLocation());
-        this->setReadyAngle(touch->getLocation());
-        gameScene->setCannonAngle(touch->getLocation());
-    }
-
 }
 
 void BubbleLayer2::onTouchEnded(Touch *touch, Event *unused_event)
 {
-
     auto gameScene = (GameScene *)this->getParent();
-    this->removeChildByTag(100);
-
     if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height && touch->getLocation().x <= 200)
     {
         this->swapBubble();
@@ -1201,32 +610,7 @@ void BubbleLayer2::onTouchEnded(Touch *touch, Event *unused_event)
 
 int BubbleLayer2::getMaxMoveNumbers(int level)
 {
-    if( level < 0 )
-    {
-        return 10;
-    }
-
-    if( level > 100)
-    {
-        return 10;
-    }
-
-    const int a[] = {
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10, // 100 level
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-    };
-    return a[level];
+    return 10;
 }
 
 
