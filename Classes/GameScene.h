@@ -6,7 +6,7 @@
 #include "BubbleLayer.h"
 #include "BubbleLayer2.h"
 #include "PropLayer.h"
-#define DESIGN_MODE
+//#define DESIGN_MODE
 
 USING_NS_CC;
 

@@ -30,7 +30,29 @@ Scene *BubbleLayer2::scene()
     scene->addChild(layer);
     return scene;
 }
-
+void BubbleLayer2::dump()
+{
+    
+    for (int i = 0; i < MAX_ROWS; ++i)
+    {
+        string str = "";
+        for (int j = 0; j < MAX_COLS; ++j)
+        {
+            if (!board[i][j])
+            {
+                str +="0";
+                str +=",";
+            }
+            else
+            {
+                int num = (int)board[i][j]->getType();
+                str += TI()->itos(num);
+                str +=",";
+            }
+        }
+        log(str.c_str());
+    }
+}
 void BubbleLayer2::calcRetainMap()
 {
     retainMap_.clear();
@@ -166,10 +188,12 @@ void BubbleLayer2::onTouch(Point target)
             removeChild(board[i][j]);
             board[i][j] = nullptr;
         }
+        dump();
     }
     
     this->scheduleUpdate();
 }
+
 void BubbleLayer2::setEnable()
 {
     _listener->setEnabled(true);

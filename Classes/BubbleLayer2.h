@@ -77,7 +77,7 @@ public:
     void starCallback(Ref* obj);
     void showHitNumsAnim();
     void showHits(int num);
-
+    void dump();
     const int const_line = 8;
     // 获取这一关卡最多可以移动多少步
     int getMaxMoveNumbers(int level);
