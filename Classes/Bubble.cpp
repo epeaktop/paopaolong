@@ -29,8 +29,9 @@ Bubble * Bubble::initWithType(BubbleType type, int flag) //根据传过来的类
     pRet->label = Label::createWithSystemFont("0,0", "Arial", 27);
     pRet->label->setColor(Color3B::RED);
     
-    pRet->label->enableOutline(ccc4(0,0,0,128),3);
+    pRet->label->enableOutline(Color4B(0,0,0,128),3);
     pRet->label->setPosition(25,25);
+    pRet->label->setVisible(false);
     pRet->addChild(pRet->label, 100000);
     if(flag == 1)
     {

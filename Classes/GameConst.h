@@ -8,7 +8,7 @@ using namespace std;
 #define MAX_CUS 41
 
 const float R = 20.0f;  //  泡泡的半径
-const int HOURGLASSTIME = 30;
+const int HOURGLASSTIME = 45;
 
 const float TOUCH_TOP = 0.90f;
 const float TOUCH_DOWN = 0.33f;
@@ -22,7 +22,7 @@ const int BUBBLE_COUNT = 7;
 #define READY_PAOPAO_POS Point(270, 193)
 #define WAIT_PAOPAO_POS Point(175,170)
 
-#define PAOPAO_SPEED 60.0f
+#define PAOPAO_SPEED 30.0f
 
 const int RMB[5] = { 1, 4, 6, 10, 15 };
 

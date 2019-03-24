@@ -22,25 +22,16 @@ bool GameoverLayer::init()
     gameoverLayer->setVisible(false);
 	addChild(gameoverLayer);
     Size size = Director::getInstance()->getWinSize();
-    
-    
     auto *game_bg = Sprite::create("popui-over-bg.png");
-    game_bg->setPosition(ccp(size.width / 2, size.height / 2));
+    game_bg->setPosition(Vec2(size.width / 2, size.height / 2));
     addChild(game_bg, 99);
     auto *home = MenuItemImage::create("r.png", "r.png", this, menu_selector(GameoverLayer::menuOverCallBack));
     auto *con  = MenuItemImage::create("c.png", "c.png", this, menu_selector(GameoverLayer::menuStartCallBack));
-    
     home->setPosition(Vec2(165,960 - 700));
     con->setPosition(Vec2(353,960 - 700));
-    
-    
-    
-    
     Menu *pMenu = Menu::create(home, con, NULL);
     pMenu->setPosition(Vec2::ZERO);
-    
     addChild(pMenu, 100);
-
 	return true;
 }
 void GameoverLayer::menuStartCallBack(Ref* Psender)

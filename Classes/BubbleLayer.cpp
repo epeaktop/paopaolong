@@ -261,7 +261,7 @@ void BubbleLayer::setDisable()
 
 void BubbleLayer::update(float fDelta)
 {
-
+    
     if (isCollideBorder())
     {
         log("[撞到边缘]%f", real.x);
@@ -270,14 +270,18 @@ void BubbleLayer::update(float fDelta)
 
     setDisable();
     Point pos = ready->getPosition();
-    auto newPos = Point(pos.x + real.x * PAOPAO_SPEED, pos.y + real.y * PAOPAO_SPEED);
+    int flag = 2;
+    if(updateTimes++ > 1)
+        flag = 1;
+    auto newPos = Point(pos.x + real.x * PAOPAO_SPEED* flag, pos.y + real.y * PAOPAO_SPEED*flag);
     ready->setPosition(newPos);
     Vec2 s = getRowAndColByPoint(newPos);
-    log("<update>(%d,%d)-->(%d,%d):row(%d),col(%d)",int(pos.x),int(pos.y), int(newPos.x),int(newPos.y),int(s.x), int(s.y));
+    log("<update>(%d,%d)-->(%d,%d):row(%d),col(%d),%f",int(pos.x),int(pos.y), int(newPos.x),int(newPos.y),int(s.x), int(s.y),fDelta);
     if (checkCollideBorder())
     {
         SimpleAudioEngine::getInstance()->playEffect("Music/Hit.mp3");
         this->unscheduleUpdate();
+        updateTimes = 0;
         real = Point::ZERO;
         correctReadyPosition();
         return;
@@ -340,9 +344,17 @@ bool BubbleLayer::checkCollideBorder()
         if (board[int(ti.x)][int(ti.y)] != nullptr)
         {
             log("[@@@@]%d,%d", int(ti.x), int(ti.y));
+#ifdef DEBUG
+            if(board[curFindRow][curFindCol]!=nullptr)
+            {
+                board[curFindRow][curFindCol]->setColor(Color3B(255,255,255));
+            }
+#endif
             curFindRow = int(ti.x);
             curFindCol = int(ti.y);
-            board[int(ti.x)][int(ti.y)]->setColor(ccRED);
+#ifdef DEBUG
+            board[int(ti.x)][int(ti.y)]->setColor(Color3B::RED);
+#endif
             return true;
         }
     }
@@ -353,13 +365,9 @@ void BubbleLayer::changeWaitToReady()
 {
     ready = wait[0];
     auto jumpAction = JumpTo::create(0.1f, READY_PAOPAO_POS, 30.0f, 1);
-
     auto callFunc = CallFunc::create(CC_CALLBACK_0(BubbleLayer::jumpActionCallBack, this));
-
     auto seq = Sequence::create(jumpAction, callFunc, nullptr);
-
     ready->runAction(seq);
-
 }
 struct PosData
 {
@@ -370,8 +378,8 @@ struct PosData
 
 void debugLog(Bubble* obj, int index, int i ,int j)
 {
-    if (obj)
-        log("item%d not nullpte, %d,%d", index, i, j);
+    if (obj && i < MAX_ROWS && j < MAX_COLS)
+        log("item%d not nullpte, %d,%d,(%f,%f)", index, i, j,obj->getPosition().x, obj->getPosition().y);
 }
 // 正在运动球停止了，摆正这个球的位置
 void BubbleLayer::correctReadyPosition()
@@ -458,7 +466,13 @@ void BubbleLayer::correctReadyPosition()
     
     board[row][col] = ready;
     board[row][col]->setString(row, col);
+    board[row][col]->setFlag(row%2==0);
     if (getPointByRowAndCol(row, col).y <= TOUCH_DOWN * (Director::getInstance()->getVisibleSize().height))
+    {
+        return gameOver(true);
+    }
+
+    if(row == 0)
     {
         return gameOver(true);
     }
@@ -521,7 +535,6 @@ void BubbleLayer::readyAction()
     resetAllPass();
     checkDownBubble();
     downBubble();
-//    throwBallAction();
     changeWaitToReady();
 }
 
@@ -956,24 +969,20 @@ void BubbleLayer::checkDownBubble()
 
     for (int i = 0; i < MAX_ROWS; ++i)
     {
-       /*
-         * 当第一次的时候横着只关心右边，第二次的时候横着只关心左边
-         * 剩下关心与自己相关的下面两个
-         */
+        // 当第一次的时候横着只关心右边，第二次的时候横着只关心左边剩下关心与自己相关的下面两个
         for (int j = 0; j < MAX_COLS; ++j)
         {
-            if (board[i][j] && board[i][j]->getIsPass())
+            if (board[i][j] && board[i][j]->getIsPass()) // 第一排已经设置为true，否则这里进入不了
             {
-                if (j < MAX_COLS - 1 && board[i][j + 1])
+                if (j < MAX_COLS - 1 && board[i][j + 1]) // 同一排右边直接设为true
                 {
                     board[i][j + 1]->setIsPass(true);
                 }
-
                 if (i < MAX_ROWS - 1)
                 {
                     if (board[i][j]->getFlag() && j > 0 && board[i + 1][j - 1])
                     {
-                        board[i + 1][j - 1]->setIsPass(true);
+                        board[i + 1][j - 1]->setIsPass(true); // 有标记的，右侧移动了一点，第二排左边设为TRUE
                     }
                     else if (!(board[i][j]->getFlag()) && board[i + 1][j])
                     {
@@ -1039,12 +1048,10 @@ void BubbleLayer::downBubble()
                 board[i][j] = NULL;
             }
         }
-
         setEnable();
     }
-	
     // 游戏开始的地方
-    if (!isPass() || _havePass)
+    if (!isGameOver() || _havePass)
         return;
     if(UserData::getInstance()->getLevel() > 4)
     {
@@ -1211,7 +1218,7 @@ void BubbleLayer::throwBallAction()
     propArmature->setVisible(false);
 }
 
-bool BubbleLayer::isPass()
+bool BubbleLayer::isGameOver()
 {
     int num = 0;
     for (int i = 0; i < MAX_ROWS; ++i)

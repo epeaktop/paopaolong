@@ -66,7 +66,7 @@ public:
 	void gameOver(bool over = false);
 	void setReadyAngle(Point target);
 	void throwBallAction();
-	bool isPass();
+	bool isGameOver();
 	void movementPassCallBack(Armature * armature, MovementEventType type, const std::string &name);
 	void moveParantCallBack(Armature * armature, MovementEventType type, const std::string &name);
 	void readyAction();
@@ -195,6 +195,7 @@ public:
     Label *moveLabel_ = nullptr;
     int curFindCol = 0;
     int curFindRow = 0;
+    int updateTimes = 0;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */
