@@ -18,6 +18,8 @@ static float waitTime = 0.1f;
 static int sameSum = 0;
 
 /*
+ 进入设计模式（实验室）
+ 
  google视频广告
  facebook接入
  更多的展示广告
@@ -378,13 +380,13 @@ struct PosData
 
 void debugLog(Bubble* obj, int index, int i ,int j)
 {
-    if (obj && i < MAX_ROWS && j < MAX_COLS)
+    if (obj && i < MAX_ROWS && j < MAX_COLS && i >= 0 && j >=0)
         log("item%d not nullpte, %d,%d,(%f,%f)", index, i, j,obj->getPosition().x, obj->getPosition().y);
 }
 // 正在运动球停止了，摆正这个球的位置
 void BubbleLayer::correctReadyPosition()
 {
-    int row = 0, col = 0;
+    int row = -1, col = -1;
     // 注意，这个ready的表诉并不清楚；应该是正在运动的球的位置
     Point pos = ready->getPosition();
     Vec2 rowCol = getRowAndColByPoint(pos);
@@ -472,7 +474,7 @@ void BubbleLayer::correctReadyPosition()
         return gameOver(true);
     }
 
-    if(row == 0)
+    if(row == -1)
     {
         return gameOver(true);
     }

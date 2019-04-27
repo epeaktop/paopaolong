@@ -18,6 +18,10 @@ public:
 	CC_SYNTHESIZE(int, _score, Score);
 	CC_SYNTHESIZE(bool, _isBeginner, IsBeginner);
 	CC_SYNTHESIZE(bool, _isClassics, IsClassics);
+    /**
+     * 是否是设计模式
+     */
+    CC_SYNTHESIZE(bool, _isDesign, IsDesign);
 
 	CC_SYNTHESIZE_ADD(int, _bomb, Bomb); //炸弹
 	CC_SYNTHESIZE_ADD(int, _colorBubble, ColorBubble); //可变泡泡

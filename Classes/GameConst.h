@@ -17,7 +17,7 @@ const float MOVE_DISTANCE = 10.0f;
 
 const int BUBBLE_COUNT = 7;
 
-#define MAX_WAIT_PAOPAO 1
+#define MAX_WAIT_PAOPAO 2
 
 #define READY_PAOPAO_POS Point(270, 193)
 #define WAIT_PAOPAO_POS Point(175,170)

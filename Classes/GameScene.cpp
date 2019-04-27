@@ -34,12 +34,18 @@ bool GameScene::init()
         SimpleAudioEngine::getInstance()->pauseAllEffects();
         SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
     }
-#ifdef DESIGN_MODE
-    _bubbleLayer = BubbleLayer2::create();
-#else
-	_bubbleLayer = BubbleLayer::create();
-#endif
-    addChild(_bubbleLayer);
+    if(USER()->getIsDesign())
+    {
+        _bubbleLayer2 = BubbleLayer2::create();
+        addChild(_bubbleLayer2);
+    }
+    else
+    {
+	    _bubbleLayer = BubbleLayer::create();
+        addChild(_bubbleLayer);
+    }
+    
+    
 	_propLayer = PropLayer::create();
 	addChild(_propLayer);
 
@@ -88,11 +94,15 @@ void GameScene::mResume()
 
 void GameScene::onTouch(Point target)
 {
-	_bubbleLayer->onTouch(target);
+    if(USER()->getIsDesign())
+        _bubbleLayer2->onTouch(target);
+    else
+	    _bubbleLayer->onTouch(target);
 }
 void GameScene::setCannonAngle(Point target)
 {
-	_propLayer->setCannonAngle(target);
+	
+    _propLayer->setCannonAngle(target);
 }
 void GameScene::setTouchEnable(bool enable)
 {

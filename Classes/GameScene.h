@@ -23,11 +23,11 @@ public:
 	virtual bool init();
 
 	TouchLayer* _touchLayer;
-#ifdef DESIGN_MODE
-	BubbleLayer2* _bubbleLayer;
-#else
+
+	BubbleLayer2* _bubbleLayer2;
+
     BubbleLayer* _bubbleLayer;
-#endif
+
     
 	PropLayer* _propLayer;
 	Node* _bg;
