@@ -1,4 +1,4 @@
-﻿//
+//
 //  HelpScene.cpp
 //  xzdd
 //
@@ -21,9 +21,9 @@
 
 using namespace cocos2d;
 using namespace CocosDenshion;
-const int BT_OK = 12345;
-const int BUY_HP_BUTTON = 12346;
-const int SIGN_BUTTON = 12347;
+const int BT_OK = 2000000;
+const int BUY_HP_BUTTON = 2000001;
+const int SIGN_BUTTON = 2000002;
 
 const int NUMBER_LAYER = 5;
 const float NUMBER_POS_Y = -20.0f;
@@ -195,7 +195,14 @@ void HelpScene::buttonCallback(Node *pNode)
     if (BT_OK == pNode->getTag())
     {
         auto s = GameScene::create();
-        s->_bubbleLayer->setLevel(UserData::getInstance()->getSelLevel());
+        if(USER()->getIsDesign())
+        {
+            s->_bubbleLayer2->setLevel(UserData::getInstance()->getSelLevel());
+        }
+        else
+        {
+            s->_bubbleLayer->setLevel(UserData::getInstance()->getSelLevel());
+        }
         auto transition = TransitionTurnOffTiles::create(0.5, s);
         Director::getInstance()->replaceScene(transition);
     }

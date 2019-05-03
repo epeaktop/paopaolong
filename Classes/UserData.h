@@ -59,6 +59,13 @@ private:
         ss << "level_"<<Level;
         return ss.str();
     }
+    std::string getDesignKey(int Level)
+    {
+        std::stringstream ss;
+        ss.str("");
+        ss << "design_"<<Level;
+        return ss.str();
+    }
     
 public:
     void setScore(int level, int score)
@@ -69,6 +76,16 @@ public:
     {
         return UserDefault::getInstance()->getIntegerForKey(getKeyByLevel(level).c_str(), 0);
     }
+    
+    void setDesign(int level, std::string str)
+    {
+        UserDefault::getInstance()->setStringForKey(getDesignKey(level).c_str(), str);
+    }
+    std::string getDesign(int level)
+    {
+        return UserDefault::getInstance()->getStringForKey(getDesignKey(level).c_str(), "");
+    }
+    
 };
 
 #define USER UserData::getInstance

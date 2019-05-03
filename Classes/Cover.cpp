@@ -10,7 +10,7 @@
 #include "GameSetting.h"
 #include "Tools.h"
 
-const int MORE_BTN_TAG = 1000;
+//const int MORE_BTN_TAG = 1000;
 const int RATE_BTN = 10011;
 const int FACEBOOK_TAG = 10012;
 const int CLASSICS_TAG = 10013;
@@ -54,8 +54,8 @@ bool Cover::init()
     showSoundButton();
     TI()->repeatShakeNode(new_button);
     auto rateBtn = addRateButton();
-    //auto classics = classicsButton();
-    Menu *pMenu = Menu::create(new_button,sound_, sound2_, rateBtn , NULL);
+    auto classics = classicsButton();
+    Menu *pMenu = Menu::create(new_button, classics, sound_, sound2_, rateBtn , NULL);
     pMenu->setPosition(Vec2::ZERO);
     addChild(pMenu, 100);
     regTouch();
@@ -105,17 +105,19 @@ void Cover::newCallback(Ref *pSender)
     
     SimpleAudioEngine::getInstance()->playEffect("Music/Click.mp3");
     SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
-    /* 选择关卡的界面 */
-    auto scene = HelpScene::scene();
+    
     if (obj->getTag() == CLASSICS_TAG)
     {
-        USER()->setIsClassics(true);
+        // USER()->setIsClassics(true);
+        USER()->setIsDesign(true);
     }
     else
     {
-        USER()->setIsClassics(false);
+        // USER()->setIsClassics(false);
+        USER()->setIsDesign(false);
     }
-
+    /* ========= 选择关卡的界面 ========= */
+    auto scene = HelpScene::scene();
     Director::getInstance()->pushScene(scene);
 }
 void Cover::exitCallback(Ref *pSender)

@@ -78,6 +78,10 @@ public:
     void showHitNumsAnim();
     void showHits(int num);
     void dump();
+    /*  序列化  */
+    void save();
+    /* 反序列化, 序列化成功证明有过设计的关卡，就是读取的关卡设计 */
+    bool load();
     const int const_line = 8;
     // 获取这一关卡最多可以移动多少步
     int getMaxMoveNumbers(int level);

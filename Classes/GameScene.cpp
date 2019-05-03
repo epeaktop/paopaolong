@@ -45,14 +45,12 @@ bool GameScene::init()
         addChild(_bubbleLayer);
     }
     
-    
 	_propLayer = PropLayer::create();
 	addChild(_propLayer);
 
     auto bgArmature = (Armature *)_bg->getChildByTag(63);
     bgArmature->setVisible(false);
     
-
 	auto keyListener = EventListenerKeyboard::create();
 	keyListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
 
@@ -101,7 +99,6 @@ void GameScene::onTouch(Point target)
 }
 void GameScene::setCannonAngle(Point target)
 {
-	
     _propLayer->setCannonAngle(target);
 }
 void GameScene::setTouchEnable(bool enable)

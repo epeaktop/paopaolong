@@ -21,17 +21,11 @@ class GameScene : public Scene
 public:
 	CREATE_FUNC(GameScene);
 	virtual bool init();
-
 	TouchLayer* _touchLayer;
-
 	BubbleLayer2* _bubbleLayer2;
-
     BubbleLayer* _bubbleLayer;
-
-    
 	PropLayer* _propLayer;
 	Node* _bg;
-
 	void onTouch(Point target);
 	void setTouchEnable(bool enable);
 	void swapBubble();
@@ -43,7 +37,6 @@ public:
 	void mResume();
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
 	void setCannonAngle(Point target);
-
 };
 
 
