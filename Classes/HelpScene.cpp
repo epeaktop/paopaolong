@@ -67,7 +67,7 @@ bool HelpScene::init()
     {
         MenuItemImage* item = nullptr;
         Sprite* sp = nullptr;
-        if (i <= UserData::getInstance()->getLevel())
+        if (i <= UserData::getInstance()->getLevel()||USER()->getIsDesign())
         {
             item = MenuItemImage::create("lv.png", "lv.png");
             item->setCallback(CC_CALLBACK_1(HelpScene::menuBackCallback,this));
