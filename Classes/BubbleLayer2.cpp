@@ -87,9 +87,7 @@ void BubbleLayer2::calcRetainMap()
 }
 
 // 显示连击
-void BubbleLayer2::showHits(int num)
-{
-}
+void BubbleLayer2::showHits(int num){}
 
 bool BubbleLayer2::init()
 {
@@ -196,7 +194,6 @@ void BubbleLayer2::onTouch(Point target)
             removeChild(board[i][j]);
             board[i][j] = nullptr;
         }
-
         dump();
         save();
     }
@@ -212,10 +209,7 @@ void BubbleLayer2::setDisable()
 {
     _listener->setEnabled(false);
 }
-
-void BubbleLayer2::update(float fDelta)
-{
-}
+void BubbleLayer2::update(float fDelta){}
 // 是否碰撞了边界
 bool BubbleLayer2::isCollideBorder()
 {
@@ -226,45 +220,7 @@ bool BubbleLayer2::isCollideBorder()
 
 // 检查是否碰撞到附近的球，在update中如果碰不到附近的球，球就一直运动
 // 碰到附近的球了就停止运动
-bool BubbleLayer2::checkCollideBorder()
-{
-    bool bRet = false;
-    auto winSize = Director::getInstance()->getVisibleSize();
-    auto point = ready->getPosition();
-
-    /* 底部的边界 */
-    if (point.y < TOUCH_DOWN * winSize.height)
-    {
-        return false;
-    }
-
-    if (ready->getPosition().y > TOUCH_TOP * winSize.height - R)
-    {
-        if (ready->getType() == BUBBLE_TYPE_COLOR)
-        {
-            BubbleType type = (BubbleType)((int)(CCRANDOM_0_1() * 7 + 1));
-            ready->setType(type);
-            ready->initWithSpriteFrameName(StringUtils::format(BUBBLE_NAME.c_str(), type));
-        }
-
-        bRet = true;
-    }
-
-    std::vector<Vec2> rowCol;
-    rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y + R)));
-    rowCol.push_back(getRowAndColByPoint(Point(point.x - R, point.y)));
-    rowCol.push_back(getRowAndColByPoint(Point(point.x + R, point.y)));
-
-    for (auto &ti : rowCol)
-    {
-        if (board[int(ti.x)][int(ti.y)] != nullptr)
-        {
-            return true;
-        }
-    }
-
-    return bRet;
-}
+bool BubbleLayer2::checkCollideBorder(){ return false; }
 
 void BubbleLayer2::changeWaitToReady()
 {
@@ -276,44 +232,19 @@ void BubbleLayer2::changeWaitToReady()
 }
 
 // 正在运动球停止了，摆正这个球的位置
-void BubbleLayer2::correctReadyPosition()
-{
-}
+void BubbleLayer2::correctReadyPosition(){}
 // 摆正位置后，才会真正消除掉球
-void BubbleLayer2::readyAction()
-{
-}
-
-bool BubbleLayer2::getFirstRowFlag()  //得到第一行是否左缺 不缺为true
-{
-    return true;
-}
-
-bool BubbleLayer2::isCircleCollision(Point pos1, float radius1, Point pos2, float radius2)
-{
-    return true;
-}
-
-void BubbleLayer2::findTheSameBubble(int i, int j, bool flag, BubbleType type)
-{
-}
-void BubbleLayer2::bubbleBlast(int i, int j, bool flag)
-{
-}
-void BubbleLayer2::moveTheBubble(int i, int j, bool flag, float distance)
-{
-}
-
-void BubbleLayer2::deleteTheSameBubble(int i, int j, bool flag)
-{
-}
+void BubbleLayer2::readyAction(){}
+bool BubbleLayer2::getFirstRowFlag() { return true; }
+bool BubbleLayer2::isCircleCollision(Point pos1, float radius1, Point pos2, float radius2){ return true; }
+void BubbleLayer2::findTheSameBubble(int i, int j, bool flag, BubbleType type){}
+void BubbleLayer2::bubbleBlast(int i, int j, bool flag){}
+void BubbleLayer2::moveTheBubble(int i, int j, bool flag, float distance){}
+void BubbleLayer2::deleteTheSameBubble(int i, int j, bool flag){}
 /**
  * 显示连击动画
  */
-void BubbleLayer2::showHitNumsAnim()
-{
-
-}
+void BubbleLayer2::showHitNumsAnim(){}
 
 void BubbleLayer2::bubbleAction(Bubble *obj)
 {
@@ -328,24 +259,8 @@ void BubbleLayer2::bubbleAction(Bubble *obj)
     }), NULL));
 }
 
-void BubbleLayer2::callbackRemoveBubble(cocos2d::Node *obj)
-{
-    auto bubble = dynamic_cast<Bubble *>(obj);
-
-    if (bubble != nullptr)
-    {
-        Armature *armature = Armature::create("paopaolong");
-        armature->getAnimation()->play("daojubaozha");
-        obj->addChild(armature);
-        armature->setPosition(obj->getContentSize() / 2);
-        armature->getAnimation()->setMovementEventCallFunc(CC_CALLBACK_3(BubbleLayer2::moveParantCallBack, this));
-    }
-
-}
-void BubbleLayer2::movementPassCallBack(Armature *armature, MovementEventType type, const std::string &name)
-{
-}
-
+void BubbleLayer2::callbackRemoveBubble(cocos2d::Node *obj){}
+void BubbleLayer2::movementPassCallBack(Armature *armature, MovementEventType type, const std::string &name){}
 void BubbleLayer2::moveParantCallBack(Armature *armature, MovementEventType type, const std::string &name)
 {
     if (type == COMPLETE)
@@ -524,51 +439,11 @@ void BubbleLayer2::throwBallAction()
     propArmature->setVisible(false);
 }
 
-bool BubbleLayer2::isPass()
-{
-    int num = 0;
-
-    for (int i = 0; i < MAX_ROWS; ++i)
-    {
-        for (int j = 0; j < MAX_COLS; ++j)
-        {
-            if (!board[i][j])
-            {
-                continue;
-            }
-
-            num++;
-        }
-    }
-
-    if (num < 6)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-bool BubbleLayer2::onTouchBegan(Touch *touch, Event *unused_event)
-{
-    return true;
-}
-
-
-void BubbleLayer2::showWinAnim(Vec2 &pos)
-{
-}
-
-void BubbleLayer2::starCallback(Ref *obj)
-{
-
-}
-
-void BubbleLayer2::onTouchMoved(Touch *touch, Event *unused_event)
-{
-
-}
-
+bool BubbleLayer2::isPass(){ return false; }
+bool BubbleLayer2::onTouchBegan(Touch *touch, Event *unused_event){ return true; }
+void BubbleLayer2::showWinAnim(Vec2 &pos){}
+void BubbleLayer2::starCallback(Ref *obj){}
+void BubbleLayer2::onTouchMoved(Touch *touch, Event *unused_event){}
 void BubbleLayer2::onTouchEnded(Touch *touch, Event *unused_event)
 {
     auto gameScene = (GameScene *)this->getParent();
@@ -593,14 +468,8 @@ void BubbleLayer2::onTouchEnded(Touch *touch, Event *unused_event)
         gameScene->_propLayer->setCannonAction(touch->getLocation());
 
     }
-
 }
-
-int BubbleLayer2::getMaxMoveNumbers(int level)
-{
-    return 10;
-}
-
+int BubbleLayer2::getMaxMoveNumbers(int level){ return 10; }
 bool BubbleLayer2::initTheBoard(int level)
 {
     bool bRet = false;
@@ -698,4 +567,3 @@ bool BubbleLayer2::load()
     }
     return true;
 }
-
