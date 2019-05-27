@@ -26,7 +26,7 @@ private:
 	
 	void timeCallFunc();
 	void menuBombCallBack(Ref* Psender);
-	void menuHourglassCallBack(Ref* Psender);
+	void addMoveNumberForOpenBox(Ref* Psender);
 	void menuPauseCallBack(Ref* Psender);
 	void menuColorBubbleCallBack(Ref* Psender);
 	void update(float delta);
@@ -50,6 +50,8 @@ private:
      * 初始化剩余步骤数
      */
     void initMoveNumbers();
+    
+    void initBox();
 public:
     void subMoveNumber()
     {
@@ -73,6 +75,8 @@ private:
      */
     Label *scoreLabel_ = nullptr;
     int flag = 0;
+    int openBoxFlag = 0;
+    bool isOpenBoxInGame = false;
 };
 
 

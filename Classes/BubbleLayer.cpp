@@ -511,6 +511,8 @@ void BubbleLayer::readyAction()
     if (ready->getType() == BUBBLE_TYPE_BOMB)
     {
         bubbleBlast(row, col, tempFlag);
+        bubbleBlast(row - 1, col, tempFlag);
+        //bubbleBlast(row - 2, col, tempFlag);
     }
     else
     {
@@ -856,13 +858,16 @@ void BubbleLayer::showHitNumsAnim()
 
 void BubbleLayer::bubbleAction(Bubble *obj)
 {
+    if(!obj)
+        return;
     auto gameSceme = (GameScene *)this->getParent();
     gameSceme->_propLayer->AddScoreLabel(5);
     SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-
+    
+    
     obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
     {
-        obj->removeFromParent();
+        //obj->removeFromParent();
         setEnable();
     }), NULL));
 }

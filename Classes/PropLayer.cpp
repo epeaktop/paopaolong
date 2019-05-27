@@ -11,6 +11,7 @@
 #include "ui/CocosGUI.h"
 #include "SimpleAudioEngine.h"
 #include "Tools.h"
+#include "NDKHelper.h"
 
 using namespace CocosDenshion;
 using namespace cocostudio::timeline;
@@ -36,6 +37,7 @@ const int MAX_TIME =  30000;
 const int CHANGE_TAG = 10247;
 const int LEVEL_TAG = 10248;
 const int MOVE_TAG = 10249;
+const int PAUSE_TAG = 10250;
 
 void PropLayer::initMoveNumbers()
 {
@@ -115,29 +117,8 @@ MenuItemImage* PropLayer::initPauseButton()
     return btn;
 }
 
-bool PropLayer::init()
+void PropLayer::initBox()
 {
-	if (!Layer::init())
-	{
-		return false;
-	}
-    
-	setTime(MAX_TIME);
-    initShooter();
-    initScoreLabel();
-    
-    initLevelLabel();
-    initLevelNumLabel();
-    initMoveNumbers();
-    if (UserData::getInstance()->getOpenBox())
-    {
-        UserData::getInstance()->setOpenBox(false);
-        menuHourglassCallBack(this);
-    }
-
-    scheduleUpdate();
-    initChangeBubbleSprite();
-    
     auto b = MenuItemImage::create("box1.png", "box1.png");
     b->setCallback(CC_CALLBACK_1(PropLayer::buttonCallback,this));
     
@@ -174,6 +155,33 @@ bool PropLayer::init()
     addChild(menu);
     menu->setPosition(Vec2::ZERO);
     menu->setAnchorPoint(Vec2::ZERO);
+}
+
+bool PropLayer::init()
+{
+	if (!Layer::init())
+	{
+		return false;
+	}
+    
+	setTime(MAX_TIME);
+    initShooter();
+    initScoreLabel();
+    
+    initLevelLabel();
+    initLevelNumLabel();
+    initMoveNumbers();
+    initChangeBubbleSprite();
+    
+    if (UserData::getInstance()->getOpenBox())
+    {
+        UserData::getInstance()->setOpenBox(false);
+        addMoveNumberForOpenBox(this);
+    }
+
+    initBox();
+    scheduleUpdate();
+    
     flag = 0;
 	return true;
 }
@@ -191,13 +199,8 @@ void PropLayer::showOpenBoxAnimi(int flag)
     box1->runAction(b);
     box2->runAction(c);
     
-    auto sp = Sprite::create("time.png");
-    sp->setTag(TIME_TAG);
-    if(flag == 2)
-    {
-        sp = Sprite::create("bomb.png");
-        sp->setTag(BOMB_TAG);
-    }
+    auto sp = Sprite::create("bomb.png");
+    sp->setTag(BOMB_TAG);
     
     sp->setScale(0.5);
     addChild(sp);
@@ -206,29 +209,14 @@ void PropLayer::showOpenBoxAnimi(int flag)
     sp->runAction(fi);
     addChild(a);
     UserData::getInstance()->setOpenBox(true);
+    isOpenBoxInGame = true;
+    removeChild(menu);
+    menuBombCallBack(this);
 }
 
-#include "NDKHelper.h"
 void PropLayer::buttonCallback(Ref* obj)
 {
-    if (UserData::getInstance()->getOpenBox())
-    {
-        auto sp = getChildByTag(TIME_TAG);
-        if (sp)
-        {
-            menuHourglassCallBack(this);
-            sp->setVisible(false);
-        }
-        
-        sp = getChildByTag(BOMB_TAG);
-        if(sp)
-        {
-            menuBombCallBack(this);
-            sp->setVisible(false);
-        }
-        
-        return;
-    }
+
     callJava("showAds","");
     int a = rand()%2 + 1;
     showOpenBoxAnimi(a);
@@ -254,21 +242,15 @@ void PropLayer::setColorBubbleNum()
 */
 }
 
-
 void PropLayer::menuBombCallBack(Ref* Psender)
 {
 	auto gameSceme = (GameScene*)this->getParent();
 	gameSceme->bombBubble();
 }
-// 增加时间
-void PropLayer::menuHourglassCallBack(Ref* Psender)
+// 增加步数
+void PropLayer::addMoveNumberForOpenBox(Ref* Psender)
 {
-	auto time = getTime() + HOURGLASSTIME;
-    if (time >= MAX_TIME)
-	{	
-		time = MAX_TIME;
-	}
-	setTime(time);
+    moveNumber_ += 5;
 }
 
 void PropLayer::menuColorBubbleCallBack(Ref* Psender)
@@ -289,12 +271,23 @@ void PropLayer::update(float delta)
 {
 	setTime(getTime() - 1.0/60.0);
     showMoveNumbers();
+    
+    if(isOpenBoxInGame)
+    {
+        if(openBoxFlag++ > 600)
+        {
+            isOpenBoxInGame = false;
+            openBoxFlag = 0;
+            UserData::getInstance()->setOpenBox(false);
+            initBox();
+        }
+    }
     if(moveNumber_ <= 0)
     {
         if(flag++ > 20) /* 结束的时候等下再出结算界面 */
         {
             hadFinished_ = true;
-            flag = -9999999;
+            flag = -999999;
         }
         if(hadFinished_)
         {
