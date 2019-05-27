@@ -50,7 +50,7 @@ private:
      * 初始化剩余步骤数
      */
     void initMoveNumbers();
-    
+public:
     void subMoveNumber()
     {
         if(moveNumber_ > 0)
@@ -62,6 +62,7 @@ private:
     {
         moveNumber_ += n;
     }
+    bool hadFinished_ = false;
 private:
     /**
      * 当前剩余步骤
@@ -71,6 +72,7 @@ private:
      * 分数label
      */
     Label *scoreLabel_ = nullptr;
+    int flag = 0;
 };
 
 

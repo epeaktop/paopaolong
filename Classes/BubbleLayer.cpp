@@ -1310,7 +1310,7 @@ void BubbleLayer::onTouchEnded(Touch *touch, Event *unused_event)
         gameScene->setCannonAngle(touch->getLocation());
         this->onTouch(touch->getLocation());
         gameScene->_propLayer->setCannonAction(touch->getLocation());
-
+        gameScene->_propLayer->subMoveNumber();
     }
 
 }

@@ -40,7 +40,6 @@ const int MOVE_TAG = 10249;
 void PropLayer::initMoveNumbers()
 {
     auto level = USER()->getSelLevel();
-   
     moveNumber_ = TI()->getMoveNumbers(level);
     auto label = Label::createWithSystemFont(TI()->itos(moveNumber_), "Arial", 30);
     addChild(label);
@@ -52,6 +51,14 @@ void PropLayer::showMoveNumbers()
 {
     auto label = (Label*)getChildByTag(MOVE_TAG);
     TI()->showNumber(label, moveNumber_, "");
+    if(moveNumber_ <= 5)
+    {
+        label->setColor(Color3B::RED);
+    }
+    else
+    {
+        label->setColor(Color3B::WHITE);
+    }
 }
 // 显示炮筒
 void PropLayer::initShooter()
@@ -167,7 +174,7 @@ bool PropLayer::init()
     addChild(menu);
     menu->setPosition(Vec2::ZERO);
     menu->setAnchorPoint(Vec2::ZERO);
-    
+    flag = 0;
 	return true;
 }
 
@@ -281,11 +288,21 @@ void PropLayer::menuPauseCallBack(Ref* Psender)
 void PropLayer::update(float delta)
 {
 	setTime(getTime() - 1.0/60.0);
-	if (getTime() <= 0)
-	{
-		auto gameSceme = (GameScene*)this->getParent();
-		gameSceme->gameOver();
-	}
+    showMoveNumbers();
+    if(moveNumber_ <= 0)
+    {
+        if(flag++ > 20) /* 结束的时候等下再出结算界面 */
+        {
+            hadFinished_ = true;
+            flag = -9999999;
+        }
+        if(hadFinished_)
+        {
+            auto gameSceme = (GameScene*)this->getParent();
+            gameSceme->gameOver();
+            hadFinished_ = false;
+        }
+    }
 }
 
 void PropLayer::AddScoreLabel(int var)
