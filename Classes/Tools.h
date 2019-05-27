@@ -136,6 +136,8 @@ public:
 
     Label* addLabel(cocos2d::Node *obj, std::string name, float x, float y, int order);
     void showNumber(cocos2d::Label* label, int num, const char* name);
+    
+    int getMoveNumbers(int level);
 private:
     static Tools* instance_;
         

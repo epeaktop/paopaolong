@@ -1206,18 +1206,6 @@ void BubbleLayer::setReadyAngle(Point target)
 }
 void BubbleLayer::throwBallAction()
 {
-    auto gameScene = (GameScene *)this->getParent();
-
-    auto bgNode = (Node *)gameScene->_bg;
-    auto bgArmature = (Armature *)bgNode->getChildByTag(63);
-    bgArmature->getAnimation()->play("huanqiu");
-    bgArmature->setVisible(false);
-
-    auto propLayer = (PropLayer *)gameScene->_propLayer;
-    auto propNode = (Node *)propLayer->_propLayer;
-    auto propArmature = (Armature *)propNode->getChildByTag(68);
-    propArmature->getAnimation()->play("huanqiushou");
-    propArmature->setVisible(false);
 }
 
 bool BubbleLayer::isGameOver()

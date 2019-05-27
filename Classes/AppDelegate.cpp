@@ -36,7 +36,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	director->getOpenGLView()->setFrameZoomFactor(0.5f);
     director->setDisplayStats(false);
 
-    director->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(1.0 / 15);
     FileUtils::getInstance()->addSearchPath("res");
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("Music/bgm.mp3");
 	SimpleAudioEngine::getInstance()->preloadEffect("Music/Ending.mp3");
