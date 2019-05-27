@@ -168,8 +168,6 @@ public:
         auto moveto = MoveTo::create(0.1f, targetPos);
         obj->runAction(moveto);
     }
-    // 获取这一关卡最多可以移动多少步
-    int getMaxMoveNumbers(int level);
     /* 获取当前移动的步数 */
     CC_SYNTHESIZE_ADD(int, _moveNumbers, MoveNumber);
 

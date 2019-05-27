@@ -9,16 +9,12 @@ using namespace std;
 
 const float R = 20.0f;  //  泡泡的半径
 const int HOURGLASSTIME = 45;
-
 const float TOUCH_TOP = 0.90f;
 const float TOUCH_DOWN = 0.33f;
-
 const float MOVE_DISTANCE = 10.0f;
-
 const int BUBBLE_COUNT = 7;
 
-#define MAX_WAIT_PAOPAO 2
-
+#define MAX_WAIT_PAOPAO 1
 #define READY_PAOPAO_POS Point(270, 193)
 #define WAIT_PAOPAO_POS Point(175,170)
 

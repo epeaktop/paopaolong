@@ -469,7 +469,7 @@ void BubbleLayer2::onTouchEnded(Touch *touch, Event *unused_event)
 
     }
 }
-int BubbleLayer2::getMaxMoveNumbers(int level){ return 10; }
+
 bool BubbleLayer2::initTheBoard(int level)
 {
     bool bRet = false;

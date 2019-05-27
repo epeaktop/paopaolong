@@ -19,7 +19,6 @@ static int sameSum = 0;
 
 /*
  进入设计模式（实验室）
- 
  google视频广告
  facebook接入
  更多的展示广告
@@ -245,8 +244,6 @@ void BubbleLayer::onTouch(Point target)
         break;
     }
     this->addMoveNumber(1);
-    auto maxLevel = getMaxMoveNumbers(USER()->getSelLevel());
-    TI()->showNumber(this->moveNumberLabel_,maxLevel - this->getMoveNumber(), "");
     this->scheduleUpdate();
 }
 
@@ -479,14 +476,7 @@ void BubbleLayer::correctReadyPosition()
         return gameOver(true);
     }
 
-    if (USER()->getIsClassics())
-    {
-        // todo : 忽略掉时间的计算
-        if (getMoveNumber() < getMaxMoveNumbers(USER()->getSelLevel()))
-        {
-            return gameOver(true);
-        }
-    }
+
     std::thread moveBubble(&BubbleLayer::moveTheBubble, this, row, col, (row % 2==0), MOVE_DISTANCE);
     moveBubble.join();
     auto newPos = getPointByRowAndCol(row, col);
@@ -1315,35 +1305,7 @@ void BubbleLayer::onTouchEnded(Touch *touch, Event *unused_event)
 
 }
 
-int BubbleLayer::getMaxMoveNumbers(int level)
-{
-    if( level < 0 )
-    {
-        return 10;
-    }
 
-    if( level > 100)
-    {
-        return 10;
-    }
-
-    const int a[] = {
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10, // 100 level
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-            10,10,10,10,10,10,10,10,10,10,
-    };
-    return a[level];
-}
 
 
 
