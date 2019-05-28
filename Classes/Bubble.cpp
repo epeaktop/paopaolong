@@ -25,7 +25,7 @@ Bubble * Bubble::initWithType(BubbleType type, int flag) //根据传过来的类
 	Bubble *pRet = Bubble::create();
 	pRet->setType(type);
 	pRet->initWithSpriteFrameName(getStringByType(type));
-    pRet->setScale(0.7);
+    pRet->setScale(0.77);
     pRet->label = Label::createWithSystemFont("0,0", "Arial", 27);
     pRet->label->setColor(Color3B::RED);
     

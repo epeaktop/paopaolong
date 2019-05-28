@@ -31,21 +31,33 @@ Scene *BubbleLayer2::scene()
 }
 void BubbleLayer2::dump()
 {
+    log("-------------------------------------");
     for (int i = 0; i < MAX_ROWS; ++i)
     {
         string str = "";
         for (int j = 0; j < MAX_COLS; ++j)
         {
+            if(j==0)
+            {
+                str += "{";
+            }
+            
             if (!board[i][j])
             {
                 str += "0";
-                str += ",";
             }
             else
             {
                 int num = (int)board[i][j]->getType();
                 str += TI()->itos(num);
+            }
+            if(j < MAX_COLS -1)
+            {
                 str += ",";
+            }
+            if(j==MAX_COLS-1)
+            {
+                str +="},";
             }
         }
         log(str.c_str());
@@ -382,41 +394,6 @@ void BubbleLayer2::bombBubble()
 }
 void BubbleLayer2::auxiliaryLine(Point tagrat)
 {
-    auto node = Node::create();
-    addChild(node);
-    node->setTag(100);
-
-
-    auto speed = 30.0f;
-    auto position = Point(READY_PAOPAO_POS.x + real.x * speed, READY_PAOPAO_POS.y + real.y * speed);
-    CCLOG("%f,%f", real.x, real.y);
-
-    while (position.y < TOUCH_TOP * Director::getInstance()->getVisibleSize().height - R)
-    {
-        for (int i = MAX_ROWS - 1; i >= 0; i--)
-        {
-            for (int j = 0; j < MAX_COLS; j++)
-            {
-                if (board[i][j] != nullptr)
-                {
-                    if ((board[i][j]->getPosition()).getDistance(position) <= R * 1.5)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-
-        if (position.x <= R || position.x >= Director::getInstance()->getVisibleSize().width - R)
-        {
-            real.x = -real.x;
-        }
-
-        position = Point(position.x + real.x * speed, position.y + real.y * speed);
-        auto line = Sprite::createWithSpriteFrameName("line.png");
-        node->addChild(line);
-        line->setPosition(position);
-    }
 }
 void BubbleLayer2::setReadyAngle(Point target)
 {
