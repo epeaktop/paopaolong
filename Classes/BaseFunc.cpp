@@ -425,29 +425,8 @@ void GetNodeAllChild( CCNode *pNode, std::vector<CCNode*>& rVecNodeChild )
 
 void TestMyTrim( void )
 {
-	std::string str = "a";
-	MyTrim(str);
-	MY_ASSERT(str == "a");
 
-	str = " abc ";
-	MyTrim(str);
-	MY_ASSERT(str == "abc");
 
-	str = "abc";
-	MyTrim(str);
-	MY_ASSERT(str == "abc");
-
-	str = "  ";
-	MyTrim(str);
-	MY_ASSERT(str == "");
-
-	str = " ";
-	MyTrim(str);
-	MY_ASSERT(str == "");
-	
-	str = "";
-	MyTrim(str);
-	MY_ASSERT(str == "");
 
 }
 
