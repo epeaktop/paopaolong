@@ -636,14 +636,9 @@ void BubbleLayer::findTheSameBubble(int i, int j, bool flag, BubbleType type)
     {
         waitTime += 0.05f;
         Bubble *obj = board[i][j];
-        SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-        ArmatureDataManager::getInstance()->addArmatureFileInfo("BubbleSpecial/baozha.ExportJson");
-        Armature *armature = Armature::create("baozha");
-        obj->addChild(armature);
-        armature->setPosition(R, R);
-        armature->getAnimation()->play("daojubaozha");
         obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
         {
+            addScore(obj);
             obj->removeFromParent();
         }), nullptr));
     }
@@ -787,7 +782,18 @@ void BubbleLayer::moveTheBubble(int i, int j, bool flag, float distance)
         moveTheBubble(i, j + 1, flag, distance - 5);
     }
 }
-
+void BubbleLayer::addScore(Bubble* obj)
+{
+    auto gameSceme = (GameScene *)this->getParent();
+    curDownNum_++;
+    int num = 5 << curDownNum_;
+    if(num > 10000)
+        num = 10000;
+    
+    
+    
+    gameSceme->_propLayer->AddScoreLabel(5 + num);
+}
 void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
 {
     if (sameSum < 3)
@@ -811,6 +817,7 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
     else
     {
         
+        SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
         for (int i = 0; i < MAX_ROWS; ++i)
         {
             for (int j = 0; j < MAX_COLS; ++j)
@@ -819,8 +826,6 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
                 {
                     Bubble *obj = board[i][j];
                     waitTime += 0.05f;
-                    SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-
                     ArmatureDataManager::getInstance()->addArmatureFileInfo("BubbleSpecial/baozha.ExportJson");
                     Armature *armature = Armature::create("baozha");
                     obj->addChild(armature);
@@ -828,6 +833,7 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
                     armature->getAnimation()->play("daojubaozha");
                     obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
                     {
+                        addScore(obj);
                         obj->removeFromParent();
                         setEnable();
                     }), nullptr));
@@ -860,14 +866,13 @@ void BubbleLayer::bubbleAction(Bubble *obj)
 {
     if(!obj)
         return;
-    auto gameSceme = (GameScene *)this->getParent();
-    gameSceme->_propLayer->AddScoreLabel(5);
     SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
     
     
     obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
     {
-        //obj->removeFromParent();
+        addScore(obj);
+        obj->removeFromParent();
         setEnable();
     }), NULL));
 }
@@ -1092,11 +1097,7 @@ void BubbleLayer::buttonCallback(Node* obj)
 }
 void BubbleLayer::downBubbleAction(Bubble *obj)
 {
-    auto gameSceme = (GameScene *)this->getParent();
-	curDownNum_++;
-	int num = 5 << curDownNum_;
-    gameSceme->_propLayer->AddScoreLabel(5 + num);
-
+ 
     float offY = 200.0;
     Point pos = obj->getPosition();
     obj->runAction(Sequence::create(MoveTo::create((pos.y - offY) / 600.0, Point(pos.x, offY)), CallFuncN::create(CC_CALLBACK_1(BubbleLayer::downBubbleActionCallBack, this)), NULL));
@@ -1111,6 +1112,7 @@ void BubbleLayer::downBubbleActionCallBack(Node *obj)
     bubble->addChild(particle);
     bubble->runAction(Sequence::create(DelayTime::create(0.5f), FadeOut::create(0.1f), CallFunc::create([ = ]()
     {
+        addScore(bubble);
         bubble->removeFromParentAndCleanup(true);
     }), nullptr));
 }

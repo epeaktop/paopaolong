@@ -170,7 +170,7 @@ public:
     }
     /* 获取当前移动的步数 */
     CC_SYNTHESIZE_ADD(int, _moveNumbers, MoveNumber);
-
+    void addScore(Bubble* obj);
 public:
 	Vector<Sprite*> _auxiliary;
 	void colorBubble();
