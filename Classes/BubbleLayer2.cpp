@@ -380,6 +380,12 @@ void BubbleLayer2::swapBubble()
     randomPaoPao();
     changeWaitToReady();
 }
+void BubbleLayer2::markDesign()
+{
+	
+	auto gameSceme = (GameScene *)this->getParent();
+	gameSceme->_propLayer->isDesign = true;
+}
 void BubbleLayer2::colorBubble()
 {
     ready->setType(BUBBLE_TYPE_COLOR);

@@ -96,11 +96,7 @@ public:
 	/**
 	 *	标识ui层为设计模式
 	 */
-	void markDesign()
-	{
-		auto gameSceme = (GameScene *)this->getParent();
-		gameSceme->_propLayer->isDesign = true;
-	}
+	void markDesign();
 
 public:
 	Vector<Sprite*> _auxiliary;
