@@ -12,9 +12,6 @@
 #include "HelpScene.h"
 #include "GameResult.h"
 #include "NDKHelper.h"
-
-const int BT_OK = 2401;
-
 using namespace CocosDenshion;
 using namespace cocostudio::timeline;
 using namespace std;
@@ -77,7 +74,6 @@ void BubbleLayer2::calcRetainMap()
             }
 
             int key = (int)board[i][j]->getType();
-
             if (key > 0)
             {
                 retainMap_[key] = 1;
@@ -193,7 +189,10 @@ void BubbleLayer2::onTouch(Point target)
         auto a = getRowAndColByPoint(target);
         int i = a.x;
         int j = a.y;
-
+        if(j >= MAX_COLS)
+            return;
+        if(i >=MAX_ROWS)
+            return;
         if (board[i][j] == nullptr)
         {
             board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);
@@ -203,8 +202,20 @@ void BubbleLayer2::onTouch(Point target)
         }
         else
         {
-            removeChild(board[i][j]);
-            board[i][j] = nullptr;
+            auto obj = board[i][j];
+            if(obj->getType() == (BubbleType)currentColor_)
+            {
+                removeChild(board[i][j]);
+                board[i][j] = nullptr;
+            }
+            else
+            {
+                removeChild(board[i][j]);
+                board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);
+                board[i][j]->setPosition(getPointByRowAndCol(i, j));
+                board[i][j]->setFlag((i % 2) == 0);
+                addChild(board[i][j]);
+            }
         }
         dump();
         save();
@@ -237,14 +248,7 @@ bool BubbleLayer2::isCollideBorder()
 // 碰到附近的球了就停止运动
 bool BubbleLayer2::checkCollideBorder(){ return false; }
 
-void BubbleLayer2::changeWaitToReady()
-{
-    ready = wait[0];
-    auto jumpAction = JumpTo::create(0.1f, READY_PAOPAO_POS, 30.0f, 1);
-    auto callFunc = CallFunc::create(CC_CALLBACK_0(BubbleLayer2::jumpActionCallBack, this));
-    auto seq = Sequence::create(jumpAction, callFunc, nullptr);
-    ready->runAction(seq);
-}
+void BubbleLayer2::changeWaitToReady(){}
 
 // 正在运动球停止了，摆正这个球的位置
 void BubbleLayer2::correctReadyPosition(){}
@@ -261,18 +265,7 @@ void BubbleLayer2::deleteTheSameBubble(int i, int j, bool flag){}
  */
 void BubbleLayer2::showHitNumsAnim(){}
 
-void BubbleLayer2::bubbleAction(Bubble *obj)
-{
-    auto gameSceme = (GameScene *)this->getParent();
-    gameSceme->_propLayer->AddScoreLabel(5);
-    SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-
-    obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
-    {
-        obj->removeFromParent();
-        setEnable();
-    }), NULL));
-}
+void BubbleLayer2::bubbleAction(Bubble *obj){}
 
 void BubbleLayer2::callbackRemoveBubble(cocos2d::Node *obj){}
 void BubbleLayer2::movementPassCallBack(Armature *armature, MovementEventType type, const std::string &name){}
@@ -322,10 +315,7 @@ void BubbleLayer2::resetAllPass()
     }
 }
 
-void BubbleLayer2::checkDownBubble()
-{
-}
-
+void BubbleLayer2::checkDownBubble(){}
 void BubbleLayer2::downBubble(){}
 void BubbleLayer2::buttonCallback(Node *obj)
 {
@@ -333,52 +323,24 @@ void BubbleLayer2::buttonCallback(Node *obj)
     auto t = TransitionFade::create(0.5, s);
     Director::getInstance()->replaceScene(t);
 }
-void BubbleLayer2::downBubbleAction(Bubble *obj)
-{
-    auto gameSceme = (GameScene *)this->getParent();
-    gameSceme->_propLayer->AddScoreLabel(5);
+void BubbleLayer2::downBubbleAction(Bubble *obj){}
 
-    float offY = 200.0;
-    Point pos = obj->getPosition();
-    obj->runAction(Sequence::create(MoveTo::create((pos.y - offY) / 600.0, Point(pos.x, offY)), CallFuncN::create(CC_CALLBACK_1(BubbleLayer2::downBubbleActionCallBack, this)), NULL));
-}
-
-void BubbleLayer2::downBubbleActionCallBack(Node *obj)
-{
-    auto bubble = dynamic_cast<Bubble *>(obj);
-
-    auto particle = ParticleSystemQuad::create("Particle/luoxia_lizi.plist");
-    particle->setPosition(bubble->getContentSize().width / 2, 0);
-    bubble->addChild(particle);
-    bubble->runAction(Sequence::create(DelayTime::create(0.5f), FadeOut::create(0.1f), CallFunc::create([ = ]()
-    {
-        bubble->removeFromParentAndCleanup(true);
-    }), nullptr));
-}
-void BubbleLayer2::initBubbleAction(Bubble *obj, int i, int j)
-{
+void BubbleLayer2::downBubbleActionCallBack(Node *obj){}
+void BubbleLayer2::initBubbleAction(Bubble *obj, int i, int j){
     setDisable();
     auto point = getPointByRowAndCol(i, j);
     auto start = Point(point.x, 300.0f - i * R * 2);
     obj->setPosition(start);
     auto moveTo = MoveTo::create(0.4f + j * 0.1f, point);
     obj->runAction(Sequence::create(moveTo, CallFunc::create([ = ]()
-    {
-        setEnable();
-    }), nullptr));
+                                                             {
+                                                                 setEnable();
+                                                             }), nullptr));
 }
 
-void BubbleLayer2::gameOver(bool over)
-{
-    auto gameSceme = (GameScene *)this->getParent();
-    gameSceme->gameOver(over);
-}
+void BubbleLayer2::gameOver(bool over){}
 
-void BubbleLayer2::swapBubble()
-{
-    randomPaoPao();
-    changeWaitToReady();
-}
+void BubbleLayer2::swapBubble(){}
 void BubbleLayer2::markDesign()
 {
 	PropLayer::isDesign = true;
