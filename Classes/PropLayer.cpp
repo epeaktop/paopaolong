@@ -167,7 +167,7 @@ void PropLayer::initColorBtn()
 	}
 	auto btn = initPauseButton();
 	auto menu = Menu::create(btn, nullptr);
-	for (auto i = 0; i < 7;i++)
+	for (auto i = 1; i < 8;i++)
 	{
 		auto sp = Sprite::create();
 		sp->initWithSpriteFrameName(Bubble::getStringByType((BubbleType)i));
