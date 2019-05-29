@@ -95,11 +95,9 @@ void BubbleLayer2::calcRetainMap()
             retainVec_.push_back(key);
         }
     }
-
+	markDesign();
 }
 
-// 显示连击
-void BubbleLayer2::showHits(int num){}
 
 bool BubbleLayer2::init()
 {
@@ -127,7 +125,7 @@ bool BubbleLayer2::init()
     this->setMoveNumber(0);
     moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
     moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
-    selectedBubble_ = TI()->addLabel(this, std::string("选择球的颜色"), 50.0f, 450.0f, 1000);
+    selectedBubble_ = TI()->addLabel(this, std::string("select bubble"), 50.0f, 450.0f, 1000);
     showSelectedBubble_ = TI()->addLabel(this, std::string("0"), 150.0f, 450.0f, 1000);
     if (!load())
     {

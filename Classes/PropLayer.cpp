@@ -157,6 +157,42 @@ void PropLayer::initBox()
     menu->setAnchorPoint(Vec2::ZERO);
 }
 
+
+void PropLayer::initColorBtn()
+{
+	if (!isDesign)
+	{
+		return;
+	}
+	auto btn = initPauseButton();
+	auto menu = Menu::create(btn, nullptr);
+	for (auto i = 0; i < 7;i++)
+	{
+		auto sp = Sprite::create();
+		sp->initWithSpriteFrameName(Bubble::getStringByType((BubbleType)i));
+		auto btn = MenuItemSprite::create(sp,sp);
+		btn->setTag(2000 + i);
+		btn->setCallback(CC_CALLBACK_1(PropLayer::colorBtn, this));
+		btn->setPosition(50 + i * 70, 100);
+		menu->addChild(btn);
+	}
+	addChild(menu);
+	menu->setPosition(Vec2::ZERO);
+	menu->setAnchorPoint(Vec2::ZERO);
+}
+
+void PropLayer::colorBtn(Ref * pSender)
+{
+	if (!pSender)
+	{
+		return;
+	}
+
+	auto obj = (Node*)pSender;
+	int tag = obj->getTag();
+	USER()->setDesignColor(tag - 2000);
+}
+
 bool PropLayer::init()
 {
 	if (!Layer::init())
@@ -178,8 +214,14 @@ bool PropLayer::init()
         UserData::getInstance()->setOpenBox(false);
         addMoveNumberForOpenBox(this);
     }
-
-    initBox();
+	if (!isDesign)
+	{
+		initBox();
+	}
+	else
+	{
+		initColorBtn();
+	}
     scheduleUpdate();
     
     flag = 0;

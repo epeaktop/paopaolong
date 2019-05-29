@@ -69,6 +69,15 @@ public:
 		return moveNumber_;
 	}
     bool hadFinished_ = false;
+	/**
+	 *	显示颜色按钮
+	 */
+	void initColorBtn();
+	/**
+	 *	选择具体颜色按钮回调
+	 */
+
+	void colorBtn(Ref* pSender);
 private:
     /**
      * 当前剩余步骤
@@ -81,6 +90,11 @@ private:
     int flag = 0;
     int openBoxFlag = 0;
     bool isOpenBoxInGame = false;
+public:	
+	/**
+	 *	时候处于编辑关卡模式
+	 */
+	bool isDesign = false;
 };
 
 

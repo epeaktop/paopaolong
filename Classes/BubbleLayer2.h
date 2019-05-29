@@ -76,7 +76,6 @@ public:
     void showWinAnim(Vec2& pos);
     void starCallback(Ref* obj);
     void showHitNumsAnim();
-    void showHits(int num);
     void dump();
     /*  序列化  */
     void save();
@@ -94,6 +93,15 @@ public:
     {
         return !clickSelectButton(p);
     }
+	/**
+	 *	标识ui层为设计模式
+	 */
+	void markDesign()
+	{
+		auto gameSceme = (GameScene *)this->getParent();
+		gameSceme->_propLayer->isDesign = true;
+	}
+
 public:
 	Vector<Sprite*> _auxiliary;
 	void colorBubble();

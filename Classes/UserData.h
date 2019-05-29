@@ -85,6 +85,17 @@ public:
     {
         return UserDefault::getInstance()->getStringForKey(getDesignKey(level).c_str(), "");
     }
+
+	void setDesignColor(int n)
+	{
+		UserDefault::getInstance()->setIntegerForKey("design_color", n);
+	}
+
+	int getDesignColor()
+	{
+		return UserDefault::getInstance()->getIntegerForKey("design_color", 0);
+	}
+
     
 };
 
