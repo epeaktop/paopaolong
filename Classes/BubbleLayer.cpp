@@ -790,10 +790,11 @@ void BubbleLayer::addScore(Bubble* obj)
     if(num > 10000)
         num = 10000;
     
-	auto label = Label::createWithSystemFont("+ 10", "Arial", 25);
+	auto label = Label::createWithCharMap("white_font.png", 25, 29, '0');
 	label->setPosition(obj->getPosition());
-	auto scale = ScaleTo::create(0.5, 1.3);
-	auto fadeout = FadeOut::create(0.5);
+	auto scale = ScaleTo::create(0.4, 1.1);
+	auto fadeout = FadeOut::create(0.4);
+	label->setString(TI()->itos(num));
 	label->runAction(Sequence::create(scale, fadeout, CallFunc::create([=]() {  label->removeFromParent(); }), nullptr));
 	addChild(label);
     gameSceme->_propLayer->AddScoreLabel(5 + num);
