@@ -102,6 +102,7 @@ bool BubbleLayer::init()
     {
         return false;
     }
+    PropLayer::isDesign = false;
     _level = UserData::getInstance()->getSelLevel();
     
     UserData::getInstance()->setScore(0);
