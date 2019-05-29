@@ -791,8 +791,8 @@ void BubbleLayer::addScore(Bubble* obj)
         num = 10000;
     
 	auto label = Label::createWithSystemFont("+ 10", "Arial", 25);
-	obj->addChild(label);
-	label->setPosition(R, R);
+	//obj->addChild(label);
+	label->setPosition(obj->getPosition());
 	auto fadeout = FadeOut::create(1);
 	label->runAction(Sequence::create(fadeout, nullptr));
     
