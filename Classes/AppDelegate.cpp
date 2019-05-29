@@ -35,8 +35,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	director->getOpenGLView()->setFrameZoomFactor(0.5f);
     director->setDisplayStats(false);
-
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    director->setAnimationInterval(1.0 / 15);
+#else
     director->setAnimationInterval(1.0 / 60);
+#endif
     FileUtils::getInstance()->addSearchPath("res");
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("Music/bgm.mp3");
 	SimpleAudioEngine::getInstance()->preloadEffect("Music/Ending.mp3");
