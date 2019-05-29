@@ -795,7 +795,7 @@ void BubbleLayer::addScore(Bubble* obj)
 	label->setPosition(obj->getPosition());
 	auto fadeout = FadeOut::create(1);
 	label->runAction(Sequence::create(fadeout, nullptr));
-    
+	addChild(label);
     gameSceme->_propLayer->AddScoreLabel(5 + num);
 }
 void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
