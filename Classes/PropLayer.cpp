@@ -48,6 +48,10 @@ void PropLayer::initMoveNumbers()
     addChild(label);
     label->setTag(MOVE_TAG);
     label->setPosition(270, 140);
+    if(isDesign)
+    {
+        label->setVisible(false);
+    }
 }
 
 void PropLayer::showMoveNumbers()
@@ -81,6 +85,10 @@ void PropLayer::initScoreLabel()
 }
 void PropLayer::initChangeBubbleSprite()
 {
+    if (isDesign)
+    {
+        return;
+    }
     auto sp = Sprite::create("res/change.png");
     
     sp->setTag(CHANGE_TAG);
@@ -174,12 +182,13 @@ void PropLayer::initColorBtn()
 		auto btn = MenuItemSprite::create(sp,sp);
 		btn->setTag(2000 + i);
 		btn->setCallback(CC_CALLBACK_1(PropLayer::colorBtn, this));
-		btn->setPosition(50 + i * 70, 100);
+		btn->setPosition(50 + (i-1) * 70, 100);
 		menu->addChild(btn);
 	}
 	addChild(menu);
 	menu->setPosition(Vec2::ZERO);
 	menu->setAnchorPoint(Vec2::ZERO);
+    menu->setTag(MENU_TAG);
 }
 
 void PropLayer::colorBtn(Ref * pSender)
@@ -188,9 +197,20 @@ void PropLayer::colorBtn(Ref * pSender)
 	{
 		return;
 	}
-
+    auto menu = getChildByTag(MENU_TAG);
+    for(int i = 2001; i < 2008; i++)
+    {
+        auto obj = menu->getChildByTag(i);
+        if(obj)
+        {
+            obj->setScale(1.0f);
+        }
+    }
+    
 	auto obj = (Node*)pSender;
+    obj->setScale(1.2);
 	int tag = obj->getTag();
+    log("====> %d", tag);
 	USER()->setDesignColor(tag - 2000);
 }
 

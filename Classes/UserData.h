@@ -93,7 +93,7 @@ public:
 
 	int getDesignColor()
 	{
-		return UserDefault::getInstance()->getIntegerForKey("design_color", 0);
+		return UserDefault::getInstance()->getIntegerForKey("design_color", 1);
 	}
 
     

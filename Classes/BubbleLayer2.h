@@ -119,14 +119,6 @@ public:
     Label *moveNumberLabel_ = nullptr;
     Label *moveLabel_ = nullptr;
     /**
-     * 当前选择球的颜色
-     */
-    Label *selectedBubble_ = nullptr;
-    /**
-     * 显示当前选择球的颜色
-     */
-    Label *showSelectedBubble_ = nullptr;
-    /**
      * 当前选择颜色的值
      */
      int currentColor_ = 1;

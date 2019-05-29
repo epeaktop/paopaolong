@@ -124,18 +124,18 @@ bool BubbleLayer2::init()
     this->setMoveNumber(0);
     moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
     moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
-    selectedBubble_ = TI()->addLabel(this, std::string("select bubble"), 50.0f, 450.0f, 1000);
-    showSelectedBubble_ = TI()->addLabel(this, std::string("0"), 150.0f, 450.0f, 1000);
     if (!load())
     {
         initTheBoard(USER()->getSelLevel());
     }
+    this->scheduleUpdate();
     return true;
 }
 
 Bubble *BubbleLayer2::randomPaoPao(int flag)
 {
     Bubble *pRet = NULL;
+    currentColor_ = USER()->getDesignColor();
     BubbleType type = (BubbleType)currentColor_;
     if(flag == 1)
     {
@@ -218,7 +218,10 @@ void BubbleLayer2::setDisable()
 {
     _listener->setEnabled(false);
 }
-void BubbleLayer2::update(float fDelta){}
+void BubbleLayer2::update(float fDelta)
+{
+    randomPaoPao();
+}
 // 是否碰撞了边界
 bool BubbleLayer2::isCollideBorder()
 {
@@ -370,12 +373,6 @@ void BubbleLayer2::gameOver(bool over)
 
 void BubbleLayer2::swapBubble()
 {
-    if (currentColor_++ > 6)
-    {
-        currentColor_ = 1;
-    }
-
-    showSelectedBubble_->setString(TI()->itos(currentColor_));
     randomPaoPao();
     changeWaitToReady();
 }
