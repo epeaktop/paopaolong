@@ -74,6 +74,10 @@ void PropLayer::initShooter()
     addChild(sp);
     sp->setPosition(270, 220);
     sp->setTag(SHOOTER_TAG);
+    if(isDesign)
+    {
+        sp->setVisible(false);
+    }
 }
 
 void PropLayer::initScoreLabel()
@@ -183,6 +187,16 @@ void PropLayer::initColorBtn()
 		btn->setTag(2000 + i);
 		btn->setCallback(CC_CALLBACK_1(PropLayer::colorBtn, this));
 		btn->setPosition(50 + (i-1) * 70, 100);
+        if(USER()->getDesignColor() == i)
+        {
+            btn->setScale(1.2);
+            
+        }
+        else
+        {
+            btn->setScale(0.8);
+        }
+        
 		menu->addChild(btn);
 	}
 	addChild(menu);
@@ -203,7 +217,7 @@ void PropLayer::colorBtn(Ref * pSender)
         auto obj = menu->getChildByTag(i);
         if(obj)
         {
-            obj->setScale(1.0f);
+            obj->setScale(0.8f);
         }
     }
     

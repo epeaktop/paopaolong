@@ -173,6 +173,7 @@ void BubbleLayer2::initWaitPaoPao()
         Bubble *obj = randomPaoPao();
         obj->setPosition(WAIT_PAOPAO_POS);
         wait[i] = obj;
+        obj->setVisible(false);
         this->addChild(obj);
     }
 }
@@ -180,7 +181,9 @@ void BubbleLayer2::initReadyPaoPao()
 {
     ready = randomPaoPao();
     ready->setPosition(READY_PAOPAO_POS);
+    ready->setVisible(false);
     this->addChild(ready);
+    
 }
 
 void BubbleLayer2::onTouch(Point target)
