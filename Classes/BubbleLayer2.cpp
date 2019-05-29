@@ -95,7 +95,6 @@ void BubbleLayer2::calcRetainMap()
             retainVec_.push_back(key);
         }
     }
-	markDesign();
 }
 
 
@@ -105,7 +104,7 @@ bool BubbleLayer2::init()
     {
         return false;
     }
-
+	markDesign();
     _level = UserData::getInstance()->getSelLevel();
 
     UserData::getInstance()->setScore(0);
@@ -382,9 +381,7 @@ void BubbleLayer2::swapBubble()
 }
 void BubbleLayer2::markDesign()
 {
-	
-	auto gameSceme = (GameScene *)this->getParent();
-	gameSceme->_propLayer->isDesign = true;
+	PropLayer::isDesign = true;
 }
 void BubbleLayer2::colorBubble()
 {

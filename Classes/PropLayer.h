@@ -94,7 +94,7 @@ public:
 	/**
 	 *	时候处于编辑关卡模式
 	 */
-	bool isDesign = false;
+	static bool isDesign;
 };
 
 

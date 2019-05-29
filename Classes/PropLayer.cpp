@@ -16,6 +16,7 @@
 using namespace CocosDenshion;
 using namespace cocostudio::timeline;
 using namespace cocostudio;
+bool PropLayer::isDesign = false;
 
 enum NodeTag
 {
