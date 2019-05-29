@@ -64,6 +64,10 @@ public:
     {
         moveNumber_ += n;
     }
+	int getMoveNumber()
+	{
+		return moveNumber_;
+	}
     bool hadFinished_ = false;
 private:
     /**

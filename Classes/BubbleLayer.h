@@ -194,6 +194,11 @@ public:
     int curFindCol = 0;
     int curFindRow = 0;
     int updateTimes = 0;
+    /**
+     *	当前击落的泡泡数
+     */
+	int curDownNum_ = 1;
+
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */

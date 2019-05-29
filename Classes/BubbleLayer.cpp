@@ -7,7 +7,12 @@
 #include "HelpScene.h"
 #include "GameResult.h"
 #include "NDKHelper.h"
-
+struct PosData
+{
+	int x;
+	int y;
+	Vec2 pos;
+};
 const int BT_OK = 2401;
 
 using namespace CocosDenshion;
@@ -35,7 +40,11 @@ static int sameSum = 0;
  打开游戏出现logo，然后出现进度条
  界面切换时候出现新手引导
 */
-
+void debugLog(Bubble* obj, int index, int i, int j)
+{
+	if (obj && i < MAX_ROWS && j < MAX_COLS && i >= 0 && j >= 0)
+		log("item%d not nullpte, %d,%d,(%f,%f)", index, i, j, obj->getPosition().x, obj->getPosition().y);
+}
 Scene *BubbleLayer::scene()
 {
     Scene *scene = Scene::create();
@@ -368,18 +377,9 @@ void BubbleLayer::changeWaitToReady()
     auto seq = Sequence::create(jumpAction, callFunc, nullptr);
     ready->runAction(seq);
 }
-struct PosData
-{
-    int x;
-    int y;
-    Vec2 pos;
-};
 
-void debugLog(Bubble* obj, int index, int i ,int j)
-{
-    if (obj && i < MAX_ROWS && j < MAX_COLS && i >= 0 && j >=0)
-        log("item%d not nullpte, %d,%d,(%f,%f)", index, i, j,obj->getPosition().x, obj->getPosition().y);
-}
+
+
 // 正在运动球停止了，摆正这个球的位置
 void BubbleLayer::correctReadyPosition()
 {
@@ -1050,10 +1050,9 @@ void BubbleLayer::downBubble()
     // 游戏开始的地方
     if (!isGameOver() || _havePass)
         return;
-    if(UserData::getInstance()->getLevel() > 4)
-    {
-        callJava("showAds","");
-    }
+ 
+    callJava("showAds","");
+    
     _havePass = true;
     setDisable();
     auto gameScene = (GameScene *)this->getParent();
@@ -1061,7 +1060,7 @@ void BubbleLayer::downBubble()
 
     auto cur_level = UserData::getInstance()->getSelLevel();
     auto score = UserData::getInstance()->getScore();
-    int last_time = gameScene->_propLayer->getTime();
+    int last_time = gameScene->_propLayer->getMoveNumber();
 
     score += last_time * 100;
 
@@ -1094,7 +1093,9 @@ void BubbleLayer::buttonCallback(Node* obj)
 void BubbleLayer::downBubbleAction(Bubble *obj)
 {
     auto gameSceme = (GameScene *)this->getParent();
-    gameSceme->_propLayer->AddScoreLabel(5);
+	curDownNum_++;
+	int num = 5 << curDownNum_;
+    gameSceme->_propLayer->AddScoreLabel(5 + num);
 
     float offY = 200.0;
     Point pos = obj->getPosition();
@@ -1227,7 +1228,8 @@ bool BubbleLayer::isGameOver()
 
 bool BubbleLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
-    return true;
+	curDownNum_ = 0;
+	return true;
 }
 
 
