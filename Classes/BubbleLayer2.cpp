@@ -15,8 +15,6 @@
 using namespace CocosDenshion;
 using namespace cocostudio::timeline;
 using namespace std;
-
-static float waitTime = 0.1f;
 static int sameSum = 0;
 
 Scene *BubbleLayer2::scene()
@@ -29,16 +27,18 @@ Scene *BubbleLayer2::scene()
 void BubbleLayer2::dump()
 {
     log("-------------------------------------");
+
     for (int i = 0; i < MAX_ROWS; ++i)
     {
         string str = "";
+
         for (int j = 0; j < MAX_COLS; ++j)
         {
-            if(j==0)
+            if (j == 0)
             {
                 str += "{";
             }
-            
+
             if (!board[i][j])
             {
                 str += "0";
@@ -48,15 +48,18 @@ void BubbleLayer2::dump()
                 int num = (int)board[i][j]->getType();
                 str += TI()->itos(num);
             }
-            if(j < MAX_COLS -1)
+
+            if (j < MAX_COLS - 1)
             {
                 str += ",";
             }
-            if(j==MAX_COLS-1)
+
+            if (j == MAX_COLS - 1)
             {
-                str +="},";
+                str += "},";
             }
         }
+
         log(str.c_str());
     }
 }
@@ -74,6 +77,7 @@ void BubbleLayer2::calcRetainMap()
             }
 
             int key = (int)board[i][j]->getType();
+
             if (key > 0)
             {
                 retainMap_[key] = 1;
@@ -86,6 +90,7 @@ void BubbleLayer2::calcRetainMap()
     for (auto iter = retainMap_.begin(); iter != retainMap_.end(); ++iter)
     {
         int key = iter->first;
+
         if (key > 0)
         {
             retainVec_.push_back(key);
@@ -100,7 +105,8 @@ bool BubbleLayer2::init()
     {
         return false;
     }
-	markDesign();
+
+    markDesign();
     _level = UserData::getInstance()->getSelLevel();
 
     UserData::getInstance()->setScore(0);
@@ -120,10 +126,12 @@ bool BubbleLayer2::init()
     this->setMoveNumber(0);
     moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
     moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
+
     if (!load())
     {
         initTheBoard(USER()->getSelLevel());
     }
+
     this->scheduleUpdate();
     return true;
 }
@@ -133,11 +141,12 @@ Bubble *BubbleLayer2::randomPaoPao(int flag)
     Bubble *pRet = NULL;
     currentColor_ = USER()->getDesignColor();
     BubbleType type = (BubbleType)currentColor_;
-    if(flag == 1)
+
+    if (flag == 1)
     {
         type = static_cast<BubbleType>(rand() % BUBBLE_COUNT + 1);
     }
-    
+
     pRet = Bubble::initWithType(type);
     ready = pRet;
     return pRet;
@@ -179,7 +188,7 @@ void BubbleLayer2::initReadyPaoPao()
     ready->setPosition(READY_PAOPAO_POS);
     ready->setVisible(false);
     this->addChild(ready);
-    
+
 }
 
 void BubbleLayer2::onTouch(Point target)
@@ -189,21 +198,33 @@ void BubbleLayer2::onTouch(Point target)
         auto a = getRowAndColByPoint(target);
         int i = a.x;
         int j = a.y;
-        if(j >= MAX_COLS)
+
+        if (j >= MAX_COLS)
+        {
             return;
-        if(i >=MAX_ROWS)
+        }
+
+        if (i >= MAX_ROWS)
+        {
             return;
+        }
+
         if (board[i][j] == nullptr)
         {
-            board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);
-            board[i][j]->setPosition(getPointByRowAndCol(i, j));
-            board[i][j]->setFlag((i % 2) == 0);
-            addChild(board[i][j]);
+            if ((BubbleType)currentColor_  != 8)
+            {
+
+                board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);
+                board[i][j]->setPosition(getPointByRowAndCol(i, j));
+                board[i][j]->setFlag((i % 2) == 0);
+                addChild(board[i][j]);
+            }
         }
         else
         {
             auto obj = board[i][j];
-            if(obj->getType() == (BubbleType)currentColor_)
+
+            if (obj->getType() == (BubbleType)currentColor_ || (BubbleType)currentColor_  == 8)
             {
                 removeChild(board[i][j]);
                 board[i][j] = nullptr;
@@ -217,6 +238,7 @@ void BubbleLayer2::onTouch(Point target)
                 addChild(board[i][j]);
             }
         }
+
         dump();
         save();
     }
@@ -246,29 +268,38 @@ bool BubbleLayer2::isCollideBorder()
 
 // 检查是否碰撞到附近的球，在update中如果碰不到附近的球，球就一直运动
 // 碰到附近的球了就停止运动
-bool BubbleLayer2::checkCollideBorder(){ return false; }
+bool BubbleLayer2::checkCollideBorder()
+{
+    return false;
+}
 
-void BubbleLayer2::changeWaitToReady(){}
+void BubbleLayer2::changeWaitToReady() {}
 
 // 正在运动球停止了，摆正这个球的位置
-void BubbleLayer2::correctReadyPosition(){}
+void BubbleLayer2::correctReadyPosition() {}
 // 摆正位置后，才会真正消除掉球
-void BubbleLayer2::readyAction(){}
-bool BubbleLayer2::getFirstRowFlag() { return true; }
-bool BubbleLayer2::isCircleCollision(Point pos1, float radius1, Point pos2, float radius2){ return true; }
-void BubbleLayer2::findTheSameBubble(int i, int j, bool flag, BubbleType type){}
-void BubbleLayer2::bubbleBlast(int i, int j, bool flag){}
-void BubbleLayer2::moveTheBubble(int i, int j, bool flag, float distance){}
-void BubbleLayer2::deleteTheSameBubble(int i, int j, bool flag){}
+void BubbleLayer2::readyAction() {}
+bool BubbleLayer2::getFirstRowFlag()
+{
+    return true;
+}
+bool BubbleLayer2::isCircleCollision(Point pos1, float radius1, Point pos2, float radius2)
+{
+    return true;
+}
+void BubbleLayer2::findTheSameBubble(int i, int j, bool flag, BubbleType type) {}
+void BubbleLayer2::bubbleBlast(int i, int j, bool flag) {}
+void BubbleLayer2::moveTheBubble(int i, int j, bool flag, float distance) {}
+void BubbleLayer2::deleteTheSameBubble(int i, int j, bool flag) {}
 /**
  * 显示连击动画
  */
-void BubbleLayer2::showHitNumsAnim(){}
+void BubbleLayer2::showHitNumsAnim() {}
 
-void BubbleLayer2::bubbleAction(Bubble *obj){}
+void BubbleLayer2::bubbleAction(Bubble *obj) {}
 
-void BubbleLayer2::callbackRemoveBubble(cocos2d::Node *obj){}
-void BubbleLayer2::movementPassCallBack(Armature *armature, MovementEventType type, const std::string &name){}
+void BubbleLayer2::callbackRemoveBubble(cocos2d::Node *obj) {}
+void BubbleLayer2::movementPassCallBack(Armature *armature, MovementEventType type, const std::string &name) {}
 void BubbleLayer2::moveParantCallBack(Armature *armature, MovementEventType type, const std::string &name)
 {
     if (type == COMPLETE)
@@ -315,35 +346,36 @@ void BubbleLayer2::resetAllPass()
     }
 }
 
-void BubbleLayer2::checkDownBubble(){}
-void BubbleLayer2::downBubble(){}
+void BubbleLayer2::checkDownBubble() {}
+void BubbleLayer2::downBubble() {}
 void BubbleLayer2::buttonCallback(Node *obj)
 {
     auto s = HelpScene::scene();
     auto t = TransitionFade::create(0.5, s);
     Director::getInstance()->replaceScene(t);
 }
-void BubbleLayer2::downBubbleAction(Bubble *obj){}
+void BubbleLayer2::downBubbleAction(Bubble *obj) {}
 
-void BubbleLayer2::downBubbleActionCallBack(Node *obj){}
-void BubbleLayer2::initBubbleAction(Bubble *obj, int i, int j){
+void BubbleLayer2::downBubbleActionCallBack(Node *obj) {}
+void BubbleLayer2::initBubbleAction(Bubble *obj, int i, int j)
+{
     setDisable();
     auto point = getPointByRowAndCol(i, j);
     auto start = Point(point.x, 300.0f - i * R * 2);
     obj->setPosition(start);
     auto moveTo = MoveTo::create(0.4f + j * 0.1f, point);
     obj->runAction(Sequence::create(moveTo, CallFunc::create([ = ]()
-                                                             {
-                                                                 setEnable();
-                                                             }), nullptr));
+    {
+        setEnable();
+    }), nullptr));
 }
 
-void BubbleLayer2::gameOver(bool over){}
+void BubbleLayer2::gameOver(bool over) {}
 
-void BubbleLayer2::swapBubble(){}
+void BubbleLayer2::swapBubble() {}
 void BubbleLayer2::markDesign()
 {
-	PropLayer::isDesign = true;
+    PropLayer::isDesign = true;
 }
 void BubbleLayer2::colorBubble()
 {
@@ -379,11 +411,17 @@ void BubbleLayer2::throwBallAction()
     propArmature->setVisible(false);
 }
 
-bool BubbleLayer2::isPass(){ return false; }
-bool BubbleLayer2::onTouchBegan(Touch *touch, Event *unused_event){ return true; }
-void BubbleLayer2::showWinAnim(Vec2 &pos){}
-void BubbleLayer2::starCallback(Ref *obj){}
-void BubbleLayer2::onTouchMoved(Touch *touch, Event *unused_event){}
+bool BubbleLayer2::isPass()
+{
+    return false;
+}
+bool BubbleLayer2::onTouchBegan(Touch *touch, Event *unused_event)
+{
+    return true;
+}
+void BubbleLayer2::showWinAnim(Vec2 &pos) {}
+void BubbleLayer2::starCallback(Ref *obj) {}
+void BubbleLayer2::onTouchMoved(Touch *touch, Event *unused_event) {}
 void BubbleLayer2::onTouchEnded(Touch *touch, Event *unused_event)
 {
     auto gameScene = (GameScene *)this->getParent();
@@ -413,16 +451,17 @@ void BubbleLayer2::onTouchEnded(Touch *touch, Event *unused_event)
 bool BubbleLayer2::initTheBoard(int level)
 {
     bool bRet = false;
-    
+
     for (int i = 0; i < MAX_ROWS; ++i)
     {
         for (int j = 0; j < MAX_COLS; ++j)
         {
             board[i][j] = NULL;
         }
+
         bRet = true;
     }
-    
+
     for (int i = 0; i < MAX_ROWS; i++)
     {
         for (int j = 0; j < MAX_COLS; ++j)
@@ -431,7 +470,7 @@ bool BubbleLayer2::initTheBoard(int level)
             {
                 continue;
             }
-            
+
             if (customs[level][i][j] == -1)
             {
                 board[i][j] = randomPaoPao(1);
@@ -440,15 +479,16 @@ bool BubbleLayer2::initTheBoard(int level)
             {
                 board[i][j] = Bubble::initWithType((BubbleType)customs[level][i][j]);
             }
+
             board[i][j]->setFlag((i % 2) == 0);
-            
-            board[i][j]->setString(i,j);
-            
+
+            board[i][j]->setString(i, j);
+
             addChild(board[i][j]);
             initBubbleAction(board[i][j], i, j);
         }
     }
-    
+
     return bRet;
 }
 // 序列化，把每个关卡的设计都存下来，在手机上怎么方便的转存到电脑上？
@@ -456,54 +496,60 @@ bool BubbleLayer2::initTheBoard(int level)
 void BubbleLayer2::save()
 {
     stringstream saveStr;
+
     for (int i = 0; i < MAX_ROWS; i++)
     {
         for (int j = 0; j < MAX_COLS; ++j)
         {
-            if( !board[i][j])
+            if (!board[i][j])
             {
                 saveStr << "0,";
                 continue;
             }
+
             saveStr << board[i][j]->getType() << ",";
         }
     }
-    USER()->setDesign(USER()->getSelLevel(),saveStr.str());
+
+    USER()->setDesign(USER()->getSelLevel(), saveStr.str());
 }
 
 bool BubbleLayer2::load()
 {
     string s = USER()->getDesign(USER()->getSelLevel());
-    if(s == "")
+
+    if (s == "")
     {
         return false;
     }
-    
+
     vector<string> items = TI()->split(s, ',');
     int index = 0;
+
     for (int i = 0; i < MAX_ROWS; i++)
     {
         for (int j = 0; j < MAX_COLS; ++j)
         {
-            if(index >= items.size())
+            if (index >= items.size())
             {
                 break;
             }
+
             auto type = TI()->stoi(items[index]);
-            if(type > 0)
+
+            if (type > 0)
             {
                 auto sp =  Bubble::initWithType((BubbleType)type);
                 board[i][j] = sp;
                 addChild(sp);
                 board[i][j]->setFlag((i % 2) == 0);
-                
-                board[i][j]->setString(i,j);
-                
-                
+                board[i][j]->setString(i, j);
                 initBubbleAction(board[i][j], i, j);
             }
+
             index ++ ;
         }
     }
+
     return true;
 }

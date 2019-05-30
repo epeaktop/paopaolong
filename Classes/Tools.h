@@ -133,11 +133,40 @@ public:
     	_ss << s;
     	return _ss.str();
 	}
+    
 
     Label* addLabel(cocos2d::Node *obj, std::string name, float x, float y, int order);
     void showNumber(cocos2d::Label* label, int num, const char* name);
     
     int getMoveNumbers(int level);
+    
+    //精灵着色器(sp为需要描边的对象,color描边颜色,width描边的宽度)
+    void shaderSprite(Node* sp, Color4B color, float width)
+    {
+        //上边
+        auto up = LayerColor::create(color, sp->getContentSize().width + 2 * width, width);
+        up->setPosition(Vec2(-width,sp->getContentSize().height));
+        //下边
+        auto down = LayerColor::create(color, sp->getContentSize().width + 2 * width, width);
+        down->setPosition(Vec2(-width,-width));
+        //右边
+        auto right = LayerColor::create(color, width, sp->getContentSize().height);
+        right->setPosition(Vec2(sp->getContentSize().width,0));
+        //左边
+        auto left = LayerColor::create(color, width, sp->getContentSize().height);
+        left->setPosition(Vec2(- width,0));
+        //加载到sp上
+        sp->addChild(up);
+        sp->addChild(down);
+        sp->addChild(right);
+        sp->addChild(left);
+    }
+    void unShaderSprite(Node* sp)
+    {
+        sp->removeAllChildren();
+    }
+    
+
 private:
     static Tools* instance_;
         

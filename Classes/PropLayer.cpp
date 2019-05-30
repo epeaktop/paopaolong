@@ -199,6 +199,23 @@ void PropLayer::initColorBtn()
         
 		menu->addChild(btn);
 	}
+    auto sp = Sprite::create("res/dig.png");
+    auto digBtn = MenuItemSprite::create(sp, sp);
+    digBtn->setTag(2000+8);
+    digBtn->setCallback(CC_CALLBACK_1(PropLayer::colorBtn, this));
+    if(USER()->getDesignColor() == 8)
+    {
+        digBtn->setScale(1.2);
+        
+    }
+    else
+    {
+        digBtn->setScale(0.8);
+    }
+    digBtn->setPosition(50, 200);
+    menu->addChild(digBtn);
+    
+    
 	addChild(menu);
 	menu->setPosition(Vec2::ZERO);
 	menu->setAnchorPoint(Vec2::ZERO);
@@ -212,17 +229,23 @@ void PropLayer::colorBtn(Ref * pSender)
 		return;
 	}
     auto menu = getChildByTag(MENU_TAG);
-    for(int i = 2001; i < 2008; i++)
+    for(int i = 2001; i <= 2008; i++)
     {
         auto obj = menu->getChildByTag(i);
         if(obj)
         {
             obj->setScale(0.8f);
+            //TI()->unShaderSprite(obj);
+            obj->setColor(Color3B(255,255,255));
         }
     }
     
 	auto obj = (Node*)pSender;
     obj->setScale(1.2);
+    if(obj->getTag()==2008){
+        obj->setColor(Color3B::RED);
+    }
+    
 	int tag = obj->getTag();
     log("====> %d", tag);
 	USER()->setDesignColor(tag - 2000);
