@@ -47,7 +47,9 @@ bool GameResult::init()
         menu->setPosition(Vec2::ZERO);
         
         setMenuButton(menu);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 		addChild(menu, 100);
+#endif
 		auto a = MenuItemImage::create("button_close.png", "button_close.png");
     	a->setCallback(CC_CALLBACK_1(GameResult::buttonCallback,this));
         

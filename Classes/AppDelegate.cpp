@@ -26,10 +26,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	glview = cocos2d::GLViewImpl::createWithRect("xiaoxiao", Rect(0, 0, 540, 960));
 	director->setOpenGLView(glview);
+#endif
     glview->setDesignResolutionSize(540 , 960, ResolutionPolicy::SHOW_ALL);
-
 	//director->getOpenGLView()->setFrameZoomFactor(0.5f);
     director->setDisplayStats(false);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)

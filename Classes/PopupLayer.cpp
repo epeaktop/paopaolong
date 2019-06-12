@@ -43,9 +43,10 @@ bool PopupLayer::init()
         // 初始化需要的 Menu
         Menu* menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
-        //menu->setAnchorPoint(Vec2::ZERO);
         setMenuButton(menu);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 		addChild(menu, 100);
+#endif
         auto a = MenuItemImage::create("button_close.png", "button_close.png");
     	a->setCallback(CC_CALLBACK_1(PopupLayer::buttonCallback,this));
         
