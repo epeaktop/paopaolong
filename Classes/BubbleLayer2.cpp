@@ -258,7 +258,6 @@ void BubbleLayer2::update(float fDelta)
 {
     randomPaoPao();
 }
-// 是否碰撞了边界
 bool BubbleLayer2::isCollideBorder()
 {
     Size size = Director::getInstance()->getWinSize();

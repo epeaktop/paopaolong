@@ -39,7 +39,6 @@ private:
 
     void buttonCallback(Ref* pSender);
 
-    // 文字内容两边的空白区
     int m_contentPadding;
     int m_contentPaddingTop;
 

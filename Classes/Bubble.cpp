@@ -5,7 +5,7 @@
 
 using namespace cocostudio;
 
-Bubble::Bubble()//构造函数初始化
+Bubble::Bubble()
 {
 	_flag = false;
 	_type = BUBBLE_TYPE_UNKNOW;
@@ -20,7 +20,7 @@ Bubble::~Bubble()
 
 }
 
-Bubble * Bubble::initWithType(BubbleType type, int flag) //根据传过来的类型来生成泡泡
+Bubble * Bubble::initWithType(BubbleType type, int flag)
 {
 	Bubble *pRet = Bubble::create();
 	pRet->setType(type);
@@ -42,7 +42,7 @@ Bubble * Bubble::initWithType(BubbleType type, int flag) //根据传过来的类
 
 
 
-std::string Bubble::getStringByType(BubbleType type) //不同类型获取不同的图片资源
+std::string Bubble::getStringByType(BubbleType type) 
 {
 	std::string pRet;
 	switch (type) {

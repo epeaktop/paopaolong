@@ -45,9 +45,10 @@ bool GameResult::init()
         // 初始化需要的 Menu
         Menu* menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
-        menu->setAnchorPoint(Vec2::ZERO);
+        
         setMenuButton(menu);
-        auto a = MenuItemImage::create("button_close.png", "button_close.png");
+		addChild(menu, 100);
+		auto a = MenuItemImage::create("button_close.png", "button_close.png");
     	a->setCallback(CC_CALLBACK_1(GameResult::buttonCallback,this));
         
         auto b = MenuItemImage::create("box1.png", "box1.png");
@@ -261,8 +262,7 @@ bool GameResult::addButton(const char *normalImage, const char *selectedImage, c
     menuImage->setTag(tag);
     menuImage->setPosition(pCenter);
 
-    // 添加文字说明并设置位置
-    Size imenu = menuImage->getContentSize();
+    auto imenu = menuImage->getContentSize();
     auto ttf = Label::createWithSystemFont(title, "Arial", 20);
     ttf->setColor(Color3B(0, 0, 0));
     ttf->setPosition(Vec2(imenu.width / 2, imenu.height / 2));

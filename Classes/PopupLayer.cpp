@@ -43,8 +43,9 @@ bool PopupLayer::init()
         // 初始化需要的 Menu
         Menu* menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
-        menu->setAnchorPoint(Vec2::ZERO);
+        //menu->setAnchorPoint(Vec2::ZERO);
         setMenuButton(menu);
+		addChild(menu, 100);
         auto a = MenuItemImage::create("button_close.png", "button_close.png");
     	a->setCallback(CC_CALLBACK_1(PopupLayer::buttonCallback,this));
         
@@ -137,7 +138,7 @@ bool PopupLayer::addButton(const char *normalImage, const char *selectedImage, c
     menuImage->setTag(tag);
     menuImage->setPosition(pCenter);
 
-    // 添加文字说明并设置位置
+    
     Size imenu = menuImage->getContentSize();
     auto ttf = Label::createWithSystemFont(title, "Arial", 20);
     ttf->setColor(Color3B(0, 0, 0));

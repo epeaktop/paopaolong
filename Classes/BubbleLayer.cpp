@@ -22,24 +22,6 @@ using namespace std;
 static float waitTime = 0.1f;
 static int sameSum = 0;
 
-/*
- 进入设计模式（实验室）
- google视频广告
- facebook接入
- 更多的展示广告
- 增加些道具
-   *【钢球】按照一条直线碰到全部消失
- 领取每日奖励（Daily Rewards）
- 花金币就可以增加游戏的时间并且弹出广告
- 没有金币看奖励广告就可以得到金币
- Fun and Simple time killer no complicated nonsense… Litterally shoot bubbles! Perfect
- 画上切换球的图标
- 透明泡泡,碰撞后透明泡泡会消失
- 将三消游戏上传上来
- 给ads账号充值
- 打开游戏出现logo，然后出现进度条
- 界面切换时候出现新手引导
-*/
 void debugLog(Bubble* obj, int index, int i, int j)
 {
 	if (obj && i < MAX_ROWS && j < MAX_COLS && i >= 0 && j >= 0)
@@ -273,7 +255,6 @@ void BubbleLayer::update(float fDelta)
     
     if (isCollideBorder())
     {
-        log("[撞到边缘]%f", real.x);
         real.x = -real.x;
     }
 
@@ -296,7 +277,6 @@ void BubbleLayer::update(float fDelta)
         return;
     }
 }
-// 是否碰撞了边界
 bool BubbleLayer::isCollideBorder()
 {
     bool bRet = false;
@@ -381,7 +361,6 @@ void BubbleLayer::changeWaitToReady()
 
 
 
-// 正在运动球停止了，摆正这个球的位置
 void BubbleLayer::correctReadyPosition()
 {
     int row = -1, col = -1;
@@ -977,12 +956,12 @@ void BubbleLayer::checkDownBubble()
 
     for (int i = 0; i < MAX_ROWS; ++i)
     {
-        // 当第一次的时候横着只关心右边，第二次的时候横着只关心左边剩下关心与自己相关的下面两个
+        
         for (int j = 0; j < MAX_COLS; ++j)
         {
-            if (board[i][j] && board[i][j]->getIsPass()) // 第一排已经设置为true，否则这里进入不了
+            if (board[i][j] && board[i][j]->getIsPass())
             {
-                if (j < MAX_COLS - 1 && board[i][j + 1]) // 同一排右边直接设为true
+                if (j < MAX_COLS - 1 && board[i][j + 1])
                 {
                     board[i][j + 1]->setIsPass(true);
                 }
@@ -990,7 +969,7 @@ void BubbleLayer::checkDownBubble()
                 {
                     if (board[i][j]->getFlag() && j > 0 && board[i + 1][j - 1])
                     {
-                        board[i + 1][j - 1]->setIsPass(true); // 有标记的，右侧移动了一点，第二排左边设为TRUE
+                        board[i + 1][j - 1]->setIsPass(true); 
                     }
                     else if (!(board[i][j]->getFlag()) && board[i + 1][j])
                     {

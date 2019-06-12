@@ -174,7 +174,7 @@ std::string UTF8ToAnsi(const std::string &strIn)
 
 #ifdef  WIN32
 	WCHAR *strSrc = NULL;
-	TCHAR *szRes = NULL;
+	char* szRes = NULL;
 	int i = MultiByteToWideChar(CP_UTF8, 0, strIn.c_str(), -1, NULL, 0);
 
 	strSrc = new WCHAR[i + 1];
@@ -182,7 +182,7 @@ std::string UTF8ToAnsi(const std::string &strIn)
 
 	i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);
 
-	szRes = new TCHAR[i + 1];
+	szRes = new char[i + 1];
 	WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);
 
 	strOut = szRes;

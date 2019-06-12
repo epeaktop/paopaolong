@@ -155,7 +155,7 @@ bool HelpScene::init()
     y_max = size.height*10;
     this->setTouchEnabled(true);
     enableMove = false;
-    schedule(schedule_selector(HelpScene::undateState));   //增加定时器调用
+    schedule(schedule_selector(HelpScene::undateState)); 
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = CC_CALLBACK_2(HelpScene::onTouchBegan, this);
@@ -337,16 +337,16 @@ void HelpScene::onTouchEnded(CCTouch *touch, CCEvent *event)
     CCSize winSize = Director::sharedDirector()->getWinSize();
     ActionInterval  *actionTo;
 
-    if (y_batch_location_begin + y_end - y_begin < y_min) //拉到最上面了
+    if (y_batch_location_begin + y_end - y_begin < y_min) 
     {
 
     }
-    else if (y_batch_location_begin + y_end - y_begin > y_min) //拉到最下面了
+    else if (y_batch_location_begin + y_end - y_begin > y_min)
     {
         actionTo = MoveTo::create(0, CCPointMake(0, y_min));
         helpLayer->runAction(actionTo);
     }
-    else  //中间
+    else  
     {
         enableMove = true;
     }

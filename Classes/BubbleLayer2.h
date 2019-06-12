@@ -24,24 +24,24 @@ public:
 	CREATE_FUNC(BubbleLayer2);
 	virtual void update(float delta);
 private:
-	Bubble *board[MAX_ROWS][MAX_COLS]; 	 //泡泡棋盘
-	Bubble *wait[MAX_WAIT_PAOPAO]; 	    // 等待的泡泡
+	Bubble *board[MAX_ROWS][MAX_COLS]; 	
+	Bubble *wait[MAX_WAIT_PAOPAO]; 
 public:
-	Bubble *ready;  // 将会发射的泡泡
+	Bubble *ready;  
 public:
 	CC_SYNTHESIZE(Vec2, real, Real);
 	CC_SYNTHESIZE(int, _level, Level);
 	bool _havePass = false;
 
 	EventListenerTouchOneByOne* _listener;
-	bool initTheBoard(int level = 0);  //初始化关卡
-	Bubble *randomPaoPao(int flag = 0); //获取随机泡泡
-	Point getPointByRowAndCol(int row, int col); //根据行列及是否左缺确定位置
+	bool initTheBoard(int level = 0); 
+	Bubble *randomPaoPao(int flag = 0);
+	Point getPointByRowAndCol(int row, int col);
 	Point getRowAndColByPoint(Point target);
-	void initWaitPaoPao(); //初始化等待的泡泡
-	void initReadyPaoPao(); //初始化准备发射的泡泡
-	void setEnable();	//设置触摸有效
-	void setDisable();	//设置触摸无效
+	void initWaitPaoPao();
+	void initReadyPaoPao();
+	void setEnable();	
+	void setDisable();	
 	bool isCollideBorder();
 	bool checkCollideBorder();
 	void changeWaitToReady();

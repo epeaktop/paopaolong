@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "GameEnum.h"
 USING_NS_CC;
-//泡泡类，包含类型和自己所在的一行是否是左缺的状态
+
 class Bubble : public Sprite
 {
 public:
@@ -12,11 +12,11 @@ public:
 	~Bubble();
 	static Bubble *initWithType(BubbleType type = BUBBLE_TYPE1, int flag = 0);
 	CREATE_FUNC(Bubble);
-	CC_SYNTHESIZE(BubbleType, _type, Type);//泡泡的类型
-	CC_SYNTHESIZE(bool, _isSame, IsSame); //判断是否是统一类型的
-	CC_SYNTHESIZE(bool, _isPass, IsPass); //判断是否路过
-	CC_SYNTHESIZE(bool, _flag, Flag);//是否是左缺的状态
-	CC_SYNTHESIZE(bool, _isMove, IsMove); //是否移动过
+	CC_SYNTHESIZE(BubbleType, _type, Type);
+	CC_SYNTHESIZE(bool, _isSame, IsSame);
+	CC_SYNTHESIZE(bool, _isPass, IsPass);
+	CC_SYNTHESIZE(bool, _flag, Flag);
+	CC_SYNTHESIZE(bool, _isMove, IsMove);
 	CC_SYNTHESIZE(bool, _isDie, IsDie);
 public:
     Label *label = nullptr;
