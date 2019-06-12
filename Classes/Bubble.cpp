@@ -31,7 +31,11 @@ Bubble * Bubble::initWithType(BubbleType type, int flag)
     
     pRet->label->enableOutline(Color4B(0,0,0,128),3);
     pRet->label->setPosition(25,25);
-    pRet->label->setVisible(false);
+#ifndef _DEBUG
+	pRet->label->setVisible(false);
+#endif // _DEBUG
+
+    
     pRet->addChild(pRet->label, 100000);
     if(flag == 1)
     {

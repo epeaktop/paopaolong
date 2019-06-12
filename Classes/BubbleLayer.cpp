@@ -9,9 +9,9 @@
 #include "NDKHelper.h"
 struct PosData
 {
-	int x;
-	int y;
-	Vec2 pos;
+    int x;
+    int y;
+    Vec2 pos;
 };
 const int BT_OK = 2401;
 
@@ -22,10 +22,13 @@ using namespace std;
 static float waitTime = 0.1f;
 static int sameSum = 0;
 
-void debugLog(Bubble* obj, int index, int i, int j)
+
+void debugLog(Bubble *obj, int index, int i, int j)
 {
-	if (obj && i < MAX_ROWS && j < MAX_COLS && i >= 0 && j >= 0)
-		log("item%d not nullpte, %d,%d,(%f,%f)", index, i, j, obj->getPosition().x, obj->getPosition().y);
+    if (obj && i < MAX_ROWS && j < MAX_COLS && i >= 0 && j >= 0)
+    {
+        log("item%d not nullpte, %d,%d,(%f,%f)", index, i, j, obj->getPosition().x, obj->getPosition().y);
+    }
 }
 Scene *BubbleLayer::scene()
 {
@@ -38,6 +41,7 @@ Scene *BubbleLayer::scene()
 void BubbleLayer::calcRetainMap()
 {
     retainMap_.clear();
+
     for (int i = 0; i < MAX_ROWS; ++i)
     {
         for (int j = 0; j < MAX_COLS; ++j)
@@ -46,32 +50,37 @@ void BubbleLayer::calcRetainMap()
             {
                 continue;
             }
+
             int key = (int)board[i][j]->getType();
+
             if (key > 0)
             {
                 retainMap_[key] = 1;
             }
         }
     }
+
     retainVec_.clear();
+
     for (auto iter = retainMap_.begin(); iter != retainMap_.end(); ++iter)
     {
         int key = iter->first;
+
         if (key > 0)
         {
             retainVec_.push_back(key);
         }
     }
-    
+
 }
 
 // 显示连击
 void BubbleLayer::showHits(int num)
 {
     auto m = MoveTo::create(1, Vec2(500, 300));
-    auto m2 = MoveTo::create(1,Vec2(1380,300));
+    auto m2 = MoveTo::create(1, Vec2(1380, 300));
     auto d = DelayTime::create(0.7);
-    auto seq = Sequence::create(m,d,m2, NULL);
+    auto seq = Sequence::create(m, d, m2, NULL);
     stringstream s("");
     s << num << " hits";
     hitedNumLabel_->setString(s.str().c_str());
@@ -84,9 +93,10 @@ bool BubbleLayer::init()
     {
         return false;
     }
+
     PropLayer::isDesign = false;
     _level = UserData::getInstance()->getSelLevel();
-    
+
     UserData::getInstance()->setScore(0);
     _listener = EventListenerTouchOneByOne::create();
     _listener->setSwallowTouches(true);
@@ -120,6 +130,7 @@ bool BubbleLayer::initTheBoard(int level)
         {
             board[i][j] = NULL;
         }
+
         bRet = true;
     }
 
@@ -140,10 +151,11 @@ bool BubbleLayer::initTheBoard(int level)
             {
                 board[i][j] = Bubble::initWithType((BubbleType)customs[level][i][j]);
             }
+
             board[i][j]->setFlag((i % 2) == 0);
-          
-            board[i][j]->setString(i,j);
-            
+
+            board[i][j]->setString(i, j);
+
             addChild(board[i][j]);
             initBubbleAction(board[i][j], i, j);
         }
@@ -155,16 +167,18 @@ bool BubbleLayer::initTheBoard(int level)
 Bubble *BubbleLayer::randomPaoPao(int flag)
 {
     Bubble *pRet = NULL;
-    
+
     BubbleType type;
-    if (flag != 0 )
+
+    if (flag != 0)
     {
         type = static_cast<BubbleType>(rand() % BUBBLE_COUNT + 1);
     }
-   	else
+    else
     {
         calcRetainMap();
-        if (retainVec_.size() ==0 )
+
+        if (retainVec_.size() == 0)
         {
             type = BUBBLE_TYPE1;
         }
@@ -174,7 +188,7 @@ Bubble *BubbleLayer::randomPaoPao(int flag)
             type = static_cast<BubbleType>(retainVec_[i]);
         }
     }
-    
+
     pRet = Bubble::initWithType(type);
     return pRet;
 }
@@ -186,8 +200,8 @@ Point BubbleLayer::getPointByRowAndCol(int row, int col)
     Size winSize = Director::getInstance()->getWinSize();
     auto x = (col * 2 + 1) * (R + 1) + (flag ? 0 : R);
     auto y = TOUCH_TOP * winSize.height - row * (R * 2 - 5) - R;
-    
-    return Point(x,y);
+
+    return Point(x, y);
 }
 
 Vec2 BubbleLayer::getRowAndColByPoint(Point target)
@@ -195,7 +209,7 @@ Vec2 BubbleLayer::getRowAndColByPoint(Point target)
     Size winSize = Director::getInstance()->getWinSize();
     int x = (TOUCH_TOP * winSize.height - target.y) / (R * 2 - 5);
     int y = ((target.x - (x % 2) * R) / ((R + 1) * 2));
-    
+
     return Vec2(x, y);
 }
 void BubbleLayer::initWaitPaoPao()
@@ -235,6 +249,7 @@ void BubbleLayer::onTouch(Point target)
     default:
         break;
     }
+
     this->addMoveNumber(1);
     this->scheduleUpdate();
 }
@@ -252,7 +267,7 @@ void BubbleLayer::setDisable()
 
 void BubbleLayer::update(float fDelta)
 {
-    
+
     if (isCollideBorder())
     {
         real.x = -real.x;
@@ -261,12 +276,17 @@ void BubbleLayer::update(float fDelta)
     setDisable();
     Point pos = ready->getPosition();
     int flag = 2;
-    if(updateTimes++ > 1)
+
+    if (updateTimes++ > 1)
+    {
         flag = 1;
-    auto newPos = Point(pos.x + real.x * PAOPAO_SPEED* flag, pos.y + real.y * PAOPAO_SPEED*flag);
+    }
+
+    auto newPos = Point(pos.x + real.x * PAOPAO_SPEED * flag, pos.y + real.y * PAOPAO_SPEED * flag);
     ready->setPosition(newPos);
     Vec2 s = getRowAndColByPoint(newPos);
-    log("<update>(%d,%d)-->(%d,%d):row(%d),col(%d),%f",int(pos.x),int(pos.y), int(newPos.x),int(newPos.y),int(s.x), int(s.y),fDelta);
+    log("<update>(%d,%d)-->(%d,%d):row(%d),col(%d),%f", int(pos.x), int(pos.y), int(newPos.x), int(newPos.y), int(s.x), int(s.y), fDelta);
+
     if (checkCollideBorder())
     {
         SimpleAudioEngine::getInstance()->playEffect("Music/Hit.mp3");
@@ -303,6 +323,7 @@ bool BubbleLayer::checkCollideBorder()
     {
         return false;
     }
+
     /* 顶部边界 */
     if (ready->getPosition().y > TOUCH_TOP * winSize.height - R)
     {
@@ -312,32 +333,41 @@ bool BubbleLayer::checkCollideBorder()
             ready->setType(type);
             ready->initWithSpriteFrameName(StringUtils::format(BUBBLE_NAME.c_str(), type));
         }
+
         // 确定当前的行，列
         curFindRow = 0;
         curFindCol = getRowAndColByPoint(point).y;
         return true;
     }
-    
+
     std::vector<Vec2> rowCol;
-     rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y)));
+    rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y)));
     rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y + R))); // 当前点的上面
     rowCol.push_back(getRowAndColByPoint(Point(point.x - R, point.y))); // 当前点的左边
     rowCol.push_back(getRowAndColByPoint(Point(point.x + R, point.y))); // 当前点的右边
 
-    for (auto & ti : rowCol)
+    for (auto &ti : rowCol)
     {
-        if(int(ti.y) >= MAX_COLS)
+        if (int(ti.y) >= MAX_COLS)
+        {
             continue;
-        if(int(ti.x) >= MAX_ROWS)
+        }
+
+        if (int(ti.x) >= MAX_ROWS)
+        {
             continue;
+        }
+
         if (board[int(ti.x)][int(ti.y)] != nullptr)
         {
             log("[@@@@]%d,%d", int(ti.x), int(ti.y));
 #ifdef DEBUG
-            if(board[curFindRow][curFindCol]!=nullptr)
+
+            if (board[curFindRow][curFindCol] != nullptr)
             {
-                board[curFindRow][curFindCol]->setColor(Color3B(255,255,255));
+                board[curFindRow][curFindCol]->setColor(Color3B(255, 255, 255));
             }
+
 #endif
             curFindRow = int(ti.x);
             curFindCol = int(ti.y);
@@ -347,6 +377,7 @@ bool BubbleLayer::checkCollideBorder()
             return true;
         }
     }
+
     return false;
 }
 // 调整后的点和发现有球的点是同一个点
@@ -367,101 +398,108 @@ void BubbleLayer::correctReadyPosition()
     // 注意，这个ready的表诉并不清楚；应该是正在运动的球的位置
     Point pos = ready->getPosition();
     Vec2 rowCol = getRowAndColByPoint(pos);
-    
+
     int i = curFindRow;
     int j = curFindCol;
-    auto item1 = board[i][j-1];
-    auto item2 = board[i][j+1];
-    auto item3 = board[i+1][j-1];
-    auto item4 = board[i+1][j];
-    auto item5 = board[i+1][j+1];
-    
+    auto item1 = board[i][j - 1];
+    auto item2 = board[i][j + 1];
+    auto item3 = board[i + 1][j - 1];
+    auto item4 = board[i + 1][j];
+    auto item5 = board[i + 1][j + 1];
+
     vector<PosData> a;
-    debugLog(item1, 1, i, j-1);
-    debugLog(item2, 2,i, j+1);
-    debugLog(item3, 3,i+1,j-1 );
-    debugLog(item4, 4,i+1,j);
-    debugLog(item5, 5,i+1,j+1);
-    
-    if(j > 0 && item1 == nullptr)
+    debugLog(item1, 1, i, j - 1);
+    debugLog(item2, 2, i, j + 1);
+    debugLog(item3, 3, i + 1, j - 1);
+    debugLog(item4, 4, i + 1, j);
+    debugLog(item5, 5, i + 1, j + 1);
+
+    if (j > 0 && item1 == nullptr)
     {
         PosData pd1;
         pd1.x = i;
-        pd1.y = j-1;
-        pd1.pos = getPointByRowAndCol(i,j-1);
+        pd1.y = j - 1;
+        pd1.pos = getPointByRowAndCol(i, j - 1);
         a.push_back(pd1);
     }
-    if(j+1< MAX_COLS&& item2 == nullptr)
+
+    if (j + 1 < MAX_COLS && item2 == nullptr)
     {
         PosData pd1;
         pd1.x = i;
-        pd1.y = j+1;
-        pd1.pos = getPointByRowAndCol(i,j+1);
+        pd1.y = j + 1;
+        pd1.pos = getPointByRowAndCol(i, j + 1);
         a.push_back(pd1);
     }
-    if(i+1 <MAX_ROWS&& item4 == nullptr)
+
+    if (i + 1 < MAX_ROWS && item4 == nullptr)
     {
         PosData pd1;
-        pd1.x = i+1;
+        pd1.x = i + 1;
         pd1.y = j;
-        pd1.pos = getPointByRowAndCol(i+1,j);
+        pd1.pos = getPointByRowAndCol(i + 1, j);
         a.push_back(pd1);
     }
-    
-    if(i+1 <MAX_ROWS && j+ 1 < MAX_COLS && item5 == nullptr)
+
+    if (i + 1 < MAX_ROWS && j + 1 < MAX_COLS && item5 == nullptr)
     {
         PosData pd1;
-        pd1.x = i+1;
-        pd1.y = j+1;
-        pd1.pos = getPointByRowAndCol(i+1,j+1);
+        pd1.x = i + 1;
+        pd1.y = j + 1;
+        pd1.pos = getPointByRowAndCol(i + 1, j + 1);
         a.push_back(pd1);
     }
-    
-    if(i+1 <MAX_ROWS && j-1 >= 0 && item3 == nullptr)
+
+    if (i + 1 < MAX_ROWS && j - 1 >= 0 && item3 == nullptr)
     {
         PosData pd1;
-        pd1.x = i+1;
-        pd1.y = j-1;
-        pd1.pos = getPointByRowAndCol(i+1,j-1);
+        pd1.x = i + 1;
+        pd1.y = j - 1;
+        pd1.pos = getPointByRowAndCol(i + 1, j - 1);
         a.push_back(pd1);
     }
+
     float dis = 100000;
-    for(auto obj : a)
+
+    for (auto obj : a)
     {
         auto dis2 = obj.pos.distance(pos);
-        if(dis2 < dis)
+
+        if (dis2 < dis)
         {
             dis = dis2;
             row = obj.x;
             col = obj.y;
         }
     }
+
     // 上边界直接设置
-    if(curFindRow==0 && board[curFindRow][curFindCol]==nullptr)
+    if (curFindRow == 0 && board[curFindRow][curFindCol] == nullptr)
     {
         row = curFindRow;
         col = curFindCol;
     }
-    
+
     board[row][col] = ready;
     board[row][col]->setString(row, col);
-    board[row][col]->setFlag(row%2==0);
+    board[row][col]->setFlag(row % 2 == 0);
+
     if (getPointByRowAndCol(row, col).y <= TOUCH_DOWN * (Director::getInstance()->getVisibleSize().height))
     {
         return gameOver(true);
     }
 
-    if(row == -1)
+    if (row == -1)
     {
         return gameOver(true);
     }
 
 
-    std::thread moveBubble(&BubbleLayer::moveTheBubble, this, row, col, (row % 2==0), MOVE_DISTANCE);
+    std::thread moveBubble(&BubbleLayer::moveTheBubble, this, row, col, (row % 2 == 0), MOVE_DISTANCE);
     moveBubble.join();
     auto newPos = getPointByRowAndCol(row, col);
-    log("[调整后的位置]%f,%f,%d,%d",newPos.x,newPos.y,row,col);
-    ready->runAction(Sequence::create(MoveTo::create(0.2f, newPos),CallFunc::create(CC_CALLBACK_0(BubbleLayer::readyAction, this)), nullptr));
+    log("[调整后的位置]%f,%f,%d,%d", newPos.x, newPos.y, row, col);
+    ready->runAction(Sequence::create(MoveTo::create(0.2f, newPos), CallFunc::create(CC_CALLBACK_0(BubbleLayer::readyAction, this)), nullptr));
 
 }
 // 摆正位置后，才会真正消除掉球
@@ -472,9 +510,13 @@ void BubbleLayer::readyAction()
     int row = RowAndCol.x;
     int col = RowAndCol.y;
     bool tempFlag;
-    if (row % 2 == 0) {
+
+    if (row % 2 == 0)
+    {
         tempFlag = true;
-    } else {
+    }
+    else
+    {
         tempFlag = false;
     }
 
@@ -762,21 +804,27 @@ void BubbleLayer::moveTheBubble(int i, int j, bool flag, float distance)
         moveTheBubble(i, j + 1, flag, distance - 5);
     }
 }
-void BubbleLayer::addScore(Bubble* obj)
+void BubbleLayer::addScore(Bubble *obj)
 {
     auto gameSceme = (GameScene *)this->getParent();
     curDownNum_++;
     int num = 5 << curDownNum_;
-    if(num > 10000)
+
+    if (num > 10000)
+    {
         num = 10000;
-    
-	auto label = Label::createWithCharMap("white_font.png", 25, 29, '0');
-	label->setPosition(obj->getPosition());
-	auto scale = ScaleTo::create(0.4, 1.1);
-	auto fadeout = FadeOut::create(0.4);
-	label->setString(TI()->itos(num));
-	label->runAction(Sequence::create(scale, fadeout, CallFunc::create([=]() {  label->removeFromParent(); }), nullptr));
-	addChild(label);
+    }
+
+    auto label = Label::createWithCharMap("white_font.png", 25, 29, '0');
+    label->setPosition(obj->getPosition());
+    auto scale = ScaleTo::create(0.4, 1.1);
+    auto fadeout = FadeOut::create(0.4);
+    label->setString(TI()->itos(num));
+    label->runAction(Sequence::create(scale, fadeout, CallFunc::create([ = ]()
+    {
+        label->removeFromParent();
+    }), nullptr));
+    addChild(label);
     gameSceme->_propLayer->AddScoreLabel(5 + num);
 }
 void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
@@ -801,8 +849,9 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
     }
     else
     {
-        
+
         SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
+
         for (int i = 0; i < MAX_ROWS; ++i)
         {
             for (int j = 0; j < MAX_COLS; ++j)
@@ -826,13 +875,16 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
                 }
             }
         }
-        if(lastHited_)
+
+        if (lastHited_)
         {
             hitNums_++;
             showHits(hitNums_);
         }
+
         lastHited_ = true;
-        if( hitNums_ > 1)
+
+        if (hitNums_ > 1)
         {
             showHitNumsAnim();
         }
@@ -844,16 +896,19 @@ void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
  */
 void BubbleLayer::showHitNumsAnim()
 {
-    
+
 }
 
 void BubbleLayer::bubbleAction(Bubble *obj)
 {
-    if(!obj)
+    if (!obj)
+    {
         return;
+    }
+
     SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-    
-    
+
+
     obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
     {
         addScore(obj);
@@ -956,7 +1011,7 @@ void BubbleLayer::checkDownBubble()
 
     for (int i = 0; i < MAX_ROWS; ++i)
     {
-        
+
         for (int j = 0; j < MAX_COLS; ++j)
         {
             if (board[i][j] && board[i][j]->getIsPass())
@@ -965,11 +1020,12 @@ void BubbleLayer::checkDownBubble()
                 {
                     board[i][j + 1]->setIsPass(true);
                 }
+
                 if (i < MAX_ROWS - 1)
                 {
                     if (board[i][j]->getFlag() && j > 0 && board[i + 1][j - 1])
                     {
-                        board[i + 1][j - 1]->setIsPass(true); 
+                        board[i + 1][j - 1]->setIsPass(true);
                     }
                     else if (!(board[i][j]->getFlag()) && board[i + 1][j])
                     {
@@ -1035,14 +1091,18 @@ void BubbleLayer::downBubble()
                 board[i][j] = NULL;
             }
         }
+
         setEnable();
     }
+
     // 游戏开始的地方
     if (!isGameOver() || _havePass)
+    {
         return;
- 
-    callJava("showAds","");
-    
+    }
+
+    callJava("showAds", "");
+
     _havePass = true;
     setDisable();
     auto gameScene = (GameScene *)this->getParent();
@@ -1056,7 +1116,7 @@ void BubbleLayer::downBubble()
 
     UserData::getInstance()->setScore(score);
 
-    UserData::getInstance()->setScore(cur_level,score);
+    UserData::getInstance()->setScore(cur_level, score);
 
     GameResult *pl = GameResult::create("game_start.png");
     pl->setContentSize(Size(540, 960));
@@ -1064,17 +1124,17 @@ void BubbleLayer::downBubble()
     pl->setContentText("", 33, 80, 150);
     pl->setCallbackFunc(this, callfuncN_selector(BubbleLayer::buttonCallback));
 
-    pl->addButton("start_bt.png", "start_bt.png", Vec2(540/2, 300), BT_OK);
+    pl->addButton("start_bt.png", "start_bt.png", Vec2(540 / 2, 300), BT_OK);
 
     this->addChild(pl, 2000);
 
-    if(UserData::getInstance()->getLevel() <= UserData::getInstance()->getSelLevel())
+    if (UserData::getInstance()->getLevel() <= UserData::getInstance()->getSelLevel())
     {
         UserData::getInstance()->addLevel(1);
     }
 }
 
-void BubbleLayer::buttonCallback(Node* obj)
+void BubbleLayer::buttonCallback(Node *obj)
 {
     auto s = HelpScene::scene();
     auto t = TransitionFade::create(0.5, s);
@@ -1082,7 +1142,7 @@ void BubbleLayer::buttonCallback(Node* obj)
 }
 void BubbleLayer::downBubbleAction(Bubble *obj)
 {
- 
+
     float offY = 200.0;
     Point pos = obj->getPosition();
     obj->runAction(Sequence::create(MoveTo::create((pos.y - offY) / 600.0, Point(pos.x, offY)), CallFuncN::create(CC_CALLBACK_1(BubbleLayer::downBubbleActionCallBack, this)), NULL));
@@ -1194,6 +1254,7 @@ void BubbleLayer::throwBallAction()
 bool BubbleLayer::isGameOver()
 {
     int num = 0;
+
     for (int i = 0; i < MAX_ROWS; ++i)
     {
         for (int j = 0; j < MAX_COLS; ++j)
@@ -1202,56 +1263,61 @@ bool BubbleLayer::isGameOver()
             {
                 continue;
             }
+
             num++;
         }
     }
+
     if (num < 6)
     {
         return true;
     }
-    
+
     return false;
 }
 
 bool BubbleLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
-	curDownNum_ = 0;
-	return true;
+    curDownNum_ = 0;
+    return true;
 }
 
 
-void BubbleLayer::showWinAnim(Vec2& pos)
+void BubbleLayer::showWinAnim(Vec2 &pos)
 {
     auto size = Director::getInstance()->getWinSize();
-    
-    ActionInterval* move = MoveTo::create(1.f, pos);
-    ActionInterval* scale = ScaleTo::create(1.0f, 0.9f);
-    ActionInterval* sineIn = EaseBackIn::create(move);
-    
-    FiniteTimeAction * spawn = Spawn::create(sineIn, scale, NULL);
-    
+
+    ActionInterval *move = MoveTo::create(1.f, pos);
+    ActionInterval *scale = ScaleTo::create(1.0f, 0.9f);
+    ActionInterval *sineIn = EaseBackIn::create(move);
+
+    FiniteTimeAction *spawn = Spawn::create(sineIn, scale, NULL);
+
     auto a = Sprite::create("star.png");
-    a->setPosition(size.width*2, size.height/2);
+    a->setPosition(size.width * 2, size.height / 2);
     a->setScale(6, 6);
     addChild(a, 10);
-    
-    CallFuncN* callback = CallFuncN::create(CC_CALLBACK_1(BubbleLayer::starCallback, this));
+
+    CallFuncN *callback = CallFuncN::create(CC_CALLBACK_1(BubbleLayer::starCallback, this));
     a->runAction(Sequence::create(spawn, callback, NULL));
 
 
 }
 
-void BubbleLayer::starCallback(Ref* obj)
+void BubbleLayer::starCallback(Ref *obj)
 {
-	
+
 }
 
 void BubbleLayer::onTouchMoved(Touch *touch, Event *unused_event)
 {
-    
+
     auto gameScene = (GameScene *)this->getParent();
-    if(getChildByTag(100))
+
+    if (getChildByTag(100))
+    {
         this->removeChildByTag(100);
+    }
 
     if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height || touch->getLocation().y >= TOUCH_TOP * Director::getInstance()->getVisibleSize().height)
     {
@@ -1273,8 +1339,11 @@ void BubbleLayer::onTouchEnded(Touch *touch, Event *unused_event)
 {
 
     auto gameScene = (GameScene *)this->getParent();
-    if(getChildByTag(100))
+
+    if (getChildByTag(100))
+    {
         this->removeChildByTag(100);
+    }
 
     if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height && touch->getLocation().x <= 200)
     {
