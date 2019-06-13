@@ -353,7 +353,7 @@ void BubbleLayer::transparentAction(Bubble* bubble)
 	auto particle = ParticleSystemQuad::create("Particle/luoxia_lizi.plist");
 	particle->setPosition(bubble->getContentSize().width / 2, 0);
 	bubble->addChild(particle);
-	bubble->runAction(Sequence::create(FadeOut::create(0.1f), CallFunc::create([=]()
+	bubble->runAction(Sequence::create(FadeOut::create(0.3f), CallFunc::create([=]()
 		{
 			bubble->removeFromParentAndCleanup(true);
 			
@@ -427,7 +427,7 @@ bool BubbleLayer::checkCollideBorder()
 			{
 				continue;
 			}
-            log("[@@@@]发现碰撞点%d,%d", int(ti.x), int(ti.y));
+            log("[@@@@]发现碰撞位置 : %d,%d", int(ti.x), int(ti.y));
 #ifdef DEBUG
 
             if (board[curFindRow][curFindCol] != nullptr)
