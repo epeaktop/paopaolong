@@ -31,12 +31,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	director->setOpenGLView(glview);
 #endif
     glview->setDesignResolutionSize(540 , 960, ResolutionPolicy::SHOW_ALL);
-	//director->getOpenGLView()->setFrameZoomFactor(0.5f);
     director->setDisplayStats(false);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     director->setAnimationInterval(1.0 / 15);
 #else
-    director->setAnimationInterval(1.0 / 15);
+    director->setAnimationInterval(1.0 / 60);
 #endif
     FileUtils::getInstance()->addSearchPath("res");
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("Music/bgm.mp3");
@@ -53,16 +52,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	auto scene = Cover::scene();
     director->runWithScene(scene);
-
     return true;
 }
 
-// This function will be called when the app is inactive. When comes a phone call,it's be invoked too
 void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 }
 
-// this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 }

@@ -23,6 +23,8 @@ public:
 	void onTouch(Point target);
 	CREATE_FUNC(BubbleLayer);
 	virtual void update(float delta);
+	bool isTransparentObj(Bubble* obj);
+	void transparentAction(Bubble* obj);
 private:
 
 	Bubble *board[MAX_ROWS][MAX_COLS]; 
@@ -173,6 +175,10 @@ public:
     void addScore(Bubble* obj);
 public:
 	Vector<Sprite*> _auxiliary;
+	/**
+	 *	可以摆放球的点
+	 */
+	bool canPut(Bubble* sp);
 	void colorBubble();
 	void swapBubble();
 	void bombBubble();

@@ -65,8 +65,10 @@ void BubbleLayer::calcRetainMap()
     for (auto iter = retainMap_.begin(); iter != retainMap_.end(); ++iter)
     {
         int key = iter->first;
-
-        if (key > 0)
+		/**
+		 *	不产生透明的泡泡、石头
+		 */
+        if (key > 0 && key <= BUBBLE_COUNT)
         {
             retainVec_.push_back(key);
         }
@@ -286,7 +288,12 @@ void BubbleLayer::update(float fDelta)
     ready->setPosition(newPos);
     Vec2 s = getRowAndColByPoint(newPos);
     log("<update>(%d,%d)-->(%d,%d):row(%d),col(%d),%f", int(pos.x), int(pos.y), int(newPos.x), int(newPos.y), int(s.x), int(s.y), fDelta);
-
+	
+	Bubble* obj = nullptr;
+	if (int(s.x) < MAX_ROWS && int(s.y) < MAX_COLS)
+	{
+		obj = board[int(s.x)][int(s.y)];
+	}
     if (checkCollideBorder())
     {
         SimpleAudioEngine::getInstance()->playEffect("Music/Hit.mp3");
@@ -296,6 +303,42 @@ void BubbleLayer::update(float fDelta)
         correctReadyPosition();
         return;
     }
+	else if(isTransparentObj(obj))
+	{
+		board[int(s.x)][int(s.y)] = nullptr;
+		transparentAction(obj);
+	}
+}
+bool BubbleLayer::isTransparentObj(Bubble* obj)
+{
+	if (nullptr == obj)
+	{
+		return false;
+	}
+
+	if (obj->getType() == BUBBLE_TYPE_TOUMING)
+	{
+		return true;
+	}
+
+	return false;
+}
+void BubbleLayer::transparentAction(Bubble* bubble)
+{
+	if (nullptr == bubble)
+	{
+		return;
+	}
+	
+	auto particle = ParticleSystemQuad::create("Particle/luoxia_lizi.plist");
+	particle->setPosition(bubble->getContentSize().width / 2, 0);
+	bubble->addChild(particle);
+	bubble->runAction(Sequence::create(FadeOut::create(0.1f), CallFunc::create([=]()
+		{
+			bubble->removeFromParentAndCleanup(true);
+			
+		}), nullptr));
+
 }
 bool BubbleLayer::isCollideBorder()
 {
@@ -357,10 +400,14 @@ bool BubbleLayer::checkCollideBorder()
         {
             continue;
         }
-
-        if (board[int(ti.x)][int(ti.y)] != nullptr)
+		auto sp = board[int(ti.x)][int(ti.y)];
+        if ( sp != nullptr)
         {
-            log("[@@@@]%d,%d", int(ti.x), int(ti.y));
+			if (sp->getType() == BUBBLE_TYPE_TOUMING)
+			{
+				continue;
+			}
+            log("[@@@@]发现碰撞点%d,%d", int(ti.x), int(ti.y));
 #ifdef DEBUG
 
             if (board[curFindRow][curFindCol] != nullptr)
@@ -414,8 +461,9 @@ void BubbleLayer::correctReadyPosition()
     debugLog(item4, 4, i + 1, j);
     debugLog(item5, 5, i + 1, j + 1);
 
-    if (j > 0 && item1 == nullptr)
+    if (j > 0 && canPut(item1))
     {
+	
         PosData pd1;
         pd1.x = i;
         pd1.y = j - 1;
@@ -423,7 +471,7 @@ void BubbleLayer::correctReadyPosition()
         a.push_back(pd1);
     }
 
-    if (j + 1 < MAX_COLS && item2 == nullptr)
+    if (j + 1 < MAX_COLS && canPut(item2))
     {
         PosData pd1;
         pd1.x = i;
@@ -432,7 +480,7 @@ void BubbleLayer::correctReadyPosition()
         a.push_back(pd1);
     }
 
-    if (i + 1 < MAX_ROWS && item4 == nullptr)
+    if (i + 1 < MAX_ROWS && canPut(item4))
     {
         PosData pd1;
         pd1.x = i + 1;
@@ -441,7 +489,7 @@ void BubbleLayer::correctReadyPosition()
         a.push_back(pd1);
     }
 
-    if (i + 1 < MAX_ROWS && j + 1 < MAX_COLS && item5 == nullptr)
+    if (i + 1 < MAX_ROWS && j + 1 < MAX_COLS && canPut(item5))
     {
         PosData pd1;
         pd1.x = i + 1;
@@ -450,7 +498,7 @@ void BubbleLayer::correctReadyPosition()
         a.push_back(pd1);
     }
 
-    if (i + 1 < MAX_ROWS && j - 1 >= 0 && item3 == nullptr)
+    if (i + 1 < MAX_ROWS && j - 1 >= 0 && canPut(item3))
     {
         PosData pd1;
         pd1.x = i + 1;
@@ -472,14 +520,16 @@ void BubbleLayer::correctReadyPosition()
             col = obj.y;
         }
     }
-
-    // 上边界直接设置
+	
     if (curFindRow == 0 && board[curFindRow][curFindCol] == nullptr)
     {
         row = curFindRow;
         col = curFindCol;
     }
-
+	if (board[row][col])
+	{
+		downBubbleActionCallBack(board[row][col]);
+	}
     board[row][col] = ready;
     board[row][col]->setString(row, col);
     board[row][col]->setFlag(row % 2 == 0);
@@ -1193,6 +1243,21 @@ void BubbleLayer::swapBubble()
     wait[0] = temp;
 
     throwBallAction();
+}
+bool BubbleLayer::canPut(Bubble* sp)
+{
+	if (sp == nullptr)
+	{
+		return true;
+	}
+	else
+	{
+		if (sp->getType() == BUBBLE_TYPE_TOUMING)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 void BubbleLayer::colorBubble()
 {

@@ -24,16 +24,38 @@ Bubble * Bubble::initWithType(BubbleType type, int flag)
 {
 	Bubble *pRet = Bubble::create();
 	pRet->setType(type);
-	pRet->initWithSpriteFrameName(getStringByType(type));
+	if (type == BUBBLE_TYPE_TOUMING)
+	{
+		pRet->initWithFile("res/touming.png");
+	}
+	else if (type == BUBBLE_TYPE_STONE)
+	{
+		pRet->initWithFile("res/stone.png");
+	}
+	else
+	{
+		pRet->initWithSpriteFrameName(getStringByType(type));
+	}
+
+	
     pRet->setScale(0.77);
-    pRet->label = Label::createWithSystemFont("0,0", "Arial", 27);
-    pRet->label->setColor(Color3B::RED);
+    pRet->label = Label::createWithSystemFont("0,0", "Arial", 18);
+	if (type == BUBBLE_TYPE1 || type == BUBBLE_TYPE4)
+	{
+		pRet->label->setColor(Color3B::WHITE);
+	}
+	else
+	{
+		pRet->label->setColor(Color3B::RED);
+	}
     
-    pRet->label->enableOutline(Color4B(0,0,0,128),3);
     pRet->label->setPosition(25,25);
+	pRet->label->setVisible(false);
 #ifndef _DEBUG
 	pRet->label->setVisible(false);
-#endif // _DEBUG
+#else
+	//pRet->label->enableOutline(Color4B(255, 255, 255, 255), 1);
+#endif
 
     
     pRet->addChild(pRet->label, 100000);

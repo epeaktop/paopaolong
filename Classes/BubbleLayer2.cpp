@@ -65,39 +65,7 @@ void BubbleLayer2::dump()
 }
 void BubbleLayer2::calcRetainMap()
 {
-    retainMap_.clear();
-
-    for (int i = 0; i < MAX_ROWS; ++i)
-    {
-        for (int j = 0; j < MAX_COLS; ++j)
-        {
-            if (!board[i][j])
-            {
-                continue;
-            }
-
-            int key = (int)board[i][j]->getType();
-
-            if (key > 0)
-            {
-                retainMap_[key] = 1;
-            }
-        }
-    }
-
-    retainVec_.clear();
-
-    for (auto iter = retainMap_.begin(); iter != retainMap_.end(); ++iter)
-    {
-        int key = iter->first;
-
-        if (key > 0)
-        {
-            retainVec_.push_back(key);
-        }
-    }
 }
-
 
 bool BubbleLayer2::init()
 {
