@@ -50,6 +50,7 @@ public:
 	bool checkCollideBorder();
 	void changeWaitToReady();
 	void correctReadyPosition();
+	Vec2 getStopPosition();
 	bool getFirstRowFlag();
 	bool isCircleCollision(Point pos1, float radius1, Point pos2, float radius2);
 	void findTheSameBubble(int i, int j, bool flag, BubbleType type);

@@ -438,6 +438,11 @@ bool BubbleLayer::checkCollideBorder()
 #endif
             curFindRow = int(ti.x);
             curFindCol = int(ti.y);
+			Vec2 ret = getStopPosition();
+			if ((int)ret.x == curFindRow)
+			{
+				continue;
+			}
 #ifdef DEBUG
             board[int(ti.x)][int(ti.y)]->setColor(Color3B::RED);
 #endif
@@ -461,91 +466,16 @@ void BubbleLayer::changeWaitToReady()
 
 void BubbleLayer::correctReadyPosition()
 {
-    int row = -1, col = -1;
-    // 注意，这个ready的表诉并不清楚；应该是正在运动的球的位置
-    Point pos = ready->getPosition();
-    Vec2 rowCol = getRowAndColByPoint(pos);
-
-    int i = curFindRow;
-    int j = curFindCol;
-    auto item1 = board[i][j - 1];
-    auto item2 = board[i][j + 1];
-    auto item3 = board[i + 1][j - 1];
-    auto item4 = board[i + 1][j];
-    auto item5 = board[i + 1][j + 1];
-
-    vector<PosData> a;
-    debugLog(item1, 1, i, j - 1);
-    debugLog(item2, 2, i, j + 1);
-    debugLog(item3, 3, i + 1, j - 1);
-    debugLog(item4, 4, i + 1, j);
-    debugLog(item5, 5, i + 1, j + 1);
-
-    if (j > 0 && canPut(item1))
-    {
-	
-        PosData pd1;
-        pd1.x = i;
-        pd1.y = j - 1;
-        pd1.pos = getPointByRowAndCol(i, j - 1);
-        a.push_back(pd1);
-    }
-
-    if (j + 1 < MAX_COLS && canPut(item2))
-    {
-        PosData pd1;
-        pd1.x = i;
-        pd1.y = j + 1;
-        pd1.pos = getPointByRowAndCol(i, j + 1);
-        a.push_back(pd1);
-    }
-
-    if (i + 1 < MAX_ROWS && canPut(item4))
-    {
-        PosData pd1;
-        pd1.x = i + 1;
-        pd1.y = j;
-        pd1.pos = getPointByRowAndCol(i + 1, j);
-        a.push_back(pd1);
-    }
-
-    if (i + 1 < MAX_ROWS && j + 1 < MAX_COLS && canPut(item5))
-    {
-        PosData pd1;
-        pd1.x = i + 1;
-        pd1.y = j + 1;
-        pd1.pos = getPointByRowAndCol(i + 1, j + 1);
-        a.push_back(pd1);
-    }
-
-    if (i + 1 < MAX_ROWS && j - 1 >= 0 && canPut(item3))
-    {
-        PosData pd1;
-        pd1.x = i + 1;
-        pd1.y = j - 1;
-        pd1.pos = getPointByRowAndCol(i + 1, j - 1);
-        a.push_back(pd1);
-    }
-
-    float dis = 100000;
-
-    for (auto obj : a)
-    {
-        auto dis2 = obj.pos.distance(pos);
-
-        if (dis2 < dis)
-        {
-            dis = dis2;
-            row = obj.x;
-            col = obj.y;
-        }
-    }
-	
-    if (curFindRow == 0 && board[curFindRow][curFindCol] == nullptr)
-    {
-        row = curFindRow;
-        col = curFindCol;
-    }
+	Vec2 ret = getStopPosition();
+	int i = curFindRow;
+	int j = curFindCol;
+	auto item1 = board[i][j - 1];
+	auto item2 = board[i][j + 1];
+	auto item3 = board[i + 1][j - 1];
+	auto item4 = board[i + 1][j];
+	auto item5 = board[i + 1][j + 1];
+	int row = ret.x;
+	int col = ret.y;
 	cleanRoundTransparent(board[row][col], row, col);
 	cleanRoundTransparent(item1, i, j - 1);
 	cleanRoundTransparent(item2, i, j + 1);
@@ -574,6 +504,97 @@ void BubbleLayer::correctReadyPosition()
     log("[调整后的位置]%f,%f,%d,%d", newPos.x, newPos.y, row, col);
     ready->runAction(Sequence::create(MoveTo::create(0.2f, newPos), CallFunc::create(CC_CALLBACK_0(BubbleLayer::readyAction, this)), nullptr));
 
+}
+Vec2 BubbleLayer::getStopPosition()
+{
+	Vec2 ret;
+	int row = -1, col = -1;
+	// 注意，这个ready的表诉并不清楚；应该是正在运动的球的位置
+	Point pos = ready->getPosition();
+	Vec2 rowCol = getRowAndColByPoint(pos);
+
+	int i = curFindRow;
+	int j = curFindCol;
+	auto item1 = board[i][j - 1];
+	auto item2 = board[i][j + 1];
+	auto item3 = board[i + 1][j - 1];
+	auto item4 = board[i + 1][j];
+	auto item5 = board[i + 1][j + 1];
+
+	vector<PosData> a;
+	debugLog(item1, 1, i, j - 1);
+	debugLog(item2, 2, i, j + 1);
+	debugLog(item3, 3, i + 1, j - 1);
+	debugLog(item4, 4, i + 1, j);
+	debugLog(item5, 5, i + 1, j + 1);
+
+	if (j > 0 && canPut(item1))
+	{
+
+		PosData pd1;
+		pd1.x = i;
+		pd1.y = j - 1;
+		pd1.pos = getPointByRowAndCol(i, j - 1);
+		a.push_back(pd1);
+	}
+
+	if (j + 1 < MAX_COLS && canPut(item2))
+	{
+		PosData pd1;
+		pd1.x = i;
+		pd1.y = j + 1;
+		pd1.pos = getPointByRowAndCol(i, j + 1);
+		a.push_back(pd1);
+	}
+
+	if (i + 1 < MAX_ROWS && canPut(item4))
+	{
+		PosData pd1;
+		pd1.x = i + 1;
+		pd1.y = j;
+		pd1.pos = getPointByRowAndCol(i + 1, j);
+		a.push_back(pd1);
+	}
+
+	if (i + 1 < MAX_ROWS && j + 1 < MAX_COLS && canPut(item5))
+	{
+		PosData pd1;
+		pd1.x = i + 1;
+		pd1.y = j + 1;
+		pd1.pos = getPointByRowAndCol(i + 1, j + 1);
+		a.push_back(pd1);
+	}
+
+	if (i + 1 < MAX_ROWS && j - 1 >= 0 && canPut(item3))
+	{
+		PosData pd1;
+		pd1.x = i + 1;
+		pd1.y = j - 1;
+		pd1.pos = getPointByRowAndCol(i + 1, j - 1);
+		a.push_back(pd1);
+	}
+
+	float dis = 100000;
+
+	for (auto obj : a)
+	{
+		auto dis2 = obj.pos.distance(pos);
+
+		if (dis2 < dis)
+		{
+			dis = dis2;
+			row = obj.x;
+			col = obj.y;
+		}
+	}
+
+	if (curFindRow == 0 && board[curFindRow][curFindCol] == nullptr)
+	{
+		row = curFindRow;
+		col = curFindCol;
+	}
+	ret.x = row, ret.y = col;
+	return ret;
 }
 // 摆正位置后，才会真正消除掉球
 void BubbleLayer::readyAction()
