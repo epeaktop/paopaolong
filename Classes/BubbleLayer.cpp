@@ -89,6 +89,26 @@ void BubbleLayer::showHits(int num)
     hitedNumLabel_->runAction(seq);
 }
 
+void BubbleLayer::cleanRoundTransparent(Bubble* obj, int i, int j)
+{
+	if (i < 0 || i >= MAX_ROWS)
+	{
+		return;
+	}
+
+	if (j < 0 || j >= MAX_COLS)
+	{
+		return;
+	}
+	if (!isTransparentObj(obj))
+	{
+		return;
+	}
+
+	board[i][j] = nullptr;
+	transparentAction(obj);
+}
+
 bool BubbleLayer::init()
 {
     if (!Layer::init())
@@ -526,10 +546,13 @@ void BubbleLayer::correctReadyPosition()
         row = curFindRow;
         col = curFindCol;
     }
-	if (board[row][col])
-	{
-		downBubbleActionCallBack(board[row][col]);
-	}
+	cleanRoundTransparent(board[row][col], row, col);
+	cleanRoundTransparent(item1, i, j - 1);
+	cleanRoundTransparent(item2, i, j + 1);
+	cleanRoundTransparent(item3, i+1, j -1);
+	cleanRoundTransparent(item4, i+1, j);
+	cleanRoundTransparent(item5, i+1, j+1);
+	
     board[row][col] = ready;
     board[row][col]->setString(row, col);
     board[row][col]->setFlag(row % 2 == 0);

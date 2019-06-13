@@ -81,7 +81,7 @@ public:
     void starCallback(Ref* obj);
     void showHitNumsAnim();
     void showHits(int num);
-
+	void cleanRoundTransparent(Bubble* obj, int i, int j);
     const int const_line = 8;
     /* 目前泡泡的高度 */
     int getHowmanyLines()
