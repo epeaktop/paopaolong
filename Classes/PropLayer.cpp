@@ -391,7 +391,7 @@ void PropLayer::update(float delta)
     }
     if(moveNumber_ <= 0)
     {
-		if (notShowBuy)
+		if (!notShowBuy)
 		{
 			showBuyAds();
 			notShowBuy = true;
