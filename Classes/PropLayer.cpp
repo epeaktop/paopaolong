@@ -405,7 +405,7 @@ void PropLayer::update(float delta)
 			if (flag++ > 20) /* 结束的时候等下再出结算界面 */
 			{
 				hadFinished_ = true;
-				flag = -999999;
+				flag = 0;
 			}
 			if (hadFinished_)
 			{
