@@ -412,6 +412,7 @@ void PropLayer::update(float delta)
 				moveNumber_ = 10;
 				showMoveNumbers();
 				hadFinished_ = false;
+				notShowBuy = false;
 				USER()->setClickAds(0);
 			}
 		}
