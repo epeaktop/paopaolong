@@ -130,6 +130,7 @@ bool BubbleLayer::init()
 
     initTheBoard(UserData::getInstance()->getSelLevel());
     calcRetainMap();
+	initReady();
     initWaitPaoPao();
     initReadyPaoPao();
     hitedNumLabel_ = Label::createWithSystemFont("0 hits", "Arial", 30);
@@ -138,7 +139,15 @@ bool BubbleLayer::init()
     this->setMoveNumber(0);
     moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
     moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
-    return true;
+	
+	return true;
+	
+}
+void BubbleLayer::initReady()
+{
+	auto sp = Sprite::create("res/ready_bg.png");
+	addChild(sp);
+	sp->setPosition(428, 157);
 }
 
 
@@ -239,7 +248,9 @@ void BubbleLayer::initWaitPaoPao()
     for (int i = 0; i < MAX_WAIT_PAOPAO; ++i)
     {
         Bubble *obj = randomPaoPao();
-        obj->setPosition(WAIT_PAOPAO_POS);
+		obj->setScale(0.8);
+		float offset = i * 42;
+		obj->setPosition(366 + offset, 155);
         wait[i] = obj;
         this->addChild(obj);
     }
@@ -921,6 +932,32 @@ void BubbleLayer::addScore(Bubble *obj)
     addChild(label);
     gameSceme->_propLayer->AddScoreLabel(5 + num);
 }
+void BubbleLayer::setTouchWich(Vec2 v)
+{
+	isTouch1 = false;
+	isTouch2 = false;
+	isTouch3 = false;
+	isTouch4 = false;
+	if (TI()->isInScope(v, Vec2(312,110),Vec2(388,230)))
+	{
+		isTouch1 = true;
+	}
+	
+	if (TI()->isInScope(v, Vec2(389, 110), Vec2(430, 230)))
+	{
+		isTouch2 = true;
+	}
+	
+	if (TI()->isInScope(v, Vec2(431, 110), Vec2(480, 230)))
+	{
+		isTouch3 = true;
+	}
+
+	if (TI()->isInScope(v, Vec2(481, 110), Vec2(540, 230)))
+	{
+		isTouch4 = true;
+	}
+}
 void BubbleLayer::deleteTheSameBubble(int i, int j, bool flag)
 {
     if (sameSum < 3)
@@ -1071,11 +1108,13 @@ void BubbleLayer::jumpActionCallBack()
     }
 
     wait[MAX_WAIT_PAOPAO - 1] = randomPaoPao();
-    this->addChild(wait[MAX_WAIT_PAOPAO - 1], -1);
+	wait[MAX_WAIT_PAOPAO - 1]->setScale(0.8);
+	this->addChild(wait[MAX_WAIT_PAOPAO - 1]);
 
     for (int i = 0; i < MAX_WAIT_PAOPAO; ++i)
     {
-        wait[i]->setPosition(Point(WAIT_PAOPAO_POS));
+		float offset = i * 42;
+		wait[i]->setPosition(366 + offset, 155);
     }
 }
 void BubbleLayer::resetAllPass()
@@ -1276,18 +1315,38 @@ void BubbleLayer::gameOver(bool over)
 
 void BubbleLayer::swapBubble()
 {
-    auto readyPoint = ready->getPosition();
-    auto waitPoint = wait[0]->getPosition();
+	auto readyPoint = ready->getPosition();
+	auto index = -1;
+	if (isTouch1)
+	{
+		index = 0;
+	}
+	if (isTouch2)
+	{
+		index = 1;
+	}
+	if (isTouch3)
+	{
+		index = 2;
+	}
+	if (isTouch4)
+	{
+		index = 3;
+	}
 
-    ready->runAction(MoveTo::create(0.1f, waitPoint));
-    wait[0]->runAction(MoveTo::create(0.1f, readyPoint));
-
-    auto temp = ready;
-    ready = wait[0];
-    wait[0] = temp;
-
-    throwBallAction();
+	if (index >= 0)
+	{
+		auto waitPoint = wait[index]->getPosition();
+		ready->runAction(MoveTo::create(0.1f, waitPoint));
+		wait[index]->runAction(MoveTo::create(0.1f, readyPoint));
+		auto temp = ready;
+		ready = wait[index];
+		wait[index] = temp;
+	}
 }
+/**
+ *	The point can put a bubble?
+ */
 bool BubbleLayer::canPut(Bubble* sp)
 {
 	if (sp == nullptr)
@@ -1355,9 +1414,6 @@ void BubbleLayer::setReadyAngle(Point target)
 {
     auto angle = (target - READY_PAOPAO_POS).getAngle(Vec2(0, 1));
     ready->setRotation(CC_RADIANS_TO_DEGREES(angle));
-}
-void BubbleLayer::throwBallAction()
-{
 }
 
 bool BubbleLayer::isGameOver()
@@ -1453,11 +1509,9 @@ void BubbleLayer::onTouchEnded(Touch *touch, Event *unused_event)
     {
         this->removeChildByTag(100);
     }
-
-    if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height && touch->getLocation().x <= 200)
-    {
-        this->swapBubble();
-    }
+	setTouchWich(touch->getLocation());
+    swapBubble();
+    
 
     if (touch->getLocation().y <= TOUCH_DOWN * Director::getInstance()->getVisibleSize().height || touch->getLocation().y >= TOUCH_TOP * Director::getInstance()->getVisibleSize().height)
     {

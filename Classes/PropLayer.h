@@ -20,7 +20,7 @@ public:
 	Node* _propLayer;
 	void buttonCallback(Ref* pSender);
     void showOpenBoxAnimi(int flag);
-
+	
 private:
 
 	
@@ -31,6 +31,7 @@ private:
 	void menuColorBubbleCallBack(Ref* Psender);
 	void update(float delta);
     void initShooter();
+	void showBuyAds();
     /**
      * 初始化分数label
      */
@@ -79,6 +80,7 @@ public:
 
 	void colorBtn(Ref* pSender);
 private:
+	bool notShowBuy = false;
     /**
      * 当前剩余步骤
      */

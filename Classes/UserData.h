@@ -94,7 +94,15 @@ public:
 		return UserDefault::getInstance()->getIntegerForKey("design_color", 1);
 	}
 
-    
+	void setClickAds(int n)
+	{
+		UserDefault::getInstance()->setIntegerForKey("click_ads", n);
+	}
+
+	int getClickAds()
+	{
+		return UserDefault::getInstance()->getIntegerForKey("click_ads", 0);
+	}
 };
 
 #define USER UserData::getInstance

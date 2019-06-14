@@ -12,6 +12,7 @@
 #include "SimpleAudioEngine.h"
 #include "Tools.h"
 #include "NDKHelper.h"
+#include "BuyMoveNumber.h"
 
 using namespace CocosDenshion;
 using namespace cocostudio::timeline;
@@ -80,6 +81,12 @@ void PropLayer::initShooter()
     }
 }
 
+void PropLayer::showBuyAds()
+{
+	auto overLayer = BuyMoveNumber::create();
+	this->addChild(overLayer);
+}
+
 void PropLayer::initScoreLabel()
 {
     auto scoreLabel = Label::createWithSystemFont("0", "Arial", 30);
@@ -96,7 +103,8 @@ void PropLayer::initChangeBubbleSprite()
     auto sp = Sprite::create("res/change.png");
     
     sp->setTag(CHANGE_TAG);
-    sp->setPosition(176, 170);
+    sp->setPosition(318, 155);
+	sp->setScale(0.3);
     addChild(sp);
     auto cr  = RotateTo::create(30, 180);
     auto cr2 = RotateTo::create(30, -180);
@@ -281,7 +289,6 @@ bool PropLayer::init()
 		initColorBtn();
 	}
     scheduleUpdate();
-    
     flag = 0;
 	return true;
 }
@@ -314,9 +321,9 @@ void PropLayer::showOpenBoxAnimi(int flag)
     menuBombCallBack(this);
 }
 
+
 void PropLayer::buttonCallback(Ref* obj)
 {
-
     callJava("showAds","");
     int a = rand()%2 + 1;
     showOpenBoxAnimi(a);
@@ -384,17 +391,40 @@ void PropLayer::update(float delta)
     }
     if(moveNumber_ <= 0)
     {
-        if(flag++ > 20) /* 结束的时候等下再出结算界面 */
-        {
-            hadFinished_ = true;
-            flag = -999999;
-        }
-        if(hadFinished_)
-        {
-            auto gameSceme = (GameScene*)this->getParent();
-            gameSceme->gameOver();
-            hadFinished_ = false;
-        }
+		if (notShowBuy)
+		{
+			showBuyAds();
+			notShowBuy = true;
+			return;
+		}
+		/**
+		 *	玩家观看广告
+		 */
+		if (USER()->getClickAds() == 1)
+		{
+			if (flag++ > 20) /* 结束的时候等下再出结算界面 */
+			{
+				hadFinished_ = true;
+				flag = -999999;
+			}
+			if (hadFinished_)
+			{
+				moveNumber_ = 10;
+				showMoveNumbers();
+				hadFinished_ = false;
+				USER()->setClickAds(0);
+			}
+		}
+		/**
+		 *	玩家直接点关闭
+		 */
+		if (USER()->getClickAds() == 2)
+		{
+			USER()->setClickAds(0);
+			auto gameSceme = (GameScene*)this->getParent();
+			gameSceme->gameOver();	
+		}
+
     }
 }
 

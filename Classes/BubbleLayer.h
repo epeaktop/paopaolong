@@ -25,6 +25,7 @@ public:
 	virtual void update(float delta);
 	bool isTransparentObj(Bubble* obj);
 	void transparentAction(Bubble* obj);
+	void initReady();
 private:
 
 	Bubble *board[MAX_ROWS][MAX_COLS]; 
@@ -68,7 +69,6 @@ public:
 	void initBubbleAction(Bubble *obj, int i, int j);
 	void gameOver(bool over = false);
 	void setReadyAngle(Point target);
-	void throwBallAction();
 	bool isGameOver();
 	void movementPassCallBack(Armature * armature, MovementEventType type, const std::string &name);
 	void moveParantCallBack(Armature * armature, MovementEventType type, const std::string &name);
@@ -174,6 +174,10 @@ public:
     /* 获取当前移动的步数 */
     CC_SYNTHESIZE_ADD(int, _moveNumbers, MoveNumber);
     void addScore(Bubble* obj);
+	
+	void setTouchWich(Vec2 v);
+
+
 public:
 	Vector<Sprite*> _auxiliary;
 	/**
@@ -205,7 +209,10 @@ public:
      *	当前击落的泡泡数
      */
 	int curDownNum_ = 1;
-
+	bool isTouch1 = false;
+	bool isTouch2 = false;
+	bool isTouch3 = false;
+	bool isTouch4 = false;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */

@@ -14,9 +14,9 @@ const float TOUCH_DOWN = 0.33f;
 const float MOVE_DISTANCE = 10.0f;
 const int BUBBLE_COUNT = 7;
 
-#define MAX_WAIT_PAOPAO 1
+#define MAX_WAIT_PAOPAO 4
 #define READY_PAOPAO_POS Point(270, 193)
-#define WAIT_PAOPAO_POS Point(175,170)
+#define WAIT_PAOPAO_POS Point(200,170)
 
 #define PAOPAO_SPEED 30.0f
 
