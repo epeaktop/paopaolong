@@ -93,6 +93,10 @@ public:
     void showHits(int num);
 	void cleanRoundTransparent(Bubble* obj, int i, int j);
 	void showTimeShootBubble();
+	/**
+	 *	show time call back function. call xx times to show win ui
+	 */
+	void showTimeCallBack();
     const int const_line = 8;
     /* 目前泡泡的高度 */
     int getHowmanyLines()
@@ -231,6 +235,10 @@ public:
 	 *	curLeftNum ++ in callback
 	 */
 	int curLeftNum = 0;
+	/**
+	 *	call back show time times
+	 */
+	int showTimeCalledTimes = 0;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */
