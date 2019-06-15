@@ -61,11 +61,20 @@ public:
 	void bubbleAction(Bubble *obj);
 	void callbackRemoveBubble(Node *obj);
 	void downBubbleActionCallBack(Node *obj);
+	void downLeftBubbleActionCallBack(Node *obj);
 	void jumpActionCallBack();
 	void resetAllPass();
 	void checkDownBubble();
 	void downBubble();
-	void downBubbleAction(Bubble *obj);
+
+	void gameWin();
+	void showTime();
+
+	void downBubbleAction(Bubble* obj);
+	/**
+	 *	专门处理遗留下球的函数
+	 */
+	void downLeftBubbleAction(Bubble* obj);
 	void initBubbleAction(Bubble *obj, int i, int j);
 	void gameOver(bool over = false);
 	void setReadyAngle(Point target);
@@ -83,6 +92,7 @@ public:
     void showHitNumsAnim();
     void showHits(int num);
 	void cleanRoundTransparent(Bubble* obj, int i, int j);
+	void showTimeShootBubble();
     const int const_line = 8;
     /* 目前泡泡的高度 */
     int getHowmanyLines()
@@ -213,6 +223,14 @@ public:
 	bool isTouch2 = false;
 	bool isTouch3 = false;
 	bool isTouch4 = false;
+	/**
+	 *	遗留下来球的数量
+	 */
+	int leftNum = 0;
+	/**
+	 *	curLeftNum ++ in callback
+	 */
+	int curLeftNum = 0;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */

@@ -109,6 +109,27 @@ void BubbleLayer::cleanRoundTransparent(Bubble* obj, int i, int j)
 	transparentAction(obj);
 }
 
+void BubbleLayer::showTimeShootBubble()
+{
+	auto v1 = Vec2(221, 506);
+	auto v2 = Vec2(370, 911);
+	auto sp = randomPaoPao();
+	sp->setPosition(READY_PAOPAO_POS);
+	auto start = sp->getPosition();
+	auto endPoint = Vec2(550, 838);
+
+	addChild(sp);
+	ccBezierConfig config;
+	config.controlPoint_1 = v1;
+	config.controlPoint_2 = v2;
+	config.endPosition = endPoint;
+
+	BezierTo* bezier = BezierTo::create(0.6, config);
+	auto action = EaseInOut::create(bezier, 0.6);
+
+	sp->runAction(Spawn::create(FadeOut::create(1) , action, NULL));
+}
+
 bool BubbleLayer::init()
 {
     if (!Layer::init())
@@ -1233,38 +1254,70 @@ void BubbleLayer::downBubble()
     {
         return;
     }
+	showTime();
+	//gameWin();
+}
 
-    callJava("showAds", "");
+void BubbleLayer::gameWin()
+{	
+	callJava("showAds", "");
+	_havePass = true;
+	setDisable();
+	auto gameScene = (GameScene*)this->getParent();
+	gameScene->_propLayer->setVisible(false);
 
-    _havePass = true;
-    setDisable();
-    auto gameScene = (GameScene *)this->getParent();
-    gameScene->_propLayer->setVisible(false);
+	auto cur_level = UserData::getInstance()->getSelLevel();
+	auto score = UserData::getInstance()->getScore();
+	int last_time = gameScene->_propLayer->getMoveNumber();
 
-    auto cur_level = UserData::getInstance()->getSelLevel();
-    auto score = UserData::getInstance()->getScore();
-    int last_time = gameScene->_propLayer->getMoveNumber();
+	score += last_time * 100;
 
-    score += last_time * 100;
+	UserData::getInstance()->setScore(score);
+	UserData::getInstance()->setScore(cur_level, score);
 
-    UserData::getInstance()->setScore(score);
+	GameResult* pl = GameResult::create("game_start.png");
+	pl->setContentSize(Size(540, 960));
+	pl->setTitle("", 30);
+	pl->setContentText("", 33, 80, 150);
+	pl->setCallbackFunc(this, callfuncN_selector(BubbleLayer::buttonCallback));
+	pl->addButton("start_bt.png", "start_bt.png", Vec2(540 / 2, 300), BT_OK);
 
-    UserData::getInstance()->setScore(cur_level, score);
+	this->addChild(pl, 2000);
 
-    GameResult *pl = GameResult::create("game_start.png");
-    pl->setContentSize(Size(540, 960));
-    pl->setTitle("", 30);
-    pl->setContentText("", 33, 80, 150);
-    pl->setCallbackFunc(this, callfuncN_selector(BubbleLayer::buttonCallback));
+	if (UserData::getInstance()->getLevel() <= UserData::getInstance()->getSelLevel())
+	{
+		UserData::getInstance()->addLevel(1);
+	}
+}
 
-    pl->addButton("start_bt.png", "start_bt.png", Vec2(540 / 2, 300), BT_OK);
-
-    this->addChild(pl, 2000);
-
-    if (UserData::getInstance()->getLevel() <= UserData::getInstance()->getSelLevel())
-    {
-        UserData::getInstance()->addLevel(1);
-    }
+void BubbleLayer::showTime()
+{
+	for (auto i = 0; i < MAX_ROWS; i++)
+	{
+		for (int j = 0; j < MAX_COLS; j++)
+		{
+			auto sp = board[i][j];
+			if (!sp)
+			{
+				continue;
+			}
+			leftNum++;
+		}
+	}
+	for (auto i = 0; i < MAX_ROWS; i++)
+	{
+		for (int j = 0; j < MAX_COLS; j++)
+		{
+			auto sp = board[i][j];
+			if (!sp)
+			{
+				continue;
+			}
+			log("<showTime>:(%d,%d)", i, j);
+			downLeftBubbleAction(sp);
+			board[i][j] = nullptr;
+		}
+	}
 }
 
 void BubbleLayer::buttonCallback(Node *obj)
@@ -1275,7 +1328,6 @@ void BubbleLayer::buttonCallback(Node *obj)
 }
 void BubbleLayer::downBubbleAction(Bubble *obj)
 {
-
     float offY = 200.0;
     Point pos = obj->getPosition();
     obj->runAction(Sequence::create(MoveTo::create((pos.y - offY) / 600.0, Point(pos.x, offY)), CallFuncN::create(CC_CALLBACK_1(BubbleLayer::downBubbleActionCallBack, this)), NULL));
@@ -1293,6 +1345,30 @@ void BubbleLayer::downBubbleActionCallBack(Node *obj)
         addScore(bubble);
         bubble->removeFromParentAndCleanup(true);
     }), nullptr));
+}
+void BubbleLayer::downLeftBubbleActionCallBack(Node* obj)
+{
+	auto bubble = dynamic_cast<Bubble*>(obj);
+	auto particle = ParticleSystemQuad::create("Particle/luoxia_lizi.plist");
+	particle->setPosition(bubble->getContentSize().width / 2, 0);
+	bubble->addChild(particle);
+	bubble->runAction(Sequence::create(DelayTime::create(0.5f), FadeOut::create(0.1f), CallFunc::create([=]()
+	    {
+			curLeftNum++;
+			if (curLeftNum == leftNum)
+			{
+				curLeftNum = 0;
+				showTimeShootBubble();
+			}
+		    addScore(bubble);
+		    bubble->removeFromParentAndCleanup(true);
+	    }), nullptr));
+}
+void BubbleLayer::downLeftBubbleAction(Bubble* obj)
+{
+	float offY = 200.0;
+	Point pos = obj->getPosition();
+	obj->runAction(Sequence::create(MoveTo::create((pos.y - offY) / 600.0, Point(pos.x, offY)), CallFuncN::create(CC_CALLBACK_1(BubbleLayer::downLeftBubbleActionCallBack, this)), NULL));
 }
 void BubbleLayer::initBubbleAction(Bubble *obj, int i, int j)
 {
@@ -1530,9 +1606,5 @@ void BubbleLayer::onTouchEnded(Touch *touch, Event *unused_event)
     }
 
 }
-
-
-
-
 
 

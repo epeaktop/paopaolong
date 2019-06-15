@@ -36,8 +36,6 @@ Bubble * Bubble::initWithType(BubbleType type, int flag)
 	{
 		pRet->initWithSpriteFrameName(getStringByType(type));
 	}
-
-	
     pRet->setScale(0.77);
     pRet->label = Label::createWithSystemFont("0,0", "Arial", 18);
 	if (type == BUBBLE_TYPE1 || type == BUBBLE_TYPE4)
@@ -50,14 +48,11 @@ Bubble * Bubble::initWithType(BubbleType type, int flag)
 	}
     
     pRet->label->setPosition(25,25);
-	pRet->label->setVisible(false);
 #ifndef _DEBUG
 	pRet->label->setVisible(false);
 #else
 	//pRet->label->enableOutline(Color4B(255, 255, 255, 255), 1);
 #endif
-
-    
     pRet->addChild(pRet->label, 100000);
     if(flag == 1)
     {
