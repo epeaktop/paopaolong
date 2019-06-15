@@ -111,23 +111,32 @@ void BubbleLayer::cleanRoundTransparent(Bubble* obj, int i, int j)
 
 void BubbleLayer::showTimeShootBubble()
 {
-	auto v1 = Vec2(221, 506);
-	auto v2 = Vec2(370, 911);
-	auto sp = randomPaoPao();
-	sp->setPosition(READY_PAOPAO_POS);
-	auto start = sp->getPosition();
-	auto endPoint = Vec2(550, 838);
+	const int SHOW_BUBBLE_NUM = 10;
+	for(int j = 0; j < 5; j++)
+	for (int i = 0; i < SHOW_BUBBLE_NUM; i++) {
+		auto sp = randomPaoPao(1);
+		sp->setPosition(READY_PAOPAO_POS);
+		auto start = sp->getPosition();
 
-	addChild(sp);
-	ccBezierConfig config;
-	config.controlPoint_1 = v1;
-	config.controlPoint_2 = v2;
-	config.endPosition = endPoint;
+		Vec2 ctrl1[SHOW_BUBBLE_NUM] = { Vec2(221, 506), Vec2(287, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),
+			Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506) };
+		Vec2 ctrl2[SHOW_BUBBLE_NUM] = { Vec2(370, 908),Vec2(73, 734), Vec2(452, 691),Vec2(82, 907),Vec2(463, 617),
+			Vec2(72, 618), Vec2(421, 664), Vec2(73, 833),Vec2(463, 921),Vec2(113, 919) };
+		Vec2 endPoint[SHOW_BUBBLE_NUM] = { Vec2(570, 837), Vec2(-20, 581),Vec2(570, 533),Vec2(-20, 753),Vec2(570, 459),
+			Vec2(-20, 467),Vec2(570, 653),Vec2(-20, 699),Vec2(570, 762),Vec2(-20, 813) };
+		int index = rand() % SHOW_BUBBLE_NUM;
+		addChild(sp);
+		ccBezierConfig config;
+		config.controlPoint_1 = ctrl1[index];
+		config.controlPoint_2 = ctrl2[index];
+		config.endPosition = endPoint[index];
 
-	BezierTo* bezier = BezierTo::create(0.6, config);
-	auto action = EaseInOut::create(bezier, 0.6);
-
-	sp->runAction(Spawn::create(FadeOut::create(1) , action, NULL));
+		BezierTo* bezier = BezierTo::create(0.6, config);
+		auto action = EaseInOut::create(bezier, 0.6);
+		auto offset = i * 0.2;
+		auto delay = DelayTime::create(offset);
+		sp->runAction(Sequence::create(delay, action, FadeOut::create(3), NULL));
+	}
 }
 
 bool BubbleLayer::init()
@@ -1355,7 +1364,7 @@ void BubbleLayer::downLeftBubbleActionCallBack(Node* obj)
 	bubble->runAction(Sequence::create(DelayTime::create(0.5f), FadeOut::create(0.1f), CallFunc::create([=]()
 	    {
 			curLeftNum++;
-			if (curLeftNum == leftNum)
+			if (curLeftNum >= leftNum)
 			{
 				curLeftNum = 0;
 				showTimeShootBubble();
