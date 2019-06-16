@@ -53,6 +53,18 @@ private:
     void initMoveNumbers();
     
     void initBox();
+	/**
+	 *	初始化道具按钮
+	 */
+	void initItemBtn();
+	/**
+	 *	show item icon
+	 *  args: 
+	 *    haveNumowner number
+	 *    pos position
+	 */
+	void showItemIcon(MenuItemImage*item, int haveNum, Vec2 pos, int tag);
+
 public:
     void subMoveNumber()
     {

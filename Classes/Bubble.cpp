@@ -48,6 +48,7 @@ Bubble * Bubble::initWithType(BubbleType type, int flag)
 	}
     
     pRet->label->setPosition(25,25);
+	pRet->label->setVisible(false);
 #ifndef _DEBUG
 	pRet->label->setVisible(false);
 #else

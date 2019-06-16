@@ -142,7 +142,7 @@ void BubbleLayer::showTimeShootBubble()
 
 void BubbleLayer::showTimeCallBack()
 {
-	if (showTimeCalledTimes++ > 40)
+	if (showTimeCalledTimes++ > 0)
 	{
 		showTimeCalledTimes = 0;
 		gameWin();
@@ -953,16 +953,17 @@ void BubbleLayer::addScore(Bubble *obj)
 {
     auto gameSceme = (GameScene *)this->getParent();
     curDownNum_++;
-    int num = 5 << curDownNum_;
-
-    if (num > 10000)
+    int num = 2 << curDownNum_;
+	num += num * hitNums_;
+    if (num > 100)
     {
-        num = 10000;
+        num = 100 + rand() % 20;
     }
-
-    auto label = Label::createWithCharMap("white_font.png", 25, 29, '0');
+	
+	
+	auto label = Label::createWithCharMap("white_font.png", 25, 29, '0');
     label->setPosition(obj->getPosition());
-    auto scale = ScaleTo::create(0.4, 1.1);
+    auto scale = ScaleTo::create(0.2, 0.6);
     auto fadeout = FadeOut::create(0.4);
     label->setString(TI()->itos(num));
     label->runAction(Sequence::create(scale, fadeout, CallFunc::create([ = ]()
@@ -1128,7 +1129,6 @@ void BubbleLayer::moveParantCallBack(Armature *armature, MovementEventType type,
 {
     if (type == COMPLETE)
     {
-        {
             auto bubble = (Bubble *)armature->getParent();
             bubble->removeFromParentAndCleanup(true);
             sameSum--;
@@ -1137,8 +1137,7 @@ void BubbleLayer::moveParantCallBack(Armature *armature, MovementEventType type,
             {
                 setEnable();
             }
-        }
-    }
+	}
 }
 void BubbleLayer::jumpActionCallBack()
 {
@@ -1279,6 +1278,10 @@ void BubbleLayer::downBubble()
 
 void BubbleLayer::gameWin()
 {	
+	if (_havePass)
+	{
+		return;
+	}
 	callJava("showAds", "");
 	_havePass = true;
 	setDisable();
@@ -1336,6 +1339,10 @@ void BubbleLayer::showTime()
 			downLeftBubbleAction(sp);
 			board[i][j] = nullptr;
 		}
+	}
+	if (leftNum == 0)
+	{
+		showTimeShootBubble();
 	}
 }
 

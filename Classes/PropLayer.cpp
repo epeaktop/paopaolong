@@ -13,6 +13,7 @@
 #include "Tools.h"
 #include "NDKHelper.h"
 #include "BuyMoveNumber.h"
+#include "UserData.h"
 
 using namespace CocosDenshion;
 using namespace cocostudio::timeline;
@@ -40,6 +41,14 @@ const int CHANGE_TAG = 10247;
 const int LEVEL_TAG = 10248;
 const int MOVE_TAG = 10249;
 const int PAUSE_TAG = 10250;
+const int BOMB_BTN_TAG = 10251;
+const int BIAO_TAG = 10252;
+const int COLOR_TAG = 10253;
+const int MORE_BTN_TAG = 10254;
+const int BOMB_ICON_BTN_TAG = 10255;
+const int BIAO_ICON_BTN_TAG = 10256;
+const int COLOR_ICON_BTN_TAG = 10257;
+const int MORE_ICON_BTN_TAG = 10258;
 
 void PropLayer::initMoveNumbers()
 {
@@ -178,7 +187,61 @@ void PropLayer::initBox()
     menu->setAnchorPoint(Vec2::ZERO);
 }
 
+void PropLayer::initItemBtn()
+{
+	auto menu = getChildByTag(MENU_TAG);
+	auto bomb = MenuItemImage::create("bomb_btn.png","bomb_btn.png");
+	auto biao = MenuItemImage::create("biao_btn.png","biao_btn.png");
+	auto col_btn = MenuItemImage::create("color_btn.png","color_btn.png");
+	auto more_btn = MenuItemImage::create("add_btn.png","add_btn.png");
 
+	bomb->setPosition(63, 50);
+	biao->setPosition(201, 50);
+	col_btn->setPosition(343, 50);
+	more_btn->setPosition(472, 50);
+
+	bomb->setCallback(CC_CALLBACK_1(PropLayer::buttonCallback, this));
+	biao->setCallback(CC_CALLBACK_1(PropLayer::buttonCallback, this));
+	col_btn->setCallback(CC_CALLBACK_1(PropLayer::buttonCallback, this));
+	more_btn->setCallback(CC_CALLBACK_1(PropLayer::buttonCallback, this));
+
+
+	bomb->setTag(BOMB_BTN_TAG);
+	biao->setTag(BIAO_TAG);
+	col_btn->setTag(COLOR_TAG);
+	more_btn->setTag(MORE_BTN_TAG);
+	
+	menu->addChild(bomb);
+	menu->addChild(biao);
+	menu->addChild(col_btn);
+	menu->addChild(more_btn);
+	
+	showItemIcon(bomb, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
+	showItemIcon(biao, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
+	showItemIcon(col_btn, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
+	showItemIcon(more_btn, USER()->getBombItemNum(), Vec2(95, 21), BOMB_ICON_BTN_TAG);
+
+}
+
+void PropLayer::showItemIcon(MenuItemImage* item, int haveNum, Vec2 pos, int tag)
+{
+	Sprite* itemNumSp = nullptr;
+	if (haveNum <= 0)
+	{
+		itemNumSp = Sprite::create("add.png");
+	}
+	else
+	{
+		itemNumSp = Sprite::create("have.png");
+	}
+	item->addChild(itemNumSp);
+	itemNumSp->setPosition(pos);
+	itemNumSp->setTag(tag);
+}
+
+/**
+ *	design mode button
+ */
 void PropLayer::initColorBtn()
 {
 	if (!isDesign)
@@ -283,11 +346,13 @@ bool PropLayer::init()
 	if (!isDesign)
 	{
 		initBox();
+		initItemBtn();
 	}
 	else
 	{
 		initColorBtn();
 	}
+
     scheduleUpdate();
     flag = 0;
 	return true;

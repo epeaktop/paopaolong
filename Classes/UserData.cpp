@@ -42,16 +42,16 @@ bool UserData::init()
     _bestScore = UserDefault::getInstance()->getIntegerForKey("BestScore", 0);
     _rebirth = UserDefault::getInstance()->getIntegerForKey("Rebirth", 0);
 	_level = UserDefault::getInstance()->getIntegerForKey("level", 1);
-    _moveItemNum = UserDefault::getInstance()->getIntegerForKey("_moveItemNum", 0);
+    
     _sliver = UserDefault::getInstance()->getIntegerForKey("sliver", 0);
     _lasttime = UserDefault::getInstance()->getIntegerForKey("lasttime", 0);
-    
-    _refreshNum = UserDefault::getInstance()->getIntegerForKey("refreshNum",0);
-    _colorNum = UserDefault::getInstance()->getIntegerForKey("colorItemNum",0 );
     _hp = UserDefault::getInstance()->getIntegerForKey("hp", 0);
-    _bombNum = UserDefault::getInstance()->getIntegerForKey("bombNum", 0);
-    _digNum = UserDefault::getInstance()->getIntegerForKey("digNum", 0);
-    
+	_digNum = UserDefault::getInstance()->getIntegerForKey("digNum", 0);
+
+	_biaoNum = UserDefault::getInstance()->getIntegerForKey("refreshNum", 0);
+	_colorNum = UserDefault::getInstance()->getIntegerForKey("colorItemNum", 0);
+	_bombNum = UserDefault::getInstance()->getIntegerForKey("bombNum", 0); 
+	_moveItemNum = UserDefault::getInstance()->getIntegerForKey("_moveItemNum", 0);
 	return true;
 }
 
@@ -86,7 +86,7 @@ void UserData::saveData()
     UserDefault::getInstance()->setIntegerForKey("sliver", _sliver);
     UserDefault::getInstance()->setIntegerForKey("lasttime", _lasttime);
     UserDefault::getInstance()->setIntegerForKey("colorItemNum", _colorNum);
-    UserDefault::getInstance()->setIntegerForKey("refreshNum", _refreshNum);
+    UserDefault::getInstance()->setIntegerForKey("refreshNum", _biaoNum);
     UserDefault::getInstance()->setIntegerForKey("hp", _hp);
     UserDefault::getInstance()->setIntegerForKey("bombNum", _bombNum);
     UserDefault::getInstance()->setIntegerForKey("digNum", _digNum);

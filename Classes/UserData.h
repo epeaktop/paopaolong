@@ -32,21 +32,20 @@ public:
     
     CC_SYNTHESIZE_ADD(int, _lasttime, LastTime);
     
-    
 	CC_SYNTHESIZE_ADD(int, _rebirth, Rebirth); 
 	CC_SYNTHESIZE_ADD(int, _bestScore, BestScore);
 	CC_SYNTHESIZE_ADD(unsigned int, _level, Level);
     CC_SYNTHESIZE_ADD(int, _Sellevel, SelLevel);
-    CC_SYNTHESIZE_ADD(int, _moveItemNum, MoveItemNum);
-    CC_SYNTHESIZE_ADD(int, _refreshNum, RefreshItemNum);
-    CC_SYNTHESIZE_ADD(int, _colorNum, colorItemNum);
     CC_SYNTHESIZE_ADD(int, _digNum, digItemNum);
-    CC_SYNTHESIZE_ADD(int, _bombNum, bombItemNum);
-    
 	CC_SYNTHESIZE(bool, _raffle, Raffle);
 	CC_SYNTHESIZE(bool, _haveRaffle, HaveRaffle);
 	CC_SYNTHESIZE(bool, _openBox, OpenBox);
-    
+
+	CC_SYNTHESIZE_ADD(int, _moveItemNum, MoveItemNum);
+	CC_SYNTHESIZE_ADD(int, _biaoNum, BiaoItemNum);
+	CC_SYNTHESIZE_ADD(int, _colorNum, ColorItemNum);
+	CC_SYNTHESIZE_ADD(int, _bombNum, BombItemNum);
+
 private:
 	UserData() = default;
 	~UserData();
@@ -103,6 +102,8 @@ public:
 	{
 		return UserDefault::getInstance()->getIntegerForKey("click_ads", 0);
 	}
+
+	
 };
 
 #define USER UserData::getInstance
