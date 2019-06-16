@@ -217,10 +217,9 @@ void PropLayer::initItemBtn()
 	menu->addChild(more_btn);
 	
 	showItemIcon(bomb, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
-	showItemIcon(biao, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
-	showItemIcon(col_btn, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
-	showItemIcon(more_btn, USER()->getBombItemNum(), Vec2(95, 21), BOMB_ICON_BTN_TAG);
-
+	showItemIcon(biao, USER()->getBiaoItemNum(), Vec2(110, 21), BIAO_ICON_BTN_TAG);
+	showItemIcon(col_btn, USER()->getColorItemNum(), Vec2(110, 21), COLOR_ICON_BTN_TAG);
+	showItemIcon(more_btn, USER()->getMoveItemNum(), Vec2(95, 21), MORE_ICON_BTN_TAG);
 }
 
 void PropLayer::showItemIcon(MenuItemImage* item, int haveNum, Vec2 pos, int tag)
