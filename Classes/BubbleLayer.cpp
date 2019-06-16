@@ -304,25 +304,6 @@ void BubbleLayer::initReadyPaoPao()
 void BubbleLayer::onTouch(Point target)
 {
     this->real = (target - ready->getPosition()).getNormalized();
-    auto gameScene = (GameScene *)this->getParent();
-    auto proplayer = (PropLayer *)gameScene->_propLayer;
-
-    switch (ready->getType())
-    {
-    case BUBBLE_TYPE_COLOR:
-        UserData::getInstance()->addColorBubble(-1);
-        proplayer->setColorBubbleNum();
-        break;
-
-    case BUBBLE_TYPE_BOMB:
-        UserData::getInstance()->addBomb(-1);
-        proplayer->setBombNum();
-        break;
-
-    default:
-        break;
-    }
-
     this->addMoveNumber(1);
     this->scheduleUpdate();
 }
@@ -441,14 +422,6 @@ bool BubbleLayer::checkCollideBorder()
     /* 顶部边界 */
     if (ready->getPosition().y > TOUCH_TOP * winSize.height - R)
     {
-        if (ready->getType() == BUBBLE_TYPE_COLOR)
-        {
-            BubbleType type = (BubbleType)((int)(CCRANDOM_0_1() * 7 + 1));
-            ready->setType(type);
-            ready->initWithSpriteFrameName(StringUtils::format(BUBBLE_NAME.c_str(), type));
-        }
-
-        // 确定当前的行，列
         curFindRow = 0;
         curFindCol = getRowAndColByPoint(point).y;
         return true;
@@ -679,7 +652,6 @@ void BubbleLayer::readyAction()
     {
         bubbleBlast(row, col, tempFlag);
         bubbleBlast(row - 1, col, tempFlag);
-        //bubbleBlast(row - 2, col, tempFlag);
     }
     else
     {
@@ -960,7 +932,6 @@ void BubbleLayer::addScore(Bubble *obj)
         num = 100 + rand() % 20;
     }
 	
-	
 	auto label = Label::createWithCharMap("white_font.png", 25, 29, '0');
     label->setPosition(obj->getPosition());
     auto scale = ScaleTo::create(0.2, 0.6);
@@ -1079,8 +1050,6 @@ void BubbleLayer::bubbleAction(Bubble *obj)
     }
 
     SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
-
-
     obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
     {
         addScore(obj);

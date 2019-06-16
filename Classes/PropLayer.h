@@ -64,7 +64,10 @@ private:
 	 *    pos position
 	 */
 	void showItemIcon(MenuItemImage*item, int haveNum, Vec2 pos, int tag);
-
+	/**
+	 *	Set the text on the icon
+	 */
+	void setTextOnIcon(Node* icon, const int tag, int haveNum);
 public:
     void subMoveNumber()
     {

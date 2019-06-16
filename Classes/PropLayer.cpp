@@ -49,6 +49,7 @@ const int BOMB_ICON_BTN_TAG = 10255;
 const int BIAO_ICON_BTN_TAG = 10256;
 const int COLOR_ICON_BTN_TAG = 10257;
 const int MORE_ICON_BTN_TAG = 10258;
+const int ITEM_MENU_TAG     = 10259;
 const int LABEL_OFFSET = 1000000;
 void PropLayer::initMoveNumbers()
 {
@@ -141,9 +142,14 @@ void PropLayer::initLevelNumLabel()
 
 MenuItemImage* PropLayer::initPauseButton()
 {
-    auto btn = MenuItemImage::create("res/pause.png", "res/pause.png");
-    btn->setCallback(CC_CALLBACK_1(PropLayer::menuPauseCallBack, this));
-    btn->setPosition(500, 910);
+	auto btn = MenuItemImage::create("res/pause.png", "res/pause.png");
+	btn->setCallback(CC_CALLBACK_1(PropLayer::menuPauseCallBack, this));
+	btn->setPosition(500, 910);
+
+	auto menu = Menu::create(btn, nullptr);
+	menu->setPosition(Vec2::ZERO);
+	addChild(menu);
+	
     return btn;
 }
 
@@ -179,8 +185,7 @@ void PropLayer::initBox()
     b->runAction(a1);
     c->runAction(a2);
     
-    auto btn = initPauseButton();
-    auto menu = Menu::create(btn, b, c, nullptr);
+    auto menu = Menu::create(b, c, nullptr);
     menu->setTag(MENU_TAG);
     addChild(menu);
     menu->setPosition(Vec2::ZERO);
@@ -189,7 +194,8 @@ void PropLayer::initBox()
 
 void PropLayer::initItemBtn()
 {
-	auto menu = getChildByTag(MENU_TAG);
+	auto menu = Menu::create();
+	menu->setTag(ITEM_MENU_TAG);
 	auto bomb = MenuItemImage::create("bomb_btn.png","bomb_btn.png");
 	auto biao = MenuItemImage::create("biao_btn.png","biao_btn.png");
 	auto col_btn = MenuItemImage::create("color_btn.png","color_btn.png");
@@ -220,6 +226,9 @@ void PropLayer::initItemBtn()
 	showItemIcon(biao, USER()->getBiaoItemNum(), Vec2(110, 21), BIAO_ICON_BTN_TAG);
 	showItemIcon(col_btn, USER()->getColorItemNum(), Vec2(110, 21), COLOR_ICON_BTN_TAG);
 	showItemIcon(more_btn, USER()->getMoveItemNum(), Vec2(95, 21), MORE_ICON_BTN_TAG);
+	addChild(menu);
+	menu->setPosition(Vec2::ZERO);
+	menu->setAnchorPoint(Vec2::ZERO);
 }
 
 void PropLayer::showItemIcon(MenuItemImage* item, int haveNum, Vec2 pos, int tag)
@@ -247,6 +256,24 @@ void PropLayer::showItemIcon(MenuItemImage* item, int haveNum, Vec2 pos, int tag
 	item->addChild(itemNumSp);
 	itemNumSp->setPosition(pos);
 	itemNumSp->setTag(tag);
+}
+
+void PropLayer::setTextOnIcon(Node* icon, const int tag, int haveNum)
+{
+	if (!icon)
+	{
+		return;
+	}
+	auto labelObj = icon->getChildByTag(tag + LABEL_OFFSET);
+	if (!labelObj)
+	{
+		return;
+	}
+	Label* label = dynamic_cast<Label*>(labelObj);
+	if (label)
+	{
+		label->setString(TI()->itos(haveNum));
+	}
 }
 
 /**
@@ -365,6 +392,7 @@ bool PropLayer::init()
 
     scheduleUpdate();
     flag = 0;
+	initPauseButton();
 	return true;
 }
 
@@ -431,16 +459,7 @@ void PropLayer::buttonCallback(Ref* obj)
                 showItemIcon(ob, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
                 return;
             }
-            auto labelObj = icon->getChildByTag(BOMB_ICON_BTN_TAG + LABEL_OFFSET);
-            if (!labelObj)
-            {
-                return;
-            }
-            Label* label = dynamic_cast<Label*>(labelObj);
-            if(label)
-            {
-                label->setString(TI()->itos(USER()->getBombItemNum()));
-            }
+			setTextOnIcon(icon, BOMB_ICON_BTN_TAG, USER()->getBombItemNum());
         }
     }
     else if(ob->getTag() == BIAO_TAG)
@@ -450,11 +469,6 @@ void PropLayer::buttonCallback(Ref* obj)
     else if(ob->getTag() == COLOR_TAG)
     {
         auto icon = ob->getChildByTag(COLOR_ICON_BTN_TAG);
-        if(!icon)
-        {
-            callJava("showAds","");
-            return;
-        }
         if(USER()->getColorItemNum() <=0)
         {
             callJava("showAds","");
@@ -472,16 +486,7 @@ void PropLayer::buttonCallback(Ref* obj)
                 showItemIcon(ob, USER()->getColorItemNum(), Vec2(110, 21), COLOR_ICON_BTN_TAG);
                 return;
             }
-            auto labelObj = icon->getChildByTag(COLOR_ICON_BTN_TAG + LABEL_OFFSET);
-            if (!labelObj)
-            {
-                return;
-            }
-            Label* label = dynamic_cast<Label*>(labelObj);
-            if(label)
-            {
-                label->setString(TI()->itos(USER()->getColorItemNum()));
-            }
+			setTextOnIcon(icon, COLOR_ICON_BTN_TAG, USER()->getColorItemNum());
         }
     }
     else if(ob->getTag() == MORE_BTN_TAG)
@@ -509,21 +514,11 @@ void PropLayer::buttonCallback(Ref* obj)
                 showItemIcon(ob, USER()->getMoveItemNum(), Vec2(110, 21), MORE_ICON_BTN_TAG);
                 return;
             }
-            auto labelObj = icon->getChildByTag(MORE_ICON_BTN_TAG + LABEL_OFFSET);
-            if (!labelObj)
-            {
-                return;
-            }
-            Label* label = dynamic_cast<Label*>(labelObj);
-            if(label)
-            {
-                label->setString(TI()->itos(USER()->getMoveItemNum()));
-            }
+			setTextOnIcon(icon, MORE_ICON_BTN_TAG, USER()->getMoveItemNum());
         }
     }
     else
     {
-      
         int a = rand()%2 + 1;
         showOpenBoxAnimi(a);
     }
