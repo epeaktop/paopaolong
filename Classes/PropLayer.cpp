@@ -49,7 +49,7 @@ const int BOMB_ICON_BTN_TAG = 10255;
 const int BIAO_ICON_BTN_TAG = 10256;
 const int COLOR_ICON_BTN_TAG = 10257;
 const int MORE_ICON_BTN_TAG = 10258;
-
+const int LABEL_OFFSET = 1000000;
 void PropLayer::initMoveNumbers()
 {
     auto level = USER()->getSelLevel();
@@ -232,7 +232,18 @@ void PropLayer::showItemIcon(MenuItemImage* item, int haveNum, Vec2 pos, int tag
 	else
 	{
 		itemNumSp = Sprite::create("have.png");
+        //auto sp = Label::createWithSystemFont(TI()->itos(haveNum), "Arial", 30);
+        auto sp = Label::createWithCharMap("white_font.png", 25, 29, '0');
+        sp->setString(TI()->itos(haveNum));
+        sp->setScale(0.8);
+        itemNumSp->addChild(sp);
+        sp->setPosition(20, 23);
+        /**
+         * XXX: the hidden rule :)
+         */
+        sp->setTag(tag + LABEL_OFFSET);
 	}
+    
 	item->addChild(itemNumSp);
 	itemNumSp->setPosition(pos);
 	itemNumSp->setTag(tag);
@@ -388,29 +399,77 @@ void PropLayer::showOpenBoxAnimi(int flag)
 
 void PropLayer::buttonCallback(Ref* obj)
 {
-    callJava("showAds","");
-    int a = rand()%2 + 1;
-    showOpenBoxAnimi(a);
+    
+    MenuItemImage* ob = dynamic_cast<MenuItemImage*>(obj);
+    if(!ob)
+    {
+        callJava("showAds","");
+        return;
+    }
+    if(ob->getTag() == BOMB_BTN_TAG)
+    {
+        
+        auto icon = ob->getChildByTag(BOMB_ICON_BTN_TAG);
+        if(!icon)
+        {
+            callJava("showAds","");
+            return;
+        }
+        if(USER()->getBombItemNum() <=0)
+        {
+            callJava("showAds","");
+            USER()->setBombItemNum(1);
+            ob->removeChild(icon);
+            showItemIcon(ob, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
+        }
+        else
+        {
+            USER()->addBombItemNum(-1);
+            menuBombCallBack(this);
+            if(USER()->getBombItemNum() <=0)
+            {
+                ob->removeChild(icon);
+                showItemIcon(ob, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
+                return;
+            }
+            auto labelObj = icon->getChildByTag(BOMB_ICON_BTN_TAG + LABEL_OFFSET);
+            if (!labelObj)
+            {
+                return;
+            }
+            Label* label = dynamic_cast<Label*>(labelObj);
+            if(label)
+            {
+                label->setString(TI()->itos(USER()->getBombItemNum()));
+            }
+        }
+    }
+    else if(ob->getTag() == BIAO_TAG)
+    {
+        USER()->addBiaoItemNum(1);
+    }
+    else if(ob->getTag() == COLOR_TAG)
+    {
+        USER()->addColorItemNum(1);
+    }
+    else if(ob->getTag() == MORE_BTN_TAG)
+    {
+        USER()->addMoveItemNum(1);
+    }
+    else
+    {
+      
+        int a = rand()%2 + 1;
+        showOpenBoxAnimi(a);
+    }
 }
 
 void PropLayer::setBombNum()
 {
-/*
-	auto bomb = (ui::ImageView*)_propLayer->getChildByTag(24);
-	bomb->addClickEventListener(CC_CALLBACK_1(PropLayer::menuBombCallBack, this));
-	auto bombText = (ui::TextBMFont*)bomb->getChildByTag(152);
-	bombText->setString(StringUtils::format("%d", UserData::getInstance()->getBomb()));
-*/
 }
 
 void PropLayer::setColorBubbleNum()
 {
-/*
-    auto colorBubble = (ui::ImageView*)_propLayer->getChildByTag(22);
-	colorBubble->addClickEventListener(CC_CALLBACK_1(PropLayer::menuColorBubbleCallBack, this));
-	auto colorBubbleText = (ui::TextBMFont*)colorBubble->getChildByTag(150);
-	colorBubbleText->setString(StringUtils::format("%d", UserData::getInstance()->getColorBubble()));
-*/
 }
 
 void PropLayer::menuBombCallBack(Ref* Psender)
