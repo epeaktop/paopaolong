@@ -408,7 +408,6 @@ void PropLayer::buttonCallback(Ref* obj)
     }
     if(ob->getTag() == BOMB_BTN_TAG)
     {
-        
         auto icon = ob->getChildByTag(BOMB_ICON_BTN_TAG);
         if(!icon)
         {
@@ -450,11 +449,77 @@ void PropLayer::buttonCallback(Ref* obj)
     }
     else if(ob->getTag() == COLOR_TAG)
     {
-        USER()->addColorItemNum(1);
+        auto icon = ob->getChildByTag(COLOR_ICON_BTN_TAG);
+        if(!icon)
+        {
+            callJava("showAds","");
+            return;
+        }
+        if(USER()->getColorItemNum() <=0)
+        {
+            callJava("showAds","");
+            USER()->setColorItemNum(1);
+            ob->removeChild(icon);
+            showItemIcon(ob, USER()->getColorItemNum(), Vec2(110, 21), COLOR_ICON_BTN_TAG);
+        }
+        else
+        {
+            USER()->addColorItemNum(-1);
+            menuColorBubbleCallBack(this);
+            if(USER()->getColorItemNum() <=0)
+            {
+                ob->removeChild(icon);
+                showItemIcon(ob, USER()->getColorItemNum(), Vec2(110, 21), COLOR_ICON_BTN_TAG);
+                return;
+            }
+            auto labelObj = icon->getChildByTag(COLOR_ICON_BTN_TAG + LABEL_OFFSET);
+            if (!labelObj)
+            {
+                return;
+            }
+            Label* label = dynamic_cast<Label*>(labelObj);
+            if(label)
+            {
+                label->setString(TI()->itos(USER()->getColorItemNum()));
+            }
+        }
     }
     else if(ob->getTag() == MORE_BTN_TAG)
     {
-        USER()->addMoveItemNum(1);
+        auto icon = ob->getChildByTag(MORE_ICON_BTN_TAG);
+        if(!icon)
+        {
+            callJava("showAds","");
+            return;
+        }
+        if(USER()->getMoveItemNum() <=0)
+        {
+            callJava("showAds","");
+            USER()->setMoveItemNum(1);
+            ob->removeChild(icon);
+            showItemIcon(ob, USER()->getMoveItemNum(), Vec2(110, 21), MORE_ICON_BTN_TAG);
+        }
+        else
+        {
+            USER()->addMoveItemNum(-1);
+            moveNumber_ += 10;
+            if(USER()->getMoveItemNum() <=0)
+            {
+                ob->removeChild(icon);
+                showItemIcon(ob, USER()->getMoveItemNum(), Vec2(110, 21), MORE_ICON_BTN_TAG);
+                return;
+            }
+            auto labelObj = icon->getChildByTag(MORE_ICON_BTN_TAG + LABEL_OFFSET);
+            if (!labelObj)
+            {
+                return;
+            }
+            Label* label = dynamic_cast<Label*>(labelObj);
+            if(label)
+            {
+                label->setString(TI()->itos(USER()->getMoveItemNum()));
+            }
+        }
     }
     else
     {
