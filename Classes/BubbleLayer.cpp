@@ -412,7 +412,7 @@ void BubbleLayer::transparentAction(Bubble* bubble)
 	{
 		return;
 	}
-	
+	SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
 	auto particle = ParticleSystemQuad::create("Particle/luoxia_lizi.plist");
 	particle->setPosition(bubble->getContentSize().width / 2, 0);
 	bubble->addChild(particle);
@@ -715,6 +715,7 @@ void BubbleLayer::playColorAnim()
 			if (i)
 			{
 				addScore(i);
+				SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
 				i->removeFromParentAndCleanup(true);
 			}
 		}
