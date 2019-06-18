@@ -118,6 +118,7 @@ void BubbleLayer::showTimeShootBubble()
 		sp->setPosition(READY_PAOPAO_POS);
 		auto start = sp->getPosition();
 
+
 		Vec2 ctrl1[SHOW_BUBBLE_NUM] = { Vec2(221, 506), Vec2(287, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),
 			Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506) };
 		Vec2 ctrl2[SHOW_BUBBLE_NUM] = { Vec2(370, 908),Vec2(73, 734), Vec2(452, 691),Vec2(82, 907),Vec2(463, 617),
@@ -135,18 +136,24 @@ void BubbleLayer::showTimeShootBubble()
 		auto action = EaseInOut::create(bezier, 0.6);
 		auto offset = i * 0.2;
 		auto delay = DelayTime::create(offset);
-		auto func = CallFunc::create(CC_CALLBACK_0(BubbleLayer::showTimeCallBack, this));
+		auto func = CallFunc::create([=]()
+			{
+				addScore(sp);
+				//sp->removeFromParentAndCleanup(true);
+				if (showTimeCalledTimes++ > 0)
+				{
+					showTimeCalledTimes = 0;
+					gameWin();
+				}
+			});
 		sp->runAction(Sequence::create(delay, action, FadeOut::create(3), func, NULL));
 	}
 }
 
 void BubbleLayer::showTimeCallBack()
 {
-	if (showTimeCalledTimes++ > 0)
-	{
-		showTimeCalledTimes = 0;
-		gameWin();
-	}
+	
+	
 }
 
 bool BubbleLayer::init()
@@ -1038,9 +1045,9 @@ void BubbleLayer::addScore(Bubble *obj)
 {
     auto gameSceme = (GameScene *)this->getParent();
     curDownNum_++;
-    int num = 2 << curDownNum_;
+    int num = 2 * curDownNum_;
 	num += num * hitNums_;
-    if (num > 100)
+    if (num > 1000)
     {
         num = 100 + rand() % 20;
     }
@@ -1163,6 +1170,12 @@ void BubbleLayer::bubbleAction(Bubble *obj)
     }
 
     SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
+	ArmatureDataManager::getInstance()->addArmatureFileInfo("BubbleSpecial/baozha.ExportJson");
+	Armature* armature = Armature::create("baozha");
+	obj->addChild(armature);
+	armature->setScale(2.0);
+	armature->setPosition(R, R);
+	armature->getAnimation()->play("daojubaozha");
     obj->runAction(Sequence::create(FadeOut::create(waitTime), CallFunc::create([ = ]()
     {
         addScore(obj);

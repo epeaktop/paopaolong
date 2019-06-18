@@ -15,10 +15,7 @@ Bubble::Bubble()
 	_isDie = false;
 }
 
-Bubble::~Bubble()
-{
-
-}
+Bubble::~Bubble(){}
 
 Bubble * Bubble::initWithType(BubbleType type, int flag)
 {

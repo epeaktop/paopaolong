@@ -35,7 +35,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     director->setAnimationInterval(1.0 / 15);
 #else
-    director->setAnimationInterval(1.0 / 30);
+    director->setAnimationInterval(1.0 / 60);
 #endif
     FileUtils::getInstance()->addSearchPath("res");
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("Music/bgm.mp3");
