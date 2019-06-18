@@ -117,6 +117,10 @@ void GameScene::colorBubble()
 {
 	_bubbleLayer->colorBubble();
 }
+void GameScene::biaoBubble()
+{
+	_bubbleLayer->biaoBubble();
+}
 void GameScene::gameOver(bool over)
 {
 	UserData::getInstance()->saveData();

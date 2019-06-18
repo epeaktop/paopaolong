@@ -31,6 +31,7 @@ public:
 	void swapBubble();
 	void bombBubble();
 	void colorBubble();
+	void biaoBubble();
 	void gameOver(bool over = false);
 	void operateAllSchedulerAndActions(Node* node, OperateFlag flag);
 	void mPause();

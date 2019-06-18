@@ -341,6 +341,30 @@ void BubbleLayer::update(float fDelta)
     Vec2 s = getRowAndColByPoint(newPos);
     log("<update>(%d,%d)-->(%d,%d):row(%d),col(%d),%f", int(pos.x), int(pos.y), int(newPos.x), int(newPos.y), int(s.x), int(s.y), fDelta);
 	
+	if (ready->getType() == BUBBLE_TYPE_BIAO)
+	{
+		ready->setRotation(180);
+		auto i = int(s.x);
+		auto j = int(s.y);
+		if (i >= 0 && i < MAX_ROWS && j >= 0 && j < MAX_COLS)
+		{
+			
+			transparentAction(board[i][j]);
+			board[i][j] = nullptr;
+			if (i == 0)
+			{
+				transparentAction(ready);
+				resetAllPass();
+				checkDownBubble();
+				downBubble();
+				changeWaitToReady();
+				unscheduleUpdate();
+				setEnable();
+			}
+		}
+		return;
+	}
+
 	Bubble* obj = nullptr;
 	if (int(s.x) < MAX_ROWS && int(s.y) < MAX_COLS)
 	{
@@ -388,7 +412,6 @@ void BubbleLayer::transparentAction(Bubble* bubble)
 	bubble->runAction(Sequence::create(FadeOut::create(0.3f), CallFunc::create([=]()
 		{
 			bubble->removeFromParentAndCleanup(true);
-			
 		}), nullptr));
 
 }
@@ -433,6 +456,7 @@ bool BubbleLayer::checkCollideBorder()
     rowCol.push_back(getRowAndColByPoint(Point(point.x - R, point.y))); // 当前点的左边
     rowCol.push_back(getRowAndColByPoint(Point(point.x + R, point.y))); // 当前点的右边
 
+
     for (auto &ti : rowCol)
     {
         if (int(ti.y) >= MAX_COLS)
@@ -463,7 +487,7 @@ bool BubbleLayer::checkCollideBorder()
             curFindRow = int(ti.x);
             curFindCol = int(ti.y);
 			Vec2 ret = getStopPosition();
-			if ((int)ret.x == curFindRow)
+			if ((int)ret.x == curFindRow && curFindRow > 0)
 			{
 				continue;
 			}
@@ -653,6 +677,10 @@ void BubbleLayer::readyAction()
         bubbleBlast(row, col, tempFlag);
         bubbleBlast(row - 1, col, tempFlag);
     }
+	else if (ready->getType() == BUBBLE_TYPE_COLOR)
+	{
+		colorBlast(row, col, tempFlag);
+	}
     else
     {
         sameSum = 0;
@@ -669,6 +697,87 @@ void BubbleLayer::readyAction()
     checkDownBubble();
     downBubble();
     changeWaitToReady();
+}
+
+void BubbleLayer::playColorAnim()
+{
+	if (bubbleList.empty())
+	{
+		for (auto i : coloredList)
+		{
+			if (i)
+			{
+				addScore(i);
+				i->removeFromParentAndCleanup(true);
+			}
+		}
+		coloredList.clear();
+		return;
+	}
+	auto sp =  bubbleList.front();
+	auto obj = Bubble::initWithType(BUBBLE_TYPE_COLOR);
+	obj->setPosition(sp->getPosition());
+	addChild(obj);
+	
+	obj->runAction(Sequence::create(FadeIn::create(0.1), CallFunc::create([=]() {
+			sp->removeFromParent();
+			coloredList.push_back(obj);
+			playColorAnim();
+		}), nullptr));
+	bubbleList.pop();
+}
+
+void BubbleLayer::colorBlast(int i, int j, bool isDouble)
+{
+	bubbleColorAction(i, j);
+	ready = nullptr;
+
+	if (isDouble && j > 0 && i > 0 && board[i - 1][j - 1])
+	{
+		bubbleColorAction(i -1, j - 1);
+	}
+	else if (!isDouble && i > 0 && board[i - 1][j])
+	{
+		bubbleColorAction(i - 1, j);
+	}
+
+	if (isDouble && i > 0 && board[i - 1][j])
+	{
+		bubbleColorAction(i - 1, j);
+	}
+	else if (!isDouble && i > 0 && j < MAX_COLS - 1 && board[i - 1][j + 1])
+	{
+		bubbleColorAction(i - 1, j + 1);
+	}
+
+	if (isDouble && j > 0 && i < MAX_ROWS && board[i + 1][j - 1])
+	{
+		bubbleColorAction(i + 1, j - 1);
+	}
+	else if (!isDouble && i < MAX_ROWS && board[i + 1][j])
+	{
+		bubbleColorAction(i + 1, j );
+	}
+
+	if (isDouble && i < MAX_ROWS && board[i + 1][j])
+	{
+		bubbleColorAction(i + 1, j);
+	}
+	else if (!isDouble && i < MAX_ROWS && j < MAX_COLS - 1 && board[i + 1][j + 1])
+	{
+		bubbleColorAction(i + 1, j+1);
+	}
+
+	if (j > 0 && board[i][j - 1])
+	{
+		bubbleColorAction(i, j  - 1);
+	}
+
+	if (j < MAX_COLS && board[i][j + 1])
+	{
+		bubbleColorAction(i, j + 1);
+	}
+	playColorAnim();
 }
 
 bool BubbleLayer::getFirstRowFlag()  //得到第一行是否左缺 不缺为true
@@ -784,6 +893,10 @@ void BubbleLayer::findTheSameBubble(int i, int j, bool flag, BubbleType type)
 }
 void BubbleLayer::bubbleBlast(int i, int j, bool flag)
 {
+	if (!(i >= 0 && i < MAX_ROWS && j >= 0 && j < MAX_COLS))
+	{
+		return;
+	}
     bubbleAction(board[i][j]);
     board[i][j] = nullptr;
     ready = nullptr;
@@ -810,23 +923,23 @@ void BubbleLayer::bubbleBlast(int i, int j, bool flag)
         board[i - 1][j + 1] = nullptr;
     }
 
-    if (flag && j > 0 && i < MAX_ROWS && board[i + 1][j - 1])
+    if (flag && j > 0 && i < MAX_ROWS -1 && board[i + 1][j - 1])
     {
         bubbleAction(board[i + 1][j - 1]);
         board[i + 1][j - 1] = nullptr;
     }
-    else if (!flag && i < MAX_ROWS && board[i + 1][j])
+    else if (!flag && i < MAX_ROWS -1 && board[i + 1][j])
     {
         bubbleAction(board[i + 1][j]);
         board[i + 1][j] = nullptr;
     }
 
-    if (flag && i < MAX_ROWS && board[i + 1][j])
+    if (flag && i < MAX_ROWS -1  && board[i + 1][j])
     {
         bubbleAction(board[i + 1][j]);
         board[i + 1][j] = nullptr;
     }
-    else if (!flag && i < MAX_ROWS && j < MAX_COLS - 1 && board[i + 1][j + 1])
+    else if (!flag && i < MAX_ROWS - 1 && j < MAX_COLS - 1 && board[i + 1][j + 1])
     {
         bubbleAction(board[i + 1][j + 1]);
         board[i + 1][j + 1] = nullptr;
@@ -838,7 +951,7 @@ void BubbleLayer::bubbleBlast(int i, int j, bool flag)
         board[i][j - 1] = nullptr;
     }
 
-    if (j < MAX_COLS && board[i][j + 1])
+    if (j < MAX_COLS -1 && board[i][j + 1])
     {
         bubbleAction(board[i][j + 1]);
         board[i][j + 1] = nullptr;
@@ -1056,6 +1169,17 @@ void BubbleLayer::bubbleAction(Bubble *obj)
         obj->removeFromParent();
         setEnable();
     }), NULL));
+}
+
+void BubbleLayer::bubbleColorAction(int i, int j)
+{
+	auto sp = board[i][j];
+	board[i][j] = nullptr;
+	if (!sp)
+	{
+		return;
+	}
+	bubbleList.push(sp);
 }
 
 void BubbleLayer::callbackRemoveBubble(cocos2d::Node *obj)
@@ -1424,13 +1548,12 @@ bool BubbleLayer::canPut(Bubble* sp)
 	{
 		return true;
 	}
-	else
+	
+	if (sp->getType() == BUBBLE_TYPE_TOUMING)
 	{
-		if (sp->getType() == BUBBLE_TYPE_TOUMING)
-		{
-			return true;
-		}
+		return true;
 	}
+	
 	return false;
 }
 void BubbleLayer::colorBubble()
@@ -1441,7 +1564,13 @@ void BubbleLayer::colorBubble()
 void BubbleLayer::bombBubble()
 {
     ready->setType(BUBBLE_TYPE_BOMB);
-    ready->initWithSpriteFrameName(BUBBLE_BOMB_NAME);
+    ready->setSpriteFrame(BUBBLE_BOMB_NAME);
+}
+void BubbleLayer::biaoBubble()
+{
+	ready->setType(BUBBLE_TYPE_BIAO);
+	auto sp = Bubble::initWithType(BUBBLE_TYPE_BIAO);
+	ready->setSpriteFrame(sp->getSpriteFrame());
 }
 void BubbleLayer::auxiliaryLine(Point tagrat)
 {
@@ -1536,14 +1665,9 @@ void BubbleLayer::showWinAnim(Vec2 &pos)
 
     CallFuncN *callback = CallFuncN::create(CC_CALLBACK_1(BubbleLayer::starCallback, this));
     a->runAction(Sequence::create(spawn, callback, NULL));
-
-
 }
 
-void BubbleLayer::starCallback(Ref *obj)
-{
-
-}
+void BubbleLayer::starCallback(Ref *obj){}
 
 void BubbleLayer::onTouchMoved(Touch *touch, Event *unused_event)
 {

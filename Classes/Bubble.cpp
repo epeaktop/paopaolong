@@ -32,6 +32,10 @@ Bubble * Bubble::initWithType(BubbleType type, int flag)
 	{
 		pRet->initWithFile("res/stone.png");
 	}
+	else if (type == BUBBLE_TYPE_BIAO)
+	{
+		pRet->initWithFile("res/biao.png");
+	}
 	else
 	{
 		pRet->initWithSpriteFrameName(getStringByType(type));

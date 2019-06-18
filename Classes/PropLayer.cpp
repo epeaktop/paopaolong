@@ -427,7 +427,6 @@ void PropLayer::showOpenBoxAnimi(int flag)
 
 void PropLayer::buttonCallback(Ref* obj)
 {
-    
     MenuItemImage* ob = dynamic_cast<MenuItemImage*>(obj);
     if(!ob)
     {
@@ -464,7 +463,31 @@ void PropLayer::buttonCallback(Ref* obj)
     }
     else if(ob->getTag() == BIAO_TAG)
     {
-        USER()->addBiaoItemNum(1);
+		auto icon = ob->getChildByTag(BIAO_ICON_BTN_TAG);
+		if (!icon)
+		{
+			callJava("showAds", "");
+			return;
+		}
+		if (USER()->getBiaoItemNum() <= 0)
+		{
+			callJava("showAds", "");
+			USER()->setBiaoItemNum(1);
+			ob->removeChild(icon);
+			showItemIcon(ob, USER()->getBiaoItemNum(), Vec2(110, 21), BIAO_ICON_BTN_TAG);
+		}
+		else
+		{
+			USER()->addBiaoItemNum(-1);
+			menuBiaoCallBack(this);
+			if (USER()->getBiaoItemNum() <= 0)
+			{
+				ob->removeChild(icon);
+				showItemIcon(ob, USER()->getBiaoItemNum(), Vec2(110, 21), BIAO_ICON_BTN_TAG);
+				return;
+			}
+			setTextOnIcon(icon, BIAO_ICON_BTN_TAG, USER()->getBiaoItemNum());
+		}
     }
     else if(ob->getTag() == COLOR_TAG)
     {
@@ -536,6 +559,11 @@ void PropLayer::menuBombCallBack(Ref* Psender)
 {
 	auto gameSceme = (GameScene*)this->getParent();
 	gameSceme->bombBubble();
+}
+void PropLayer::menuBiaoCallBack(Ref* pSender)
+{
+	auto gameSceme = (GameScene*)this->getParent();
+	gameSceme->biaoBubble();
 }
 // 增加步数
 void PropLayer::addMoveNumberForOpenBox(Ref* Psender)

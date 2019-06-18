@@ -10,6 +10,7 @@
 #include "Tools.h"
 
 #include <map>
+#include <queue>
 
 
 USING_NS_CC;
@@ -59,6 +60,7 @@ public:
 	void moveTheBubble(int i, int j, bool flag, float distance);
 	void deleteTheSameBubble(int i, int j, bool flag);
 	void bubbleAction(Bubble *obj);
+	void bubbleColorAction(int i, int j);
 	void callbackRemoveBubble(Node *obj);
 	void downBubbleActionCallBack(Node *obj);
 	void downLeftBubbleActionCallBack(Node *obj);
@@ -82,7 +84,9 @@ public:
 	void movementPassCallBack(Armature * armature, MovementEventType type, const std::string &name);
 	void moveParantCallBack(Armature * armature, MovementEventType type, const std::string &name);
 	void readyAction();
+    void playColorAnim();
 
+	void colorBlast(int row, int col, bool isDouble);
 	bool onTouchBegan(Touch *touch, Event *unused_event);
 	void onTouchMoved(Touch *touch, Event *unused_event);
 	void onTouchEnded(Touch *touch, Event *unused_event);
@@ -201,6 +205,7 @@ public:
 	void colorBubble();
 	void swapBubble();
 	void bombBubble();
+	void biaoBubble();
 	void auxiliaryLine(Point tagrat);
     void buttonCallback(Node* obj);
     std::map<int, int> retainMap_;    // 用来计算还剩下那些颜色的泡泡
@@ -239,6 +244,16 @@ public:
 	 *	call back show time times
 	 */
 	int showTimeCalledTimes = 0;
+	
+	vector<FiniteTimeAction*> actionList;
+	/**
+	 *	Waiting for the ball to disappear
+	 */
+	queue<Bubble*> bubbleList;
+	/**
+	 * 	Placed with colored bubbles
+	 */
+	vector<Bubble*> coloredList;
 };
 
 #endif /* defined(__paopaolong__MainLayer__) */

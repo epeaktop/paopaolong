@@ -26,6 +26,7 @@ private:
 	
 	void timeCallFunc();
 	void menuBombCallBack(Ref* Psender);
+	void menuBiaoCallBack(Ref* pSender);
 	void addMoveNumberForOpenBox(Ref* Psender);
 	void menuPauseCallBack(Ref* Psender);
 	void menuColorBubbleCallBack(Ref* Psender);

@@ -15,7 +15,7 @@ enum BubbleType{
 	BUBBLE_TYPE_BOMB,
 	BUBBLE_TYPE_TOUMING,
 	BUBBLE_TYPE_STONE,
-
+	BUBBLE_TYPE_BIAO,
 };
 
 enum GameLevel

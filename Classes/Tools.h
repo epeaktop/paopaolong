@@ -169,6 +169,7 @@ public:
 
 private:
     static Tools* instance_;
+
         
 };
 
