@@ -183,8 +183,8 @@ int Tools::getMoveNumbers(int level)
         30,30,30,30,30,
         30,30,30,30,30,
         // 10
-        30,30,30,30,30,
-        30,30,30,30,30,
+        30,35,40,45,45,
+        45,45,45,45,45,
         // 20
         30,30,30,30,30,
         30,30,30,30,30,
@@ -244,5 +244,7 @@ int Tools::getMoveNumbers(int level)
         30,30,30,30,30,
         
     };
-    return a[level];
+    if(level < 1 || level > 199)
+        return 30;
+    return a[level-1];
 }
