@@ -179,7 +179,7 @@ void BubbleLayer2::onTouch(Point target)
 
         if (board[i][j] == nullptr)
         {
-            if ((BubbleType)currentColor_  != 8)
+            if ((BubbleType)currentColor_  != 1000)
             {
 
                 board[i][j] = Bubble::initWithType((BubbleType)currentColor_, 1);

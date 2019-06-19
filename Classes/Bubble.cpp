@@ -81,6 +81,8 @@ std::string Bubble::getStringByType(BubbleType type)
 	case BUBBLE_TYPE_COLOR:
 		pRet = BUBBLE_COLOR_NAME;
 		break;
+	case BUBBLE_TYPE_BOMB:
+		pRet = BUBBLE_BOMB_NAME;
 	default:
 		break;
 	}

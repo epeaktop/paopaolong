@@ -285,16 +285,16 @@ void PropLayer::initColorBtn()
 	{
 		return;
 	}
-	auto btn = initPauseButton();
-	auto menu = Menu::create(btn, nullptr);
-	for (auto i = 1; i < 8;i++)
+	
+	auto menu = Menu::create();
+	for (auto i = 1; i < 12;i++)
 	{
-		auto sp = Sprite::create();
-		sp->initWithSpriteFrameName(Bubble::getStringByType((BubbleType)i));
+		auto sp = Bubble::initWithType((BubbleType)i);
 		auto btn = MenuItemSprite::create(sp,sp);
+	
 		btn->setTag(2000 + i);
 		btn->setCallback(CC_CALLBACK_1(PropLayer::colorBtn, this));
-		btn->setPosition(50 + (i-1) * 70, 100);
+		btn->setPosition(50 + (i-1) * 40, 100);
         if(USER()->getDesignColor() == i)
         {
             btn->setScale(1.2);
@@ -302,27 +302,12 @@ void PropLayer::initColorBtn()
         }
         else
         {
-            btn->setScale(0.8);
+            btn->setScale(0.6);
         }
         
 		menu->addChild(btn);
 	}
-    auto sp = Sprite::create("res/dig.png");
-    auto digBtn = MenuItemSprite::create(sp, sp);
-    digBtn->setTag(2000+8);
-    digBtn->setCallback(CC_CALLBACK_1(PropLayer::colorBtn, this));
-    if(USER()->getDesignColor() == 8)
-    {
-        digBtn->setScale(1.2);
-        
-    }
-    else
-    {
-        digBtn->setScale(0.8);
-    }
-    digBtn->setPosition(50, 200);
-    menu->addChild(digBtn);
-    
+
     
 	addChild(menu);
 	menu->setPosition(Vec2::ZERO);
@@ -337,26 +322,19 @@ void PropLayer::colorBtn(Ref * pSender)
 		return;
 	}
     auto menu = getChildByTag(MENU_TAG);
-    for(int i = 2001; i <= 2008; i++)
+    for(int i = 2001; i <= 2010; i++)
     {
         auto obj = menu->getChildByTag(i);
         if(obj)
         {
-            obj->setScale(0.8f);
-            //TI()->unShaderSprite(obj);
+            obj->setScale(0.6);
             obj->setColor(Color3B(255,255,255));
         }
     }
     
 	auto obj = (Node*)pSender;
-    obj->setScale(1.2);
-    if(obj->getTag()==2008){
-        obj->setColor(Color3B::RED);
-    }
-    
-	int tag = obj->getTag();
-    log("====> %d", tag);
-	USER()->setDesignColor(tag - 2000);
+    obj->setScale(1.2);    
+	USER()->setDesignColor(obj->getTag() - 2000);
 }
 
 bool PropLayer::init()
