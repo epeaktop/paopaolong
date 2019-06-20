@@ -172,7 +172,7 @@ public:
 
 	void myDrawLine(Node* obj, float x, float y, int length)
 	{
-		
+        return;
 		int len = 0;
 		int i = 0;
 		const int tag = 1111111;
