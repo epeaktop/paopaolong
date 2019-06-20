@@ -51,6 +51,7 @@ public:
 	bool isCollideBorder();
 	bool checkCollideBorder();
 	void changeWaitToReady();
+	void showDebugString();
 	void correctReadyPosition();
 	Vec2 getStopPosition();
 	bool getFirstRowFlag();
@@ -194,8 +195,7 @@ public:
     void addScore(Bubble* obj);
 	
 	void setTouchWich(Vec2 v);
-
-
+	
 public:
 	Vector<Sprite*> _auxiliary;
 	/**

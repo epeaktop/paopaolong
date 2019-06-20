@@ -187,6 +187,7 @@ bool BubbleLayer::init()
     moveLabel_ = TI()->addLabel(this, std::string("Moves:"), 1000.0f, 50.0f, 1000);
     moveNumberLabel_ = TI()->addLabel(this, std::string("0"), 1100.0f, 50.0f, 1000);
 	showTimeCalledTimes = 0;
+	TI()->myDrawLine(this, 0, TOUCH_DOWN * 960, 540);
 	return true;
 	
 }
@@ -462,8 +463,8 @@ bool BubbleLayer::checkCollideBorder()
     rowCol.push_back(getRowAndColByPoint(Point(point.x, point.y + R))); // 当前点的上面
     rowCol.push_back(getRowAndColByPoint(Point(point.x - R, point.y))); // 当前点的左边
     rowCol.push_back(getRowAndColByPoint(Point(point.x + R, point.y))); // 当前点的右边
-
-
+	log("[@@@@] ------------------------------");
+	int x = -1;
     for (auto &ti : rowCol)
     {
         if (int(ti.y) >= MAX_COLS)
@@ -476,6 +477,7 @@ bool BubbleLayer::checkCollideBorder()
             continue;
         }
 		auto sp = board[int(ti.x)][int(ti.y)];
+		log("[@@@@]%d,%d", int(ti.x), int(ti.y));
         if ( sp != nullptr)
         {
 			if (sp->getType() == BUBBLE_TYPE_TOUMING)
@@ -483,28 +485,67 @@ bool BubbleLayer::checkCollideBorder()
 				continue;
 			}
             log("[@@@@]发现碰撞位置 : %d,%d", int(ti.x), int(ti.y));
-#ifdef DEBUG
-
-            if (board[curFindRow][curFindCol] != nullptr)
-            {
-                board[curFindRow][curFindCol]->setColor(Color3B(255, 255, 255));
-            }
-
-#endif
-            curFindRow = int(ti.x);
-            curFindCol = int(ti.y);
-			Vec2 ret = getStopPosition();
-			if ((int)ret.x == curFindRow && curFindRow > 0)
+            curFindRow = int(ti.x), curFindCol = int(ti.y);
+			if (curFindRow == MAX_ROWS - 1)
 			{
-				continue;
+				return true;
 			}
-#ifdef DEBUG
-            board[int(ti.x)][int(ti.y)]->setColor(Color3B::RED);
-#endif
-            return true;
+			if ((x = (int)getStopPosition().x) != -1)
+			{
+				if (curFindRow == x)
+				{
+					if (x < 1 )
+					{
+						continue;
+					}
+					if(curFindCol > 5)
+					{
+						if (x % 2 == 0)
+						{
+							if (board[x - 1][curFindCol] == nullptr)
+							{
+								continue;
+							}
+						}
+						else
+						{
+							if (curFindCol < MAX_COLS - 1)
+							{
+								if (board[x - 1][curFindCol + 1] == nullptr)
+								{
+									continue;
+								}
+							}
+						}
+					}
+					else
+					{
+						if (x % 2 == 0)
+						{
+							if (curFindCol > 0)
+							{
+
+								if (board[x - 1][curFindCol] == nullptr)
+								{
+									continue;
+								}
+							}
+						}
+						else
+						{
+								if (board[x - 1][curFindCol] == nullptr)
+								{
+									continue;
+								}
+							
+						}
+					}
+				}
+				return true;
+			}
         }
     }
-
+	log("[@@@@] ------ ------ ------ ------ ------");
     return false;
 }
 // 调整后的点和发现有球的点是同一个点
@@ -515,6 +556,22 @@ void BubbleLayer::changeWaitToReady()
     auto callFunc = CallFunc::create(CC_CALLBACK_0(BubbleLayer::jumpActionCallBack, this));
     auto seq = Sequence::create(jumpAction, callFunc, nullptr);
     ready->runAction(seq);
+}
+
+void BubbleLayer::showDebugString()
+{
+	for (int i = 0; i < MAX_ROWS; i++)
+	{
+		for (int j = 0; j < MAX_COLS;j++)
+		{
+			auto sp = board[i][j];
+			if (!sp)
+			{
+				continue;
+			}
+			sp->label->setVisible(true);
+		}
+	}
 }
 
 
@@ -549,7 +606,8 @@ void BubbleLayer::correctReadyPosition()
 
     if (row == -1)
     {
-        return gameOver(true);
+		showDebugString();
+		return gameOver(true);
     }
 
 
@@ -1574,6 +1632,9 @@ void BubbleLayer::colorBubble()
 {
     ready->setType(BUBBLE_TYPE_COLOR);
     ready->setSpriteFrame(BUBBLE_COLOR_NAME.c_str());
+#ifdef _DEBUG
+	showDebugString();
+#endif
 }
 void BubbleLayer::bombBubble()
 {
@@ -1586,6 +1647,7 @@ void BubbleLayer::biaoBubble()
 	auto sp = Bubble::initWithType(BUBBLE_TYPE_BIAO);
 	ready->setSpriteFrame(sp->getSpriteFrame());
 }
+
 void BubbleLayer::auxiliaryLine(Point tagrat)
 {
     auto node = Node::create();
@@ -1595,7 +1657,6 @@ void BubbleLayer::auxiliaryLine(Point tagrat)
 
     auto speed = 30.0f;
     auto position = Point(READY_PAOPAO_POS.x + real.x * speed, READY_PAOPAO_POS.y + real.y * speed);
-    CCLOG("%f,%f", real.x, real.y);
 
     while (position.y < TOUCH_TOP * Director::getInstance()->getVisibleSize().height - R)
     {

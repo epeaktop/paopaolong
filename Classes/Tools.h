@@ -166,6 +166,26 @@ public:
         sp->removeAllChildren();
     }
     
+	/**
+	 *	draw a line
+	 */
+
+	void myDrawLine(Node* obj, float x, float y, int length)
+	{
+		
+		int len = 0;
+		int i = 0;
+		const int tag = 1111111;
+		while(len < length)
+		{
+			i++;
+			auto sp = Sprite::create("res/line2.png");
+			sp->setPosition(x + 10*i, y);
+			sp->setTag(tag);
+			len += 5;
+			obj->addChild(sp, 1000);
+		}
+	}
 
 private:
     static Tools* instance_;

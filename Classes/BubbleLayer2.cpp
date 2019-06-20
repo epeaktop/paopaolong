@@ -101,6 +101,7 @@ bool BubbleLayer2::init()
     }
 
     this->scheduleUpdate();
+	TI()->myDrawLine(this, 0, TOUCH_DOWN * 960, 540);
     return true;
 }
 
