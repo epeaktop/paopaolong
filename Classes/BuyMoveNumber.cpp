@@ -34,7 +34,7 @@ bool BuyMoveNumber::init()
 }
 void BuyMoveNumber::buyCallback(Ref* Psender)
 {
-	callJava("showVideoAds", "");
+	callJava("showAds", "");
 	USER()->setClickAds(1);
 	removeFromParentAndCleanup(true);
 }

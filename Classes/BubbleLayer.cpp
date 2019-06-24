@@ -112,41 +112,47 @@ void BubbleLayer::cleanRoundTransparent(Bubble* obj, int i, int j)
 void BubbleLayer::showTimeShootBubble()
 {
 	const int SHOW_BUBBLE_NUM = 10;
-	for(int j = 0; j < 5; j++)
-	for (int i = 0; i < SHOW_BUBBLE_NUM; i++) {
-		auto sp = randomPaoPao(1);
-		sp->setPosition(READY_PAOPAO_POS);
-		auto start = sp->getPosition();
+	showTimeCalledTimes = 0;
+	for (auto j = 0; j < 3; j++)
+	{
+		for (int i = 0; i < SHOW_BUBBLE_NUM; i++) {
+			auto sp = randomPaoPao(1);
+			sp->setPosition(READY_PAOPAO_POS);
+			auto start = sp->getPosition();
 
+			Vec2 ctrl1[SHOW_BUBBLE_NUM] = { Vec2(221, 506), Vec2(287, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),
+				Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506) };
+			Vec2 ctrl2[SHOW_BUBBLE_NUM] = { Vec2(370, 908),Vec2(73, 734), Vec2(452, 691),Vec2(82, 907),Vec2(463, 617),
+				Vec2(72, 618), Vec2(421, 664), Vec2(73, 833),Vec2(463, 921),Vec2(113, 919) };
+			Vec2 endPoint[SHOW_BUBBLE_NUM] = { Vec2(570, 837), Vec2(-20, 581),Vec2(570, 533),Vec2(-20, 753),Vec2(570, 459),
+				Vec2(-20, 467),Vec2(570, 653),Vec2(-20, 699),Vec2(570, 762),Vec2(-20, 813) };
+			int index = rand() % SHOW_BUBBLE_NUM;
+			addChild(sp);
+			ccBezierConfig config;
+			config.controlPoint_1 = ctrl1[index];
+			config.controlPoint_2 = ctrl2[index];
+			config.endPosition = endPoint[index];
 
-		Vec2 ctrl1[SHOW_BUBBLE_NUM] = { Vec2(221, 506), Vec2(287, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),
-			Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506),Vec2(221, 506) };
-		Vec2 ctrl2[SHOW_BUBBLE_NUM] = { Vec2(370, 908),Vec2(73, 734), Vec2(452, 691),Vec2(82, 907),Vec2(463, 617),
-			Vec2(72, 618), Vec2(421, 664), Vec2(73, 833),Vec2(463, 921),Vec2(113, 919) };
-		Vec2 endPoint[SHOW_BUBBLE_NUM] = { Vec2(570, 837), Vec2(-20, 581),Vec2(570, 533),Vec2(-20, 753),Vec2(570, 459),
-			Vec2(-20, 467),Vec2(570, 653),Vec2(-20, 699),Vec2(570, 762),Vec2(-20, 813) };
-		int index = rand() % SHOW_BUBBLE_NUM;
-		addChild(sp);
-		ccBezierConfig config;
-		config.controlPoint_1 = ctrl1[index];
-		config.controlPoint_2 = ctrl2[index];
-		config.endPosition = endPoint[index];
-
-		BezierTo* bezier = BezierTo::create(0.6, config);
-		auto action = EaseInOut::create(bezier, 0.6);
-		auto offset = i * 0.2;
-		auto delay = DelayTime::create(offset);
-		auto func = CallFunc::create([=]()
-			{
-				addScore(sp);
-				//sp->removeFromParentAndCleanup(true);
-				if (showTimeCalledTimes++ > 0)
+			BezierTo* bezier = BezierTo::create(0.6, config);
+			auto action = EaseInOut::create(bezier, 0.6);
+			auto offset = i * 0.2;
+			auto delay = DelayTime::create(offset);
+			
+			auto func = CallFunc::create([=]()
 				{
-					showTimeCalledTimes = 0;
-					gameWin();
-				}
-			});
-		sp->runAction(Sequence::create(delay, action, FadeOut::create(3), func, NULL));
+					if (showTimeCalledTimes % 10 == 0)
+					{
+						SimpleAudioEngine::getInstance()->playEffect("Music/Remove.mp3");
+					}
+					addScore(sp);
+					log("<cb> %d", showTimeCalledTimes);
+					if (showTimeCalledTimes++ > 28)
+					{
+						gameWin();
+					}
+				});
+			sp->runAction(Sequence::create(delay, action, func, NULL));
+		}
 	}
 }
 
@@ -1102,7 +1108,11 @@ void BubbleLayer::moveTheBubble(int i, int j, bool flag, float distance)
 }
 void BubbleLayer::addScore(Bubble *obj)
 {
-    auto gameSceme = (GameScene *)this->getParent();
+	if (!obj)
+	{
+		return;
+	}
+	auto gameSceme = (GameScene *)this->getParent();
     curDownNum_++;
     int num = 2 * curDownNum_;
 	num += num * hitNums_;
@@ -1447,8 +1457,10 @@ void BubbleLayer::gameWin()
 	{
 		return;
 	}
+	
 	callJava("showAds", "");
 	_havePass = true;
+	SimpleAudioEngine::getInstance()->playEffect("Music/Ending.mp3");
 	setDisable();
 	auto gameScene = (GameScene*)this->getParent();
 	gameScene->_propLayer->setVisible(false);
