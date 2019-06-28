@@ -50,6 +50,8 @@ const int BIAO_ICON_BTN_TAG = 10256;
 const int COLOR_ICON_BTN_TAG = 10257;
 const int MORE_ICON_BTN_TAG = 10258;
 const int ITEM_MENU_TAG     = 10259;
+
+const int SCORE_PROGRESS_TAG = 10260;
 const int LABEL_OFFSET = 1000000;
 void PropLayer::initMoveNumbers()
 {
@@ -99,10 +101,10 @@ void PropLayer::showBuyAds()
 
 void PropLayer::initScoreLabel()
 {
-    auto scoreLabel = Label::createWithSystemFont("0", "Arial", 30);
+    auto scoreLabel = Label::createWithSystemFont("0", "Arial", 20);
     addChild(scoreLabel);
     scoreLabel->setTag(SCORE_TAG);
-    scoreLabel->setPosition(270, 910);
+    scoreLabel->setPosition(210, 940);
 }
 void PropLayer::initChangeBubbleSprite()
 {
@@ -371,6 +373,7 @@ bool PropLayer::init()
     scheduleUpdate();
     flag = 0;
 	initPauseButton();
+	initScoreProgress();
 	return true;
 }
 
@@ -400,6 +403,22 @@ void PropLayer::showOpenBoxAnimi(int flag)
     isOpenBoxInGame = true;
     removeChild(menu);
     menuBombCallBack(this);
+}
+
+void PropLayer::initScoreProgress()
+{
+	auto sp = Sprite::create("res/progress.png");
+	addChild(sp, 1000);
+	sp->setPosition(295+8, 913+13);
+	Sprite* red = Sprite::create("res/progress_bar.png");
+	auto prog = ProgressTimer::create(red);
+	prog->setPosition(295, 913);
+	prog->setTag(SCORE_PROGRESS_TAG);
+	//prog->setType(ProgressTimer::Type::BAR);
+	prog->setType(kCCProgressTimerTypeBar);
+	prog->setBarChangeRate(Vec2(1, 0));
+	prog->setMidpoint(Point(0, 0));
+	addChild(prog, 1001);
 }
 
 
@@ -626,6 +645,35 @@ void PropLayer::AddScoreLabel(int var)
     auto scoreLabel = (Label*)getChildByTag(SCORE_TAG);
 	UserData::getInstance()->addScore(var);
 	scoreLabel->setString(StringUtils::format("%d", UserData::getInstance()->getScore()));
+	
+	auto score = UserData::getInstance()->getScore();
+	auto num = 0;
+	if (score < 1000)
+	{
+		num = score / 10;
+		if (num > 50)
+		{
+			num = 50;
+		}
+	}
+	else if (score >= 1000 && score < 3000)
+	{
+		auto a  = score / 100;
+		
+		num = 50 + a;
+
+		if (num > 80)
+		{
+			num = 80;
+		}
+	}
+	else
+	{
+		num = 100;
+	}
+	
+	auto progress = dynamic_cast<ProgressTimer*>(getChildByTag(SCORE_PROGRESS_TAG));
+	progress->setPercentage(num);
 }
 /**
  * 設置炮筒的角度
@@ -635,6 +683,8 @@ void PropLayer::setCannonAngle(Point target)
     auto cannon = (Sprite*)this->getChildByTag(SHOOTER_TAG);
 	auto angle = (target - READY_PAOPAO_POS).getAngle(Vec2(0, 1));
 	cannon->setRotation(CC_RADIANS_TO_DEGREES(angle));
+
+
 }
 /**
  * 設置炮筒的行為

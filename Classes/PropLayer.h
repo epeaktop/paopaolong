@@ -20,6 +20,7 @@ public:
 	Node* _propLayer;
 	void buttonCallback(Ref* pSender);
     void showOpenBoxAnimi(int flag);
+	void initScoreProgress();
 	
 private:
 
