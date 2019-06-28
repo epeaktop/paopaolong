@@ -55,10 +55,15 @@ bool Cover::init()
     TI()->repeatShakeNode(new_button);
     auto rateBtn = addRateButton();
     auto classics = classicsButton();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#else
+	classics->setVisible(false);
+#endif
     Menu *pMenu = Menu::create(new_button, classics, sound_, sound2_, rateBtn , NULL);
     pMenu->setPosition(Vec2::ZERO);
     addChild(pMenu, 100);
     regTouch();
+	callJava("showBannerAd", "");
     return true;
 }
 

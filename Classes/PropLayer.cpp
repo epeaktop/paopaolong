@@ -421,8 +421,10 @@ void PropLayer::buttonCallback(Ref* obj)
         }
         if(USER()->getBombItemNum() <=0)
         {
-            callJava("showAds","");
-            USER()->setBombItemNum(1);
+            callJava("showRandAds","");
+            //callJava("showUnityAds","");
+            
+			USER()->setBombItemNum(1);
             ob->removeChild(icon);
             showItemIcon(ob, USER()->getBombItemNum(), Vec2(110, 21), BOMB_ICON_BTN_TAG);
         }
@@ -444,12 +446,12 @@ void PropLayer::buttonCallback(Ref* obj)
 		auto icon = ob->getChildByTag(BIAO_ICON_BTN_TAG);
 		if (!icon)
 		{
-			callJava("showAds", "");
+			callJava("showRandAds", "");
 			return;
 		}
 		if (USER()->getBiaoItemNum() <= 0)
 		{
-			callJava("showAds", "");
+			callJava("showRandAds", "");
 			USER()->setBiaoItemNum(1);
 			ob->removeChild(icon);
 			showItemIcon(ob, USER()->getBiaoItemNum(), Vec2(110, 21), BIAO_ICON_BTN_TAG);
@@ -472,7 +474,7 @@ void PropLayer::buttonCallback(Ref* obj)
         auto icon = ob->getChildByTag(COLOR_ICON_BTN_TAG);
         if(USER()->getColorItemNum() <=0)
         {
-            callJava("showAds","");
+            callJava("showRandAds","");
             USER()->setColorItemNum(1);
             ob->removeChild(icon);
             showItemIcon(ob, USER()->getColorItemNum(), Vec2(110, 21), COLOR_ICON_BTN_TAG);
@@ -495,12 +497,12 @@ void PropLayer::buttonCallback(Ref* obj)
         auto icon = ob->getChildByTag(MORE_ICON_BTN_TAG);
         if(!icon)
         {
-            callJava("showAds","");
+            callJava("showRandAds","");
             return;
         }
         if(USER()->getMoveItemNum() <=0)
         {
-            callJava("showAds","");
+            callJava("showRandAds","");
             USER()->setMoveItemNum(1);
             ob->removeChild(icon);
             showItemIcon(ob, USER()->getMoveItemNum(), Vec2(110, 21), MORE_ICON_BTN_TAG);

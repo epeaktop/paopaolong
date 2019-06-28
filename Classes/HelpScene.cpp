@@ -163,6 +163,7 @@ bool HelpScene::init()
     listener->onTouchEnded = CC_CALLBACK_2(HelpScene::onTouchEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	showStar();
+	callJava("hideBannerAd", "");
     return true;
 }
 
